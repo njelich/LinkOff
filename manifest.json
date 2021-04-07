@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+    "name": "LinkOff - Clean your feed",
+    "short_name": "LinkOff",
+    "author": "Noah Jelich",
+    "version": "0.1",
+    "description": "Cleans the LinkedIn feed based on keywords and filters",
+    "background": {
+      "scripts":["background.js"]
+    },
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "https://www.linkedin.com/*"
+        ],
+        "js": ["content.js"],
+        "css": ["content.css"]
+      }
+    ],
+    "browser_action": {
+      "default_popup": "popup/popup.html"
+    },
+    "permissions": [
+      "https://www.linkedin.com/*",
+      "storage"
+    ]
+  }

@@ -1,0 +1,67 @@
+
+
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="popup.css">
+  <link href="../lib/bulma.min.css" rel="stylesheet" type="text/css">
+  <link href="../lib/bulma-switch.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="columns is-mobile" >
+    <div class="column is-10 is-offset-1">
+      <div class="block pt-4">
+        <h2 class="title is-2 has-text-centered">Link Off</h2>
+        <p class="subtitle has-text-centered">by <a href="https://www.linkedin.com/in/njelich/">Noah Jelich</a></p>
+      </div>
+      <div class="field">
+        <input id="master-switch" class="switch is-large" type="checkbox">
+        <label for="master-switch">Toggle extension</label>
+      </div>
+      <div class="columns is-mobile">
+        <div class="column is-half">
+          <div class="field">
+            <input id="feed-switch" class="switch is-rounded" type="checkbox"/>
+            <label for="feed-switch">Whole feed</label>
+          </div>
+          <div class="field">
+            <input id="learning-switch" class="switch is-rounded" type="checkbox"/>
+            <label for="learning-switch">Learning</label>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="field">
+            <input id="ads-switch" class="switch is-rounded" type="checkbox"/>
+            <label for="ads-switch">Ad banners</label>
+          </div>
+          <div class="field">
+            <input id="news-switch" class="switch is-rounded" type="checkbox"/>
+            <label for="news-switch">News</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <input 
+          id='keyword-selector'
+          placeholder='Add keywords'
+          class='tagify--outside'
+          >
+      </div>
+      <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+            <strong>Link Off</strong> by <a href="https://jelich.cc">Noah Jelich</a>. The source code is licensed
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a> and available on <a href="https://jelich.cc">my github</a>.
+            Add me on  <a href="https://www.linkedin.com/in/njelich/">LinkedIn</a> or
+          </p>
+          <a href='https://ko-fi.com/G2G547IJY' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi2.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <link href="../lib/tagify.css" rel="stylesheet" type="text/css">
+  <script language="javascript" src="../lib/tagify.min.js"></script>
+  <script language="javascript" src="popup.js"></script>
+</body>
+</html>
+
