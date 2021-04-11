@@ -2,6 +2,8 @@
 
 Cleans the LinkedIn feed based on keywords and filters.
 
+[![Preview LinkOff](https://j.gifs.com/4QE44n.gif)](https://www.youtube.com/watch?v=rGQneD68f1w)
+
 Make your LinkedIn experience better, instantly!
 
 The best solution, with cross-browser compatibility.
