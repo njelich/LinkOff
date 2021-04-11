@@ -19,7 +19,8 @@
           "https://www.linkedin.com/*"
         ],
         "js": ["content.js"],
-        "css": ["content.css"]
+        "css": ["content.css"],
+        "run_at": "document_end"
       }
     ],
     "browser_action": {

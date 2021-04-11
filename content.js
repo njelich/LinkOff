@@ -21,18 +21,40 @@ function showFeed() {
 // Other elements
 
 async function hideOther(className) {
-  if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
-    for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
-      document.getElementsByClassName(className)[i].classList.add("hide");
-    }
+  let attempts = 0;
+  let success = false;
+
+  while (!success && attempts < 50) {
+    await new Promise(resolve => {
+      setTimeout(() => {
+        if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
+          for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
+            document.getElementsByClassName(className)[i].classList.add("hide");
+          }
+        }
+        attempts = attempts + 1;
+        resolve();
+      }, 100*attempts*10);
+    });
   }
 }
 
 async function showOther(className) {
-  if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
-    for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
-      document.getElementsByClassName(className)[i].classList.remove("hide");
-    }
+  let attempts = 0;
+  let success = false;
+
+  while (!success && attempts < 50) {
+    await new Promise(resolve => {
+      setTimeout(() => {
+        if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
+          for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
+            document.getElementsByClassName(className)[i].classList.remove("hide");
+          }
+        }
+        attempts = attempts + 1;
+        resolve();
+      }, 100*attempts*10);
+    });
   }
 }
 
@@ -40,8 +62,6 @@ async function showOther(className) {
 // Block by keywords
 
 var keywordInterval;
-
-
 
 function blockByKeywords() {
   chrome.storage.local.get('keywords', function(res) {
@@ -131,9 +151,5 @@ if (document.readyState != 'loading'){
 } else {
   document.addEventListener('DOMContentLoaded', getStorageAndHide);
 }
-
-
-
-
 
  
