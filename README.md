@@ -11,9 +11,13 @@ The best solution, with cross-browser compatibility.
 ### Features 🚀
 
 >⭐️ Removes LinkedIn ads and Promoted content
+
 >⭐️ Hides LinkedIn Learning courses
+
 >⭐️ Ability to hide the whole feed
+
 >⭐️ Custom keywords that enable post filtering (WIP)
+
 >⭐️ Mobile friendly (WIP)
 
 Completely free and with no ads
