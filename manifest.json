@@ -3,7 +3,7 @@
     "name": "LinkOff - Clean your feed",
     "short_name": "LinkOff",
     "author": "Noah Jelich",
-    "version": "0.1",
+    "version": "0.2",
     "description": "Cleans the LinkedIn feed based on keywords and filters",
     "background": {
       "scripts":["background.js"]
