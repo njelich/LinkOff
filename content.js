@@ -153,15 +153,9 @@ chrome.storage.onChanged.addListener((res, _) => {
   getStorageAndHide();
 });
 
-// On change
+// Track url changes
 
-let url = window.location.href; 
-setInterval(() => {
-  if (window.location.href !== lastUrl) {
-    lastUrl = window.location.href;
-    getStorageAndHide()
-  }
-}, 500)
+window.addEventListener('hashchange', getStorageAndHide, false);
 
 // On load
 
