@@ -26,6 +26,13 @@ Completely free and with no ads
 
 Made with ❤️ by Noah Jelich
 
+### Frequently Asked Questions
+
+ * Is there an option to hide all polls? *Yes, it is done by adding the Poll keyword to the filter*
+ * Are you going to make a Tampermonkey/Greasemonkey script? *Unfortunately, no. I do not have time to maintain any more code*
+ * What about Vivaldi/Brave/Edge/Opera and other browsers? *The extension can be natively installed on all chromium browsers*
+ * What about Safari and MacOs? *The store charges 100$ per year to post apps, which I cannot afford*
+
 ### Development
 
 Please create an issue before submitting a pull request.
