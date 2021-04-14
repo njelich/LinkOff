@@ -4,12 +4,17 @@
 
 const keywordList = [
     "Promoted",
+    "Poll",
+    "following",
     "likes this",
     "commented on this",
     "loves this",
     "finds this insightful",
     "celebrates this",
-    "is curious about this"
+    "is curious about this",
+    "Be the first to comment",
+    "Be the first to react",
+    "New post in",
 ]
 
 const keywordSelector = document.querySelector('input[id=keyword-selector]');
