@@ -8,7 +8,6 @@ async function hideFeed() {
 
   while (!success && attempts < 50) {
     await new Promise(resolve => {
-      console.log(attempts + "hideFeed" + className)
       setTimeout(() => {
         if (document.getElementsByClassName("artdeco-dropdown") && 
             document.getElementsByClassName("artdeco-dropdown")[1] && 
@@ -29,7 +28,6 @@ async function showFeed() {
 
   while (!success && attempts < 50) {
     await new Promise(resolve => {
-      console.log(attempts + "showFeed" + className)
       setTimeout(() => {
         if (document.getElementsByClassName("artdeco-dropdown") && 
             document.getElementsByClassName("artdeco-dropdown")[1] && 
@@ -89,47 +87,40 @@ async function showOther(className) {
 
 // Block by keywords
 
-var keywordInterval;
+let keywordInterval;
 
 function blockByKeywords() {
   chrome.storage.local.get('keywords', function(res) {
-    if (res?.keywords) {
+    if (res?.keywords !== "") {
       let keywords = res.keywords.split(',');
-      if (keywords.length > 0) {
-        keywordInterval = setInterval(function() {
-          let postCount = 0;
-          const posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
-            return el.classList[2] == null;
-          });
-          console.log(posts)
-          posts.forEach(element => {
-            console.log(element)
+      let posts, blockedPosts, postCount = 0;
+
+      keywordInterval = setInterval(() => {
+
+        posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
+          return el.classList[2] == 'hide' || el.classList[2] == null;
+        });
+
+        blockedPosts = Array.prototype.filter.call(posts, function(el) {
+          return el.classList[2] == 'hide';
+        });
+
+        // Filter only if there are enough posts to load more
+        postCount = posts.length - blockedPosts.length;
+        if( postCount >= 6) {
+          posts.forEach(post => {
             let blocked = false;
-            for (keyword in keywords) {
-              if (keywords.length && el.html().includes(keywords[i])) {
+            keywords.forEach(keyword => {
+              if(post.innerHTML.indexOf(keyword) !== -1) {
                 blocked = true;
-                el.classList.add("hide");
-                break;
+                post.classList.add("hide");
               }
-            }
-            if (!blocked) {
-              postCount++;
-            }
+            });
           });
+        }
 
-          if (postCount < 12) {
-            posts.last().classList.remove("hide");;
-            postCount++;
-          }
-          if (postCount < 12) {
-            posts.first().classList.remove("hide");;
-            postCount++;
-          }
-
-        }, 1000);
-      }
+      }, 200);
     }
-
   });
 };
 
@@ -137,7 +128,7 @@ function blockByKeywords() {
 
 function hideAll (res) {
   if(res.master) {
-    if (res.feed) {hideFeed();} else {showFeed();/*blockByKeywords();*/};
+    if (res.feed) {hideFeed(); clearInterval(keywordInterval);} else {showFeed(); blockByKeywords();};
     res.learning ?  hideOther("learning-top-courses") : showOther("learning-top-courses");
     if (res.ads) {hideOther("ad-banner-container");}
       else {showOther("ad-banner-container");}
@@ -148,7 +139,7 @@ function hideAll (res) {
     showOther("ad-banner-container"); 
     showOther("ads-container");
     //showOther("news-module");
-    //clearInterval(keywordInterval);
+    clearInterval(keywordInterval);
   }
 }
 
