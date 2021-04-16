@@ -1,4 +1,4 @@
-# LinkOff - Clean your feed 🧹
+# LinkOff - Clean your LinkedIn feed 🧹
 
 Cleans the LinkedIn feed based on keywords and filters.
 
