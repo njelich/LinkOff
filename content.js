@@ -129,7 +129,7 @@ function blockByKeywords() {
 function hideAll (res) {
   if(res.master) {
     if (res.feed) {hideFeed(); clearInterval(keywordInterval);} else {showFeed(); blockByKeywords();};
-    res.learning ?  hideOther("learning-top-courses") : showOther("learning-top-courses");
+    if(res.learning) {hideOther("learning-top-courses");hideOther("pv-course-recommendations")} else {showOther("learning-top-courses");showOther("pv-course-recommendations")};
     if (res.ads) {hideOther("ad-banner-container");}
       else {showOther("ad-banner-container");}
     //res.news ? hideOther("news-module") : showOther("news-module");
