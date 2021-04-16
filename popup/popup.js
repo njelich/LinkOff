@@ -44,7 +44,7 @@ const masterSwitch = document.getElementById("master-switch");
 const feedSwitch = document.getElementById("feed-switch");
 const learningSwitch = document.getElementById("learning-switch");
 const adsSwitch = document.getElementById("ads-switch");
-const newsSwitch = document.getElementById("news-switch");
+const wipeMessage = document.getElementById("msg-button");
 
 chrome.storage.local.get(['master', 'feed', 'learning', 'ads', 'news'], (res) => {
     if (res) {
@@ -88,11 +88,8 @@ adsSwitch.addEventListener('change', () => {
     }
 });
 
-newsSwitch.addEventListener('change', () => {
-    if (newsSwitch.checked) {
-        chrome.storage.local.set({ 'news': true });
-    } else {
-        chrome.storage.local.set({ 'news': false });
-    }
+wipeMessage.addEventListener('click', () => {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {wipeMessages: true});
+      });
 });
-

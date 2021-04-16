@@ -28,6 +28,7 @@
     },
     "permissions": [
       "https://www.linkedin.com/*",
-      "storage"
+      "storage",
+      "activeTab"
     ]
   }
