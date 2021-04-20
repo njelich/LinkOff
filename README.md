@@ -20,7 +20,7 @@ The best solution, with cross-browser compatibility.
 
 >⭐️ Cleans up your inbox
 
->⭐️ Custom keywords that enable post filtering (WIP)
+>⭐️ Custom keywords that enable post filtering
 
 >⭐️ Mobile friendly (WIP)
 
