@@ -18,7 +18,9 @@ The best solution, with cross-browser compatibility.
 
 >⭐️ Ability to hide the whole feed
 
->⭐️ Custom keywords that enable post filtering (WIP)
+>⭐️ Cleans up your inbox
+
+>⭐️ Custom keywords that enable post filtering
 
 >⭐️ Mobile friendly (WIP)
 
