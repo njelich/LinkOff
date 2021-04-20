@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "LinkOff - Clean your feed",
+    "name": "LinkOff - Clean your LinkedIn",
     "short_name": "LinkOff",
     "author": "Noah Jelich",
-    "version": "0.2",
-    "description": "Cleans the LinkedIn feed based on keywords and filters",
+    "version": "0.3",
+    "description": "LinkOff is a browser extension / add-on that lets you clean up and customize LinkedIn. It filters out the junk you don't want to see, leaving behind the posts and page elements you do wish to see.",
     "background": {
       "scripts":["background.js"]
     },
