@@ -4,7 +4,7 @@
     "short_name": "LinkOff",
     "author": "Noah Jelich",
     "version": "0.3",
-    "description": "LinkOff is a browser extension / add-on that lets you clean up and customize LinkedIn. It filters out the junk you don't want to see, leaving behind the posts and page elements you do wish to see.",
+    "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
     "background": {
       "scripts":["background.js"]
     },
@@ -28,7 +28,6 @@
     },
     "permissions": [
       "https://www.linkedin.com/*",
-      "storage",
-      "activeTab"
+      "storage"
     ]
   }
