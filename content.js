@@ -235,7 +235,13 @@ chrome.storage.onChanged.addListener((res, _) => {
 
 // Track url changes
 
-window.addEventListener('hashchange', getStorageAndHide, false);
+let lastUrl = window.location.href; 
+setInterval(() => {
+  if (window.location.href !== lastUrl) {
+    lastUrl = window.location.href;
+    getStorageAndHide()
+  }
+}, 500)
 
 // On load
 
