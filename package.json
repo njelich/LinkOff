@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "css-build": "node-sass --omit-source-map-url popup/popup.scss popup/popu.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch"
+  },
+  "devDependencies": {
+    "node-sass": "^6.0.0"
+  }
+}
