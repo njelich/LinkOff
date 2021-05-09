@@ -1,10 +1,14 @@
 {
   "scripts": {
-    "css-build": "node-sass --omit-source-map-url popup/popup.scss popup/popu.css",
+    "css-build": "node-sass --omit-source-map-url popup/popup.scss popup/popup.css",
     "css-watch": "npm run css-build -- --watch",
     "start": "npm run css-watch"
   },
   "devDependencies": {
+    "@creativebulma/bulma-divider": "^1.1.0",
+    "@yaireo/tagify": "^4.1.1",
+    "bulma": "^0.9.2",
+    "bulma-switch": "^2.0.0",
     "node-sass": "^6.0.0"
   }
 }

@@ -1,6 +1,6 @@
-# LinkOff - Clean your LinkedIn feed 🧹
+# LinkOff - LinkedIn Filter and Customizer 🧹
 
-Cleans the LinkedIn feed based on keywords and filters.
+LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.
 
 [![Preview LinkOff](https://j.gifs.com/4QE44n.gif)](https://www.youtube.com/watch?v=rGQneD68f1w)
 
@@ -39,7 +39,9 @@ Made with ❤️ by Noah Jelich
 
 Please create an issue before submitting a pull request.
 
-This extension is plain JS, CSS and HTML, with all necessary libraries shipped in the `lib` folder. To install the extension locally follow the instructions for your browser.
+Use npm to install dependencies, simply run `npm i`. To rebuild the CSS from SCSS run `npm run css-build`. 
+
+To install the extension locally follow the instructions below for your browser.
 
 **Firefox**
 
