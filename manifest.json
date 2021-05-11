@@ -10,6 +10,9 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "background": {
+    "scripts": ["background.js"]
+  },
   "content_scripts": [{
     "matches": [
       "https://www.linkedin.com/*"

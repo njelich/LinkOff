@@ -98,18 +98,34 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 });
 
+// Action buttons
 
-// Keywords
+const actionEvent = action => event => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { [action.id]: true });
+  });
+}
 
-const keywordList = [
+document.addEventListener('DOMContentLoaded', function() {
+  // Add change listeners to switches
+  var i, x;
+  x = document.querySelectorAll("button");
+  for (i = 0; i < x.length; i++) {
+    x[i].addEventListener("click", actionEvent(x[i]))
+  }
+});
+
+// Feed hide by keywords
+
+const feedKeywordList = [
   "Be the first to comment",
   "Be the first to react",
   "New post in",
 ]
 
-const keywordSelector = document.querySelector('input[id=keyword-selector]');
-const keywordTagify = new Tagify(keywordSelector, {
-  whitelist: keywordList,
+const feedKeywords = document.querySelector('input[id=hide-by-keywords]');
+const feedTagify = new Tagify(feedKeywords, {
+  whitelist: feedKeywordList,
   dropdown: {
     position: "input",
     enabled: 0,
@@ -119,12 +135,12 @@ const keywordTagify = new Tagify(keywordSelector, {
 })
 
 function onChange(e) {
-  chrome.storage.local.set({ 'keywords': e.target.value }, () => {});
+  chrome.storage.local.set({ 'feed-keywords': e.target.value }, () => {});
 }
-keywordSelector.addEventListener('change', onChange)
+feedKeywords.addEventListener('change', onChange)
 
 window.onload = function() {
-  chrome.storage.local.get('keywords', function(res) {
-    keywordTagify.addTags(res.keywords);
+  chrome.storage.local.get('feed-keywords', function(res) {
+    feedTagify.addTags(res['feed-keywords']);
   });
 };

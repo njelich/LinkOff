@@ -8762,6 +8762,14 @@ body {
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0px; }
 
+:root {
+  --tags-border-color: #00D1B2 !important;
+  --tags-hover-border-color: #00D1B2 !important;
+  --tags-focus-border-color: rgba(76, 175, 80, 0) !important;
+  --tagify-dd-color-primary: #00D1B2 !important;
+  --tagify-dd-color-primary:rgba(76, 175, 80, 0)  !important;
+  --tagify-dd-bg-color: #f8f8ff !important; }
+
 .tagify--outside {
   border: 0; }
   .tagify--outside .tagify__input {

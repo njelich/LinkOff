@@ -51,6 +51,14 @@ function getStorageAndDoIt() {
   chrome.storage.local.get(null, doIt);
 }
 
+// Actions listener
+
+chrome.runtime.onMessage.addListener(
+  function(request, _) {
+    if(request['select-messages-for-deletion']) selectMessagesForDeletion();
+  }
+);
+
 // Toggle feed
 
 async function hideFeed() {
@@ -137,20 +145,6 @@ async function showOther(className) {
 
 // Block by keywords
 
-/* 
-  "following",
-  "likes this",
-  "commented on this",
-  "loves this",
-  "finds this insightful",
-  "celebrates this",
-  "is curious about this",
-  "Be the first to comment",
-  "Be the first to react",
-  "New post in",
-  
-  */
-
 let keywordInterval;
 
 function blockByKeywords(res) {
@@ -171,8 +165,6 @@ function blockByKeywords(res) {
   let posts;
 
   if(keywords.length) keywordInterval = setInterval(() => {
-    console.log("inside")
-
     posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
       return el.classList[2] == null;
     });
@@ -181,7 +173,6 @@ function blockByKeywords(res) {
     if (posts.length >= 6) {
       posts.forEach(post => {
         if(keywords.some(keyword => {
-          console.log(post.innerHTML.indexOf(keyword))
           return post.innerHTML.indexOf(keyword) !== -1
         })) post.classList.add("hide");
       });
@@ -232,29 +223,13 @@ function hideAll(res) {
 }
 
 //Modified from https://gist.github.com/twhitacre/d4536183c22a2f5a8c7c427df04acc90
-async function deleteMessages() {
+async function selectMessagesForDeletion() {
   const container = document.querySelector('.msg-conversations-container ul');
   if (!container) {
-    alert('No messages. Are you on the messaging page?');
+    alert("No messages. Are you on the messaging page?\n\nIf not, please navigate to messaging using the LinkedIn navbar and then click the Select Messages for Deletion button again."); 
     return;
   }
-
-  /*
-   let attempts = 0;
-   let success = false;
-
-   while (!success && attempts < 50) {
-     await new Promise(resolve => {
-       setTimeout(() => {
-         console.log(container = document.querySelector('.msg-conversations-container ul'))
-         if (container = document.querySelector('.msg-conversations-container ul')) {
-           success = true
-         }
-         attempts = attempts + 1;
-         resolve();
-       }, 100*attempts*10);
-     });
-   }*/
+  
 
   async function loadAllMessages() {
     return await new Promise((resolve) => {
@@ -292,16 +267,6 @@ async function deleteMessages() {
   }
   alert('Click the trash can icon at the top to delete all messages.');
 };
-
-// Click listener for deleting messages
-
-chrome.runtime.onMessage.addListener(
-  function(request, _) {
-    if (request.wipeMessages) {
-      deleteMessages();
-    }
-  }
-);
 
 // Storage listener
 
