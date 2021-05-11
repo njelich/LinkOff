@@ -21,6 +21,8 @@ function doIt(res) {
     showOther("feeds");
     clearInterval(keywordInterval);
   }
+  //Toggle feed sorting order
+  if(res['main-toggle'] && res['sort-by-recent']) sortByRecent()
   // Hide LinkedIn learning prompts and ads
   if(res['main-toggle'] && res['hide-linkedin-learning']) {
     hideOther("learning-top-courses");
@@ -200,6 +202,21 @@ function blockByKeywords(res) {
 
   }, 100);
 };
+
+// Ensure cookie value
+
+function sortByRecent() {
+  if(document.cookie.split(";").some(cookie => {
+    let cookiePair = cookie.split("=")
+    console.log(cookiePair)
+    return "chronFeed" == cookiePair[1]
+  })) {
+    document.cookie = "feed-sort=chronFeed; expires=Tue, 19 Jan 2038 03:14:07 UTC;"
+  } else {
+    document.querySelector('button[data-control-name="feed_sort_toggle_chron"]').click();
+    document.cookie = "feed-sort=chronFeed; expires=Tue, 19 Jan 2038 03:14:07 UTC;"
+  }
+}
 
 // Main functions
 
