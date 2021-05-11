@@ -13,38 +13,57 @@ function doIt(res) {
       showFeed();
       showOther("feeds");
       clearInterval(keywordInterval);
-      blockByKeywords(res);
+      blockByKeywords(res)
     }
-  
   } else {
     //Feed
     showFeed();
     showOther("feeds");
     clearInterval(keywordInterval);
-
   }
-  //Feed
-  
-    /*
-    //hideOther("account-center-container");
-    if (res.learning) {
-      hideOther("learning-top-courses");
-      hideOther("pv-course-recommendations")
-    } else {
-      showOther("learning-top-courses");
-      showOther("pv-course-recommendations")
-    };
-    if (res.ads) { hideOther("ad-banner-container"); } else { showOther("ad-banner-container"); }
-    //res.news ? hideOther("news-module") : showOther("news-module");*/
-    /*
-    showFeed();
-    //showOther("feeds")
-    //showOther("account-center-container");
+  // Hide LinkedIn learning prompts and ads
+  if(res['main-toggle'] && res['hide-linkedin-learning']) {
+    hideOther("learning-top-courses");
+    hideOther("pv-course-recommendations");
+  } else {
     showOther("learning-top-courses");
+    showOther("pv-course-recommendations")
+  }
+  // Hide ads across linkedin
+  if(res['main-toggle'] && res['hide-advertisements']) {
+    hideOther("ad-banner-container");
+    hideOther("ads-container");
+  } else {
     showOther("ad-banner-container");
-    showOther("ads-container");
-    //showOther("news-module");
-    clearInterval(keywordInterval);*/
+    showOther("ads-container")
+  }
+  // Hide feed area community and follow panels
+  if(res['main-toggle'] && res['hide-community-panel']) {
+    hideOther("community-panel");
+  } else {
+    showOther("community-panel");
+  }
+  if(res['main-toggle'] && res['hide-follow-recommendations']) {
+    hideOther("feed-follows-module");
+  } else {
+    showOther("feed-follows-module");
+  }
+  // Hide account building prompts
+  if(res['main-toggle'] && res['hide-account-building']) {
+    hideOther("mn-abi-form");
+    hideOther("artdeco-card mb4 overflow-hidden ember-view");
+  } else {
+    showOther("mn-abi-form");
+    showOther("artdeco-card mb4 overflow-hidden ember-view");
+  }
+  // Hide premium upsell prompts
+  if(res['main-toggle'] && res['hide-premium']) {
+    hideOther("premium-upsell-link");
+    hideOther("gp-promo-embedded-card-three");
+  } else {
+    showOther("premium-upsell-link");
+    showOther("gp-promo-embedded-card-three");
+  }
 }
 
 function getStorageAndDoIt() {
