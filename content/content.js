@@ -22,7 +22,7 @@ function doIt(res) {
     clearInterval(keywordInterval);
   }
   //Toggle feed sorting order
-  if(res['main-toggle'] && res['sort-by-recent']) sortByRecent()
+  if(res['main-toggle'] && res['sort-by-recent'] && (window.location.href=="https://www.linkedin.com/feed/" || window.location.href=="https://www.linkedin.com/")) sortByRecent()
   // Hide LinkedIn learning prompts and ads
   if(res['main-toggle'] && res['hide-linkedin-learning']) {
     hideOther("learning-top-courses");
@@ -169,7 +169,6 @@ async function showOther(className) {
 let keywordInterval;
 
 function blockByKeywords(res) {
-  console.log(res)
   let keywords = res.keywords == "" ? res.keywords.split(',') : []
   if(res['hide-by-age'] !== "disabled") keywords.push({"hour":"h • ", "day":"d • ", "week":"w • ", "month":"mo • "}[res['hide-by-age']])
   if(res['hide-polls']) keywords.push('Poll')
@@ -203,19 +202,26 @@ function blockByKeywords(res) {
   }, 100);
 };
 
-// Ensure cookie value
+// Toggle sort by recent
 
-function sortByRecent() {
-  if(document.cookie.split(";").some(cookie => {
-    let cookiePair = cookie.split("=")
-    console.log(cookiePair)
-    return "chronFeed" == cookiePair[1]
-  })) {
-    document.cookie = "feed-sort=chronFeed; expires=Tue, 19 Jan 2038 03:14:07 UTC;"
-  } else {
-    document.querySelector('button[data-control-name="feed_sort_toggle_chron"]').click();
-    document.cookie = "feed-sort=chronFeed; expires=Tue, 19 Jan 2038 03:14:07 UTC;"
+async function sortByRecent() {
+    const dropdownTrigger = await waitForSelector('button[data-control-name="feed_sort_dropdown_trigger"]')
+    if(dropdownTrigger.textContent.includes("Top")) {
+      dropdownTrigger.click()
+      const recentOption = await waitForSelector('div[data-control-name="feed_sort_toggle_chron"]')
+      recentOption.click()
+    }
+}
+
+// Wait for selector implementation
+
+async function waitForSelector(selector) {
+  while (document.querySelector(selector) === null) {
+      await new Promise(resolve => {
+        requestAnimationFrame(resolve);
+    });
   }
+  return document.querySelector(selector);
 }
 
 // Main functions
