@@ -150,6 +150,7 @@ let keywordInterval;
 function blockByKeywords(res) {
   console.log(res)
   let keywords = res.keywords == "" ? res.keywords.split(',') : []
+  if(res['hide-by-age'] !== "disabled") keywords.push({"hour":"h • ", "day":"d • ", "week":"w • ", "month":"mo • "}[res['hide-by-age']])
   if(res['hide-polls']) keywords.push('Poll')
   if(res['hide-videos']) keywords.push('id="vjs_video_')
   if(res['hide-links']) keywords.push('https://lnkd.in/')
