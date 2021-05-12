@@ -66,3 +66,7 @@ To install the extension locally follow the instructions below for your browser.
  * Enable developer mode using the toggle on the right
  * Click Load Unpacked on the left side of the screen.
  * Navigate to the location of the folder you unzipped, and select it.
+
+#### Generating releases
+
+To generate the release of the extension, simply run `zip -r linkoff-vNumber.zip . -x ".*" -x "__MACOSX" -x "assets*" -x "node_modules*" -x "package*" -x "README.md" -x "*.zip`.
