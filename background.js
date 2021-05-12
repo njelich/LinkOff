@@ -1,9 +1,8 @@
 // Set defaults on install.
 
 chrome.storage.local.get(null, function(res) {
-    console.log(res)
-    if(!res.initialized) chrome.storage.local.set({
-        "initialized": true, 
+    if(res.initialized !== "v0.5") chrome.storage.local.set({
+        "initialized": "v0.5", 
         "hide-account-building": false,
         "hide-advertisements": true,
         "hide-by-age": "week",
@@ -22,7 +21,8 @@ chrome.storage.local.get(null, function(res) {
         "hide-shared": false,
         "hide-videos": false,
         "hide-whole-feed": false,
-        "hide-with-reactions": true,
+        "hide-liked": true,
+        "hide-other-reactions": false,
         "main-toggle": true,
         "sort-by-recent": true,
     })

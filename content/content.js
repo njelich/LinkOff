@@ -178,8 +178,9 @@ function blockByKeywords(res) {
   if(res['hide-promoted']) keywords.push('Promoted')
   if(res['hide-shared']) keywords.push('feed-shared-mini-update-v2')
   if(res['hide-followed']) keywords.push('following')
-  if(res['hide-reacted']) keywords.push('likes this', 'loves this', 'finds this insightful', 'celebrates this', 'is curious about this')
-  if(res['hide-commented']) keywords.push('commented on this')
+  if(res['hide-liked']) keywords.push('likes this')
+  if(res['hide-other-reactions']) keywords.push('loves this', 'finds this insightful', 'celebrates this', 'is curious about this')
+  if(res['hide-commented-on']) keywords.push('commented on this')
   if(res['hide-by-companies']) keywords.push('href="https://www.linkedin.com/company/')
   if(res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
 
@@ -199,7 +200,7 @@ function blockByKeywords(res) {
       });
     }
 
-  }, 100);
+  }, 500);
 };
 
 // Toggle sort by recent
