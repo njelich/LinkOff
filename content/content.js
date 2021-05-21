@@ -169,7 +169,7 @@ async function showOther(className) {
 let keywordInterval;
 
 function blockByKeywords(res) {
-  let keywords = res.keywords == "" ? res.keywords.split(',') : []
+  let keywords = res['feed-keywords'] == "" ? [] : res['feed-keywords'].split(',');
   if(res['hide-by-age'] !== "disabled") keywords.push({"hour":"h • ", "day":"d • ", "week":"w • ", "month":"mo • "}[res['hide-by-age']])
   if(res['hide-polls']) keywords.push('Poll')
   if(res['hide-videos']) keywords.push('id="vjs_video_')
@@ -183,6 +183,8 @@ function blockByKeywords(res) {
   if(res['hide-commented-on']) keywords.push('commented on this')
   if(res['hide-by-companies']) keywords.push('href="https://www.linkedin.com/company/')
   if(res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
+
+  console.log(keywords)
 
   let posts;
 
