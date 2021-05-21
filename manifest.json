@@ -26,6 +26,7 @@
   },
   "permissions": [
     "https://www.linkedin.com/*",
+    "cookies",
     "storage"
   ]
 }
