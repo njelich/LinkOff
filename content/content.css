@@ -1,3 +1,15 @@
 .hide {
     display: None
 }
+
+.dim {
+    opacity: 0.05;
+    filter: alpha(opacity=5);
+    zoom: 1;
+  }
+
+.dim:hover {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+    zoom: 1;
+  }

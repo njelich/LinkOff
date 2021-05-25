@@ -2,7 +2,10 @@
 
 // Main function
 
+let mode = "hide"
+
 async function doIt(res) {
+  mode = res['gentle-mode'] ? "dim" : "hide";
   chrome.runtime.sendMessage(
     { name: "fetchLiAt", data: {
       accountList: res["account-list"], 
@@ -42,10 +45,12 @@ async function doIt(res) {
   }
   // Hide ads across linkedin
   if(res['main-toggle'] && res['hide-advertisements']) {
-    hideOther("ad-banner-container");
+    hideOther("ad-banner-container artdeco-card");
+    hideOther("ad-banner-container is-header-zone");
     hideOther("ads-container");
   } else {
-    showOther("ad-banner-container");
+    showOther("ad-banner-container artdeco-card");
+    showOther("ad-banner-container is-header-zone");
     showOther("ads-container")
   }
   // Hide feed area community and follow panels
@@ -101,7 +106,7 @@ async function hideFeed() {
         if (document.getElementsByClassName("artdeco-dropdown") &&
           document.getElementsByClassName("artdeco-dropdown")[1] &&
           document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling) {
-          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.add("hide")
+          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.add(mode)
           success = true
         }
         attempts = attempts + 1;
@@ -121,7 +126,7 @@ async function showFeed() {
         if (document.getElementsByClassName("artdeco-dropdown") &&
           document.getElementsByClassName("artdeco-dropdown")[1] &&
           document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling) {
-          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.remove("hide")
+          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.remove(mode)
           success = true
         }
         attempts = attempts + 1;
@@ -135,12 +140,12 @@ async function showFeed() {
 
 async function hideOther(className) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.add("hide")
+  for (let el of elements) el.classList.add(mode)
 }
 
 async function showOther(className) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.remove("hide")
+  for (let el of elements) el.classList.remove(mode)
 }
 
 // Block by keywords
@@ -171,21 +176,22 @@ function blockByKeywords(res) {
     });
 
     // Filter only if there are enough posts to load more
-    if (posts.length >= 6) {
+    
+    if (posts.length > 2) {
       posts.forEach(post => {
         if(keywords.some(keyword => {
           return post.innerHTML.indexOf(keyword) !== -1
-        })) post.classList.add("hide");
+        })) post.classList.add(mode);
       });
-    } else {
+    } /*else {
       posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
         return el.classList[2] == "hide";
       });
       posts[0].classList.remove("hide")
       posts[1].classList.remove("hide")
-    }
+    }*/
 
-  }, 500);
+  }, 100);
 };
 
 // Toggle sort by recent
