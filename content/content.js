@@ -134,15 +134,13 @@ async function showFeed() {
 // Toggle arbitrary element
 
 async function hideOther(className) {
-  const el = await waitForClassName(className)
-  console.log(el)
-  el.forEach((e) => e.add("hide"))
+  const elements = await waitForClassName(className)
+  for (let el of elements) el.classList.add("hide")
 }
 
 async function showOther(className) {
-  const el = await waitForClassName(className)
-  console.log(el)
-  el.forEach((e) => e.remove("hide"))
+  const elements = await waitForClassName(className)
+  for (let el of elements) el.classList.remove("hide")
 }
 
 // Block by keywords
@@ -179,6 +177,12 @@ function blockByKeywords(res) {
           return post.innerHTML.indexOf(keyword) !== -1
         })) post.classList.add("hide");
       });
+    } else {
+      posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
+        return el.classList[2] == "hide";
+      });
+      posts[0].classList.remove("hide")
+      posts[1].classList.remove("hide")
     }
 
   }, 500);

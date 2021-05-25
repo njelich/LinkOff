@@ -3,7 +3,8 @@
 chrome.storage.local.get(null, function (res) {
   if (res.initialized !== "v0.5")
     chrome.storage.local.set({
-      initialized: "v0.5",
+      "initialized": "v0.5",
+      "feed-keywords": "",
       "hide-account-building": false,
       "hide-advertisements": true,
       "hide-by-age": "week",
