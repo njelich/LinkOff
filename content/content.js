@@ -45,10 +45,12 @@ async function doIt(res) {
   }
   // Hide ads across linkedin
   if(res['main-toggle'] && res['hide-advertisements']) {
+    hideOther("ad-banner-container");
     hideOther("ad-banner-container artdeco-card");
     hideOther("ad-banner-container is-header-zone");
     hideOther("ads-container");
   } else {
+    showOther("ad-banner-container");
     showOther("ad-banner-container artdeco-card");
     showOther("ad-banner-container is-header-zone");
     showOther("ads-container")
@@ -126,7 +128,7 @@ async function showFeed() {
         if (document.getElementsByClassName("artdeco-dropdown") &&
           document.getElementsByClassName("artdeco-dropdown")[1] &&
           document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling) {
-          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.remove(mode)
+          document.getElementsByClassName("artdeco-dropdown")[1].nextElementSibling.classList.remove("hide", "dim")
           success = true
         }
         attempts = attempts + 1;
@@ -145,7 +147,7 @@ async function hideOther(className) {
 
 async function showOther(className) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.remove(mode)
+  for (let el of elements) el.classList.remove("hide", "dim")
 }
 
 // Block by keywords
@@ -177,19 +179,13 @@ function blockByKeywords(res) {
 
     // Filter only if there are enough posts to load more
     
-    if (posts.length > 2) {
+    if (posts.length > 10) {
       posts.forEach(post => {
         if(keywords.some(keyword => {
           return post.innerHTML.indexOf(keyword) !== -1
         })) post.classList.add(mode);
       });
-    } /*else {
-      posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
-        return el.classList[2] == "hide";
-      });
-      posts[0].classList.remove("hide")
-      posts[1].classList.remove("hide")
-    }*/
+    }
 
   }, 100);
 };
