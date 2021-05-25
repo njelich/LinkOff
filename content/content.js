@@ -134,43 +134,15 @@ async function showFeed() {
 // Toggle arbitrary element
 
 async function hideOther(className) {
-  let attempts = 0;
-  let success = false;
-
-  while (!success && attempts < 50) {
-    await new Promise(resolve => {
-      setTimeout(() => {
-        if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
-          for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
-            document.getElementsByClassName(className)[i].classList.add("hide");
-            success = true
-          }
-        }
-        attempts = attempts + 1;
-        resolve();
-      }, 100 + attempts * 10);
-    });
-  }
+  const el = await waitForClassName(className)
+  console.log(el)
+  el.forEach((e) => e.add("hide"))
 }
 
 async function showOther(className) {
-  let attempts = 0;
-  let success = false;
-
-  while (!success && attempts < 50) {
-    await new Promise(resolve => {
-      setTimeout(() => {
-        if (document.getElementsByClassName(className) && document.getElementsByClassName(className)[0]) {
-          for (var i = 0; i < document.getElementsByClassName(className).length; i++) {
-            document.getElementsByClassName(className)[i].classList.remove("hide");
-            success = true
-          }
-        }
-        attempts = attempts + 1;
-        resolve();
-      }, 100 + attempts * 10);
-    });
-  }
+  const el = await waitForClassName(className)
+  console.log(el)
+  el.forEach((e) => e.remove("hide"))
 }
 
 // Block by keywords
@@ -233,6 +205,16 @@ async function waitForSelector(selector) {
   }
   return document.querySelector(selector);
 }
+
+async function waitForClassName(className) {
+  while (!Boolean(document.getElementsByClassName(className).length)) {
+      await new Promise(resolve => {
+        requestAnimationFrame(resolve);
+    });
+  }
+  return document.getElementsByClassName(className);
+}
+
 
 // Main functions
 
