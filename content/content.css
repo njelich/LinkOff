@@ -13,3 +13,38 @@
     filter: alpha(opacity=50);
     zoom: 1;
   }
+
+
+body {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+img, video,
+:not(object):not(body)>embed,
+object,
+svg image,
+[style*="background:url"],
+[style*="background-image:url"],
+[style*="background: url"],
+[style*="background-image: url"],
+[background],
+twitterwidget,
+.sr-reader,
+.sr-backdrop {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+[style*="background:url"] *,
+[style*="background-image:url"] *,
+[style*="background: url"] *,
+[style*="background-image: url"] *,
+input,
+[background] *,
+img[src^="https://s0.wp.com/latex.php"],
+twitterwidget .NaturalImage-image {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+

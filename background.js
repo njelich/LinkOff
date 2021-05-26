@@ -43,9 +43,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 async function fetchLiAtCookie(accountList, name) {
   chrome.cookies.getAll({ domain: "linkedin.com", name: "li_at" },cookie => {
-    console.log(cookie[0].value != accountList[name])
-    if (accountList[name] != cookie[0].value) {
-      const accounts = accountList;
+    console.log(name)
+    if (accountList[name] != cookie[0].value && name) {
+      const accounts = accountList ? accountList : {};
       accounts[name] = cookie[0].value
       console.log(accounts)
       chrome.storage.local.set({

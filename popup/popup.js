@@ -98,6 +98,26 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 });
 
+// User switcher
+
+const userSwitcher = document.getElementById("switch-account")
+let userOption;
+chrome.storage.local.get(["switch-account","account-list"], (res) => {
+  if (res) {
+    for (let key in res['account-list']) {
+      userOption = new Option(key,res['account-list'][key]);
+      userSwitcher.add(userOption,undefined);
+    }
+  }
+})
+userSwitcher.addEventListener("change", function(e) {
+  selectProperty(userSwitcher)
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { "switch-account": true, "li_at": e.target.value });
+  });
+})
+
+
 // Action buttons
 
 const actionEvent = action => event => {
