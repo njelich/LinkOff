@@ -48,6 +48,10 @@ Also available on Firefox. Coming soon to Opera and other browsers.
 >⭐️ Hide community panel and follow recommendations 
 >
 >⭐️ Stop LinkedIn premium upsell pestering 
+>
+>⭐️ Toggle-able dark mode 
+>
+>⭐️ Account switching (WIP)
 
 >⭐️ Fully configurable to suit your need! 
 >
