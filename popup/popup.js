@@ -141,6 +141,7 @@ const feedKeywordList = [
   "Be the first to comment",
   "Be the first to react",
   "New post in",
+  "Jobs recommended for you"
 ]
 
 const feedKeywords = document.querySelector('input[id=hide-by-keywords]');
