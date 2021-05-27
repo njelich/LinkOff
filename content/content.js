@@ -7,6 +7,11 @@ let mode = "hide"
 async function doIt(res) {
   // Set Mode
   mode = res['gentle-mode'] ? "dim" : "hide";
+  if(res['dark-mode']) {
+    document.body.classList.add('darkMode');
+  } else {
+    document.body.classList.remove('darkMode');
+  }
 
   // Hide stuff
   if(res['main-toggle']) {
@@ -86,7 +91,7 @@ async function doIt(res) {
       name: document.querySelector('img[class="global-nav__me-photo ember-view"]')?.alt,
     }},
     function (response) {
-        
+        console.log(response)
     }
   )
 }
