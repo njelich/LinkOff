@@ -2,6 +2,16 @@
 
 LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.
 
+<p>
+  <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/maanaljajdhhnllllmhmiiboodmoffon?label=Chrome%20users">
+  <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/rating/maanaljajdhhnllllmhmiiboodmoffon">
+  <img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/linkoff-clean-your-feed?label=Firefox%20users">
+  <img alt="Mozilla Add-on" src="https://img.shields.io/amo/rating/linkoff-clean-your-feed">
+  <img alt="GitHub manifest version" src="https://img.shields.io/github/manifest-json/v/njelich/linkoff">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/njelich/linkoff">
+  <img alt="GitHub" src="https://img.shields.io/github/license/njelich/linkoff">
+<p/>
+
 [![Preview LinkOff](https://j.gifs.com/4QE44n.gif)](https://www.youtube.com/watch?v=rGQneD68f1w)
 
 Links: [Chrome Web Store](https://chrome.google.com/webstore/detail/linkoff-clean-your-feed/maanaljajdhhnllllmhmiiboodmoffon) | [Firefox Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/linkoff-clean-your-feed/) | [Edge Extensions (Guide)](https://www.howtogeek.com/411830/how-to-install-google-chrome-extensions-in-microsoft-edge/) | [Brave, Vivaldi (click the Add button)](https://chrome.google.com/webstore/detail/linkoff-clean-your-feed/maanaljajdhhnllllmhmiiboodmoffon) | [Opera Add-Ons (guide)](https://addons.opera.com/en/extensions/details/install-chrome-extensions/) | [LinkedIn Thread](https://www.linkedin.com/posts/njelich_from-the-idea-to-submission-in-only-12-hours-activity-6785679700992778240-lhRB)
