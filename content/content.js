@@ -186,17 +186,20 @@ function blockByKeywords(res) {
   let posts;
 
   if(keywords.length) keywordInterval = setInterval(() => {
-    posts = Array.prototype.filter.call(document.querySelectorAll('div.relative.ember-view'), function(el) {
-      return el.classList[2] == null;
-    });
+    // Select posts which are not already hidden
+    posts = document.querySelectorAll('[data-id*="urn:li:activity"]:not([data-hidden])')
 
     // Filter only if there are enough posts to load more
-    
     if (posts.length > 10) {
       posts.forEach(post => {
         if(keywords.some(keyword => {
           return post.innerHTML.indexOf(keyword) !== -1
-        })) post.classList.add(mode);
+        })) {
+          post.classList.add(mode);
+
+          // Add attribute to track already hidden posts
+          post.dataset.hidden = true
+        }
       });
     }
 
