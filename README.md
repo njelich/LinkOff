@@ -95,6 +95,6 @@ To install the extension locally follow the instructions below for your browser.
  * Click Load Unpacked on the left side of the screen.
  * Navigate to the location of the folder you unzipped, and select it.
 
-#### Generating releases
+#### Commit format
 
-To generate the release of the extension, simply run `zip -r linkoff-vNumber.zip . -x ".*" -x "__MACOSX" -x "assets*" -x "node_modules*" -x "package*" -x "README.md" -x "*.zip`.
+Please write short release messages of the format `Tag: description`. The description should be written in present tense. The tag can be any of the following: **Breaking, Build, Chore, Fix, New, Update, Upgrade**. Releases and changelog will be automatically generated.
