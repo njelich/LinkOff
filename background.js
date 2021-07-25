@@ -31,27 +31,3 @@ chrome.storage.local.get(null, function (res) {
       "sort-by-recent": true,
     });
 });
-
-// Fetch login cookie
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request);
-  if(request.name=="fetchLiAt") {
-    fetchLiAtCookie(request.data.accountList, request.data.name)
-  }
-  sendResponse("Got login cookie");
-});
-
-async function fetchLiAtCookie(accountList, name) {
-  chrome.cookies.getAll({ domain: "linkedin.com", name: "li_at" },cookie => {
-    console.log(name)
-    if (accountList && accountList[name] != cookie[0].value && name) {
-      const accounts = accountList ? accountList : {};
-      accounts[name] = cookie[0].value
-      console.log(accounts)
-      chrome.storage.local.set({
-        "account-list": accounts,
-      });
-    }
-  })
-}

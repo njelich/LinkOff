@@ -81,19 +81,6 @@ async function doIt(res) {
     showOther("premium-upsell-link");
     showOther("gp-promo-embedded-card-three");
   }
-  // Switch user
-  console.log(res['switch-account'], res["account-list"])
-
-  // Fetch session cookie
-  chrome.runtime.sendMessage(
-    { name: "fetchLiAt", data: {
-      accountList: res["account-list"], 
-      name: document.querySelector('img[class="global-nav__me-photo ember-view"]')?.alt,
-    }},
-    function (response) {
-        console.log(response)
-    }
-  )
 }
 
 function getStorageAndDoIt() {
@@ -105,7 +92,6 @@ function getStorageAndDoIt() {
 chrome.runtime.onMessage.addListener(
   function(request, _) {
     if(request['select-messages-for-deletion']) selectMessagesForDeletion();
-    if(request['switch-account']) {document.cookie=`li_at=${request['li_at']}`; location.reload()}
   }
 );
 
