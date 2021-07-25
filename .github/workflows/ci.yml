@@ -1,0 +1,57 @@
+name: CI / CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  createRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+            
+      - name: Gets semantic release info
+        id: semantic_release_info
+        uses: njelich/action-semantic-release-info@v1.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      
+      - name: Update version in manifest.json
+        if: steps.semantic_release_info.outputs.version != ''
+        run: bash .github/workflows/updateVersionInManifest.sh ${{ steps.semantic_release_info.outputs.version }}
+      
+      - name: Commit files
+        if: steps.semantic_release_info.outputs.version != ''
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "docs(): bumping release ${{ steps.semantic_release_info.outputs.git_tag }}"
+          git tag ${{ steps.semantic_release_info.outputs.git_tag }}
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        if: steps.semantic_release_info.outputs.version != ''
+        with:
+          branch: ${{ github.ref }}
+          github_token: ${{ github.token }}
+          tags: true
+          
+      - name: Archive extension files
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'LinkOff.zip'
+          exclusions: '*.git* /*node_modules/* /*assets/* README.md package*'
+          
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.semantic_release_info.outputs.git_tag }}
+          name: ${{ steps.semantic_release_info.outputs.git_tag }}
+          body: ${{ steps.semantic_release_info.outputs.notes }}
+          artifacts: "LinkOff.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}

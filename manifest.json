@@ -1,0 +1,40 @@
+{
+  "manifest_version": 2,
+  "name": "LinkOff - LinkedIn Filter and Customizer",
+  "short_name": "LinkOff",
+  "author": "Noah Jelich",
+  "version": "1.0.2",
+  "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "browser_action": {
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": [
+    "https://www.linkedin.com/*",
+    "cookies",
+    "storage"
+  ]
+}

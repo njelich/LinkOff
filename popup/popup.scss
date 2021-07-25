@@ -1,0 +1,111 @@
+@charset "utf-8";
+@import "../node_modules/@yaireo/tagify/src/tagify";
+@import "../node_modules/bulma/bulma.sass";
+@import "../node_modules/bulma-switch/src/sass/index.sass";
+@import "../node_modules/@creativebulma/bulma-divider/src/sass/index.sass";
+// Fixed width
+body {
+  width: 400px;
+}
+
+// Master switch
+.onoffswitch {
+  position: relative;
+  width: 180px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  &-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  &-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 60px;
+  }
+  &-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+    &:before,
+    &:after {
+      display: block;
+      float: left;
+      width: 50%;
+      height: 60px;
+      padding: 0;
+      line-height: 60px;
+      font-size: 20px;
+      color: white;
+      font-family: Trebuchet, Arial, sans-serif;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+    &:before {
+      content: "ENABLED";
+      padding-left: 15px;
+      background-color: #00D1B2;
+      color: #FFFFFF;
+    }
+    &:after {
+      content: "DISABLED";
+      padding-right: 15px;
+      background-color: #EEEEEE;
+      color: #999999;
+      text-align: right;
+    }
+  }
+  &-switch {
+    display: block;
+    width: 50px;
+    margin: 5px;
+    background: #FFFFFF;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 116px;
+    border-radius: 60px;
+    transition: all 0.3s ease-in 0s;
+  }
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+  right: 0px;
+}
+
+:root{
+  --tags-border-color       : #00D1B2 !important;
+  --tags-hover-border-color : #00D1B2 !important;
+  --tags-focus-border-color : rgba(76, 175, 80, 0) !important;
+  --tagify-dd-color-primary : #00D1B2 !important;
+  --tagify-dd-color-primary:rgba(76, 175, 80, 0)  !important;
+  --tagify-dd-bg-color: #f8f8ff !important;
+}
+
+// Tagify show tags below input field
+.tagify--outside {
+  border: 0;
+  .tagify__input {
+    order: -1;
+    flex: 100%;
+    border: 1px solid var(--tags-border-color);
+    margin-bottom: 1em;
+    transition: .1s;
+    &:hover {
+      border-color: var(--tags-hover-border-color);
+    }
+  }
+  .tagify--focus .tagify__input {
+    transition: 0s;
+    border-color: var(--tags-focus-border-color);
+  }
+}
