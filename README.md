@@ -50,8 +50,6 @@ Also available on Firefox. Coming soon to Opera and other browsers.
 >⭐️ Stop LinkedIn premium upsell pestering 
 >
 >⭐️ Toggle-able dark mode 
->
->⭐️ Account switching (WIP)
 
 >⭐️ Fully configurable to suit your need! 
 >

@@ -82,13 +82,13 @@ const selectProperty = property => event => {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Add change listeners to switches
+  // Add change listeners to selectors
   var i, x;
   x = document.querySelectorAll("select");
   for (i = 0; i < x.length; i++) {
     x[i].addEventListener("change", selectProperty(x[i]))
   }
-  // Set initial checked state from storage
+  // Set initial select state from storage
   chrome.storage.local.get([].map.call(x, el => el.id), (res) => {
     if (res) {
       for (i = 0; i < x.length; i++) {
