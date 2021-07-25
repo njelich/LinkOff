@@ -42,6 +42,7 @@ jobs:
           
       - name: Archive extension files
         uses: thedoctor0/zip-release@master
+        if: steps.semantic_release_info.outputs.version != ''
         with:
           type: 'zip'
           filename: 'LinkOff.zip'
@@ -49,6 +50,7 @@ jobs:
           
       - name: Create release
         uses: ncipollo/release-action@v1
+        if: steps.semantic_release_info.outputs.version != ''
         with:
           tag: ${{ steps.semantic_release_info.outputs.git_tag }}
           name: ${{ steps.semantic_release_info.outputs.git_tag }}
