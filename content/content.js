@@ -87,11 +87,29 @@ function getStorageAndDoIt() {
   chrome.storage.local.get(null, doIt);
 }
 
-// Actions listener
+// Add message selection button
 
 chrome.runtime.onMessage.addListener(
   function(request, _) {
-    if(request['select-messages-for-deletion']) selectMessagesForDeletion();
+    if(request['on-message-page']) {
+      const button = document.createElement('button')
+      
+      button.title = "Select all messages"
+
+      const styles = {
+        height: "4rem",
+        width: "4rem",
+        border: "8px solid transparent",
+        background: `url(${chrome.runtime.getURL("../icons/select-all.png")}) no-repeat`,
+        backgroundSize: 'cover',
+      }
+
+      Object.assign(button.style, styles)
+
+      button.onclick = selectMessagesForDeletion
+
+      document.querySelector('.msg-conversations-container__title-row').appendChild(button)
+    }
   }
 );
 
@@ -255,7 +273,7 @@ function disableDarkTheme() {
 
 //Modified from https://gist.github.com/twhitacre/d4536183c22a2f5a8c7c427df04acc90
 async function selectMessagesForDeletion() {
-  const container = document.querySelector('.msg-conversations-container ul');
+  const container = document.querySelector('.msg__list ul');
   if (!container) {
     alert("No messages. Are you on the messaging page?\n\nIf not, please navigate to messaging using the LinkedIn navbar and then click the Select Messages for Deletion button again."); 
     return;

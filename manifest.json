@@ -11,29 +11,19 @@
     "128": "icons/icon128.png"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.linkedin.com/*"
-      ],
-      "js": [
-        "content/content.js"
-      ],
-      "css": [
-        "content/content.css"
-      ],
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
       "run_at": "document_end"
     }
   ],
   "browser_action": {
     "default_popup": "popup/popup.html"
   },
-  "permissions": [
-    "https://www.linkedin.com/*",
-    "storage"
-  ]
+  "permissions": ["https://www.linkedin.com/*", "storage"],
+  "web_accessible_resources": ["icons/select-all.png"]
 }

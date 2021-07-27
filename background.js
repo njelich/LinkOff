@@ -31,3 +31,14 @@ chrome.storage.local.get(null, function (res) {
       "sort-by-recent": true,
     });
 });
+
+// React to url change
+chrome.tabs.onUpdated.addListener(
+  function(tabId, changeInfo) {
+    if (changeInfo.url && changeInfo.url.startsWith('https://www.linkedin.com/messaging/thread')) {
+      chrome.tabs.sendMessage(tabId, {
+        'on-message-page': true,
+      })
+    }
+  }
+);
