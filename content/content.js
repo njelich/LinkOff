@@ -91,10 +91,11 @@ function getStorageAndDoIt() {
 
 chrome.runtime.onMessage.addListener(
   function(request, _) {
-    if(request['on-message-page']) {
+    if(request['on-message-page'] && !document.querySelector('#select-all')) {
       const button = document.createElement('button')
       
       button.title = "Select all messages"
+      button.id = 'select-all'
 
       const styles = {
         height: "4rem",
@@ -287,12 +288,12 @@ async function selectMessagesForDeletion() {
       if (container) {
         const interval = setInterval(() => {
           const { scrollHeight } = container;
-          if (scrollHeight > 20000) {
+          if (scrollHeight > 40000) {
             clearInterval(interval);
             resolve();
           }
           if (scrollHeight === height) {
-            if (attempts >= 3) {
+            if (attempts >= 10) {
               clearInterval(interval);
               resolve();
             } else {
@@ -301,7 +302,7 @@ async function selectMessagesForDeletion() {
           }
           height = scrollHeight;
           container.scrollTop = scrollHeight;
-        }, 1000);
+        }, 1500);
       } else {
         alert('The page too long to load. Please try again.');
       }
