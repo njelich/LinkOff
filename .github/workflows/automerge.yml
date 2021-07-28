@@ -14,8 +14,8 @@ jobs:
     - name: Merge
       uses: robotology/gh-action-nightly-merge@v1.3.1
       with:
-        stable_branch: 'release'
-        development_branch: 'main'
+        stable_branch: 'main'
+        development_branch: 'release'
         allow_ff: true
         ff_only: true
         user_name: "GitHub Action"
