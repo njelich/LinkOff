@@ -1,10 +1,8 @@
 name: CI / CD
 
 on:
-  push:
-    branches: [ release ]
-  pull_request:
-    branches: [ release ]
+  schedule:
+    - cron: '0 4 * * 4'
   workflow_dispatch:
 
 jobs:
