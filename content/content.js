@@ -156,8 +156,8 @@ let keywordInterval;
 function blockByKeywords(res) {
   let keywords = res['feed-keywords'] == "" ? [] : res['feed-keywords'].split(',');
   if(res['hide-by-age'] !== "disabled") keywords.push({"hour":"h • ", "day":"d • ", "week":"w • ", "month":"mo • "}[res['hide-by-age']])
-  if(res['hide-polls']) keywords.push('Poll')
-  if(res['hide-videos']) keywords.push('id="vjs_video_')
+  if(res['hide-polls']) keywords.push('poll')
+  if(res['hide-videos']) keywords.push('id="vjs_video_', 'video-s-loader')
   if(res['hide-links']) keywords.push('https://lnkd.in/')
   if(res['hide-images']) keywords.push('class="feed-shared-image__container"')
   if(res['hide-promoted']) keywords.push('Promoted')
