@@ -89,27 +89,32 @@ function getStorageAndDoIt() {
 
 // Add message selection button
 
+let isListenerInstalled
 chrome.runtime.onMessage.addListener(
   function(request, _) {
-    if(request['on-message-page'] && !document.querySelector('#select-all')) {
-      const button = document.createElement('button')
-      
-      button.title = "Select all messages"
-      button.id = 'select-all'
+    if(request['on-message-page'] && !isListenerInstalled) {
+      const menuContainer = document.querySelector('.msg-conversations-container__dropdown-container > div')
 
-      const styles = {
-        height: "4rem",
-        width: "4rem",
-        border: "8px solid transparent",
-        background: `url(${chrome.runtime.getURL("../icons/select-all.png")}) no-repeat`,
-        backgroundSize: 'cover',
-      }
+      const observer = new MutationObserver(function(mutations) {
+        const menu = menuContainer.querySelector('ul')
 
-      Object.assign(button.style, styles)
+        if (!menu || menu.children.length > 3) return
 
-      button.onclick = selectMessagesForDeletion
+        const selectMenuItem = document.createElement('div')
+        
+        selectMenuItem.classList.add('artdeco-dropdown__item', 'artdeco-dropdown__item--is-dropdown', 'ember-view')
+        selectMenuItem.textContent = 'Select all for deletion'
+        
+        selectMenuItem.onclick = function() {
+          document.querySelector('.msg-conversations-container__title-row button.artdeco-dropdown__trigger').click()
+          selectMessagesForDeletion()
+        }
 
-      document.querySelector('.msg-conversations-container__title-row').appendChild(button)
+        menu.appendChild(selectMenuItem)
+      })
+
+
+      observer.observe(menuContainer, { attributes: false, childList: true, subtree: false, characterData: false });
     }
   }
 );
@@ -274,7 +279,8 @@ function disableDarkTheme() {
 
 //Modified from https://gist.github.com/twhitacre/d4536183c22a2f5a8c7c427df04acc90
 async function selectMessagesForDeletion() {
-  const container = document.querySelector('.msg__list ul');
+  const container = document.querySelector('.msg-conversations-container__conversations-list');
+
   if (!container) {
     alert("No messages. Are you on the messaging page?\n\nIf not, please navigate to messaging using the LinkedIn navbar and then click the Select Messages for Deletion button again."); 
     return;
@@ -288,12 +294,12 @@ async function selectMessagesForDeletion() {
       if (container) {
         const interval = setInterval(() => {
           const { scrollHeight } = container;
-          if (scrollHeight > 40000) {
+          if (scrollHeight > 20000) {
             clearInterval(interval);
             resolve();
           }
           if (scrollHeight === height) {
-            if (attempts >= 10) {
+            if (attempts >= 3) {
               clearInterval(interval);
               resolve();
             } else {
@@ -302,7 +308,7 @@ async function selectMessagesForDeletion() {
           }
           height = scrollHeight;
           container.scrollTop = scrollHeight;
-        }, 1500);
+        }, 1000);
       } else {
         alert('The page too long to load. Please try again.');
       }
