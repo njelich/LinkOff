@@ -3,18 +3,22 @@ on:
   workflow_dispatch:
   
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
+  nightly-merge:
 
-    - name: Merge Main into Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Merge
+      uses: robotology/gh-action-nightly-merge@v1.3.1
+      with:
+        stable_branch: 'release'
+        development_branch: 'main'
+        allow_ff: true
+        ff_only: true
+        user_name: "GitHub Action"
+        user_email: "action@github.com"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git fetch origin release
-        git checkout -b release origin/release
-        git merge origin/main --ff-only
-        git push origin release
