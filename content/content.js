@@ -75,8 +75,8 @@ async function doIt(res) {
   }
   // Hide premium upsell prompts
   if(res['main-toggle'] && res['hide-premium']) {
-    hideOther("premium-upsell-link");
-    hideOther("gp-promo-embedded-card-three");
+    hideOther("premium-upsell-link", false);
+    hideOther("gp-promo-embedded-card-three", false);
   } else {
     showOther("premium-upsell-link");
     showOther("gp-promo-embedded-card-three");
@@ -163,14 +163,14 @@ async function showFeed() {
 
 // Toggle arbitrary element
 
-async function hideOther(className) {
+async function hideOther(className, showIcon = true) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.add(mode)
+  for (let el of elements) el.classList.add(mode, showIcon && 'showIcon')
 }
 
 async function showOther(className) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.remove("hide", "dim")
+  for (let el of elements) el.classList.remove("hide", "dim", "showIcon")
 }
 
 // Block by keywords
@@ -181,9 +181,9 @@ function blockByKeywords(res) {
   let keywords = res['feed-keywords'] == "" ? [] : res['feed-keywords'].split(',');
   if(res['hide-by-age'] !== "disabled") keywords.push({"hour":"h • ", "day":"d • ", "week":"w • ", "month":"mo • "}[res['hide-by-age']])
   if(res['hide-polls']) keywords.push('poll')
-  if(res['hide-videos']) keywords.push('id="vjs_video_', 'video-s-loader')
+  if(res['hide-videos']) keywords.push('id="vjs_video_', 'feed-shared-linkedin-video')
   if(res['hide-links']) keywords.push('https://lnkd.in/')
-  if(res['hide-images']) keywords.push('class="feed-shared-image__container"')
+  if(res['hide-images']) keywords.push('class="feed-shared-image__image"')
   if(res['hide-promoted']) keywords.push('Promoted')
   if(res['hide-shared']) keywords.push('feed-shared-mini-update-v2')
   if(res['hide-followed']) keywords.push('following')
@@ -205,7 +205,7 @@ function blockByKeywords(res) {
         if(keywords.some(keyword => {
           return post.innerHTML.indexOf(keyword) !== -1
         })) {
-          post.classList.add(mode);
+          post.classList.add(mode, 'showIcon');
 
           // Add attribute to track already hidden posts
           post.dataset.hidden = true

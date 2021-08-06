@@ -1,18 +1,45 @@
 .hide {
-    display: None
+  display: None
 }
 
-.dim {
-    opacity: 0.05;
-    filter: alpha(opacity=5);
-    zoom: 1;
-  }
+.dim:not(:hover) > div {
+  opacity: 0.05;
+  filter: alpha(opacity=5);
+  zoom: 1;
+  position: relative;
+}
 
-.dim:hover {
-    opacity: 0.5;
-    filter: alpha(opacity=50);
-    zoom: 1;
-  }
+.dim:not(:hover) > div > div > div {
+  max-height: 150px;
+  overflow: hidden;
+}
+
+.dim:hover > div > div > div {
+  max-height: auto;
+  overflow: visible;
+}
+
+
+.dim.showIcon:not(:hover)::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('chrome-extension://__MSG_@@extension_id__/icons/forbidden.svg');
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+}
+
+.dim:hover > div {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  zoom: 1;
+}
+
+
 
 body.darkMode {
   -webkit-filter: invert(100%);
