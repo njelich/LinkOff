@@ -31,3 +31,14 @@ chrome.storage.local.get(null, function (res) {
       "sort-by-recent": true,
     });
 });
+
+// React to url change
+chrome.tabs.onUpdated.addListener(
+  function(tabId, changeInfo) {
+    if (changeInfo.url) {
+      chrome.tabs.sendMessage(tabId, {
+        'on-message-page': true,
+      })
+    }
+  }
+);

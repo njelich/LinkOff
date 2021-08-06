@@ -1,0 +1,24 @@
+name: Merge Main into Release
+on:
+  workflow_dispatch:
+  
+jobs:
+  nightly-merge:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Merge
+      uses: robotology/gh-action-nightly-merge@v1.3.1
+      with:
+        stable_branch: 'main'
+        development_branch: 'release'
+        allow_ff: true
+        ff_only: true
+        user_name: "GitHub Action"
+        user_email: "action@github.com"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
