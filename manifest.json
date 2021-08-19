@@ -29,6 +29,7 @@
       "run_at": "document_end"
     }
   ],
+  "web_accessible_resources": ["icons/forbidden.svg"],
   "browser_action": {
     "default_popup": "popup/popup.html"
   },
