@@ -76,10 +76,10 @@ async function doIt(res) {
   // Hide premium upsell prompts
   if(res['main-toggle'] && res['hide-premium']) {
     hideOther("premium-upsell-link", false);
-    hideOther("gp-promo-embedded-card-three", false);
+    hideOther("gp-promo-embedded-card-three__card");
   } else {
     showOther("premium-upsell-link");
-    showOther("gp-promo-embedded-card-three");
+    showOther("gp-promo-embedded-card-three__card");
   }
 }
 
@@ -206,6 +206,7 @@ function blockByKeywords(res) {
           return post.innerHTML.indexOf(keyword) !== -1
         })) {
           post.classList.add(mode, 'showIcon');
+          post.onclick = () => post.classList.remove(mode, 'showIcon');
 
           // Add attribute to track already hidden posts
           post.dataset.hidden = true

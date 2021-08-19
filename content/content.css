@@ -2,19 +2,19 @@
   display: None
 }
 
-.dim:not(:hover) > div {
-  opacity: 0.05;
-  filter: alpha(opacity=5);
-  zoom: 1;
-  position: relative;
+.dim:not(:hover) > * {
+  opacity: 0.05 !important;
+  filter: alpha(opacity=5) !important;
+  zoom: 1 !important;
+  position: relative !important;
 }
 
-.dim:not(:hover) > div > div > div {
-  max-height: 150px;
-  overflow: hidden;
+.dim:not(:hover) > * > * > * {
+  max-height: 150px !important;
+  overflow: hidden !important;
 }
 
-.dim:hover > div > div > div {
+.dim:hover > * > * > * {
   max-height: auto;
   overflow: visible;
 }
@@ -33,7 +33,7 @@
   height: 30px;
 }
 
-.dim:hover > div {
+.dim:hover > * {
   opacity: 0.5;
   filter: alpha(opacity=50);
   zoom: 1;
