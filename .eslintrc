@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "globals": {
+    "chrome": true,
+    "Tagify": true
+  },
+  "plugins": ["prettier"],
+  "extends": ["eslint:recommended", "prettier"]
+}

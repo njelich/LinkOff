@@ -9,7 +9,16 @@
     "@yaireo/tagify": "^4.1.1",
     "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
-    "node-sass": "^6.0.0"
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "node-sass": "^6.0.0",
+    "prettier": "^2.4.1"
   },
-  "release": { "branches": [ "master" ] }
+  "release": {
+    "branches": [
+      "master"
+    ]
+  },
+  "dependencies": {}
 }
