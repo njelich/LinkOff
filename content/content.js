@@ -224,7 +224,11 @@ function blockByKeywords(res) {
   if (res['hide-promoted']) keywords.push('Promoted')
   if (res['hide-shared']) keywords.push('feed-shared-mini-update-v2')
   if (res['hide-followed']) keywords.push('following')
-  if (res['hide-liked']) keywords.push('likes this')
+  if (res['hide-liked'])
+    keywords.push(
+      'likes this',
+      'like this'
+    )
   if (res['hide-other-reactions'])
     keywords.push(
       'loves this',
