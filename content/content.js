@@ -89,6 +89,13 @@ async function doIt(res) {
     showOther('premium-upsell-link')
     showOther('gp-promo-embedded-card-three__card')
   }
+
+  // Hide news
+  if (res['main-toggle'] && res['hide-news']) {
+    hideOther('news-module')
+  } else {
+    showOther('news-module')
+  }
 }
 
 function getStorageAndDoIt() {

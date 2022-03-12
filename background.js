@@ -21,6 +21,7 @@ chrome.storage.local.get(null, function (res) {
       "hide-links": false,
       "hide-polls": true,
       "hide-premium": true,
+      "hide-news": false,
       "hide-promoted": true,
       "hide-shared": false,
       "hide-videos": false,
