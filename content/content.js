@@ -255,7 +255,7 @@ function blockByKeywords(res) {
           }
         })
       } else {
-        if (!postCountPrompted) {
+        if (!postCountPrompted && !res['disable-postcount-prompt']) {
           postCountPrompted = true //Prompt only once when loading linkedin
           alert(
             'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
