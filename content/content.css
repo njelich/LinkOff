@@ -1,5 +1,5 @@
 .hide {
-  display: None
+  display: None;
 }
 
 .dim:not(:hover) > * {
@@ -18,7 +18,6 @@
   max-height: auto;
   overflow: visible;
 }
-
 
 .dim.showIcon:not(:hover)::after {
   content: '';
@@ -39,21 +38,20 @@
   zoom: 1;
 }
 
-
-
 body.darkMode {
   -webkit-filter: invert(100%);
   filter: invert(100%);
 }
 
-body.darkMode img, body.darkMode video,
-body.darkMode :not(object):not(body)>embed,
+body.darkMode img,
+body.darkMode video,
+body.darkMode :not(object):not(body) > embed,
 body.darkMode object,
 body.darkMode svg image,
-body.darkMode [style*="background:url"],
-body.darkMode [style*="background-image:url"],
-body.darkMode [style*="background: url"],
-body.darkMode [style*="background-image: url"],
+body.darkMode [style*='background:url'],
+body.darkMode [style*='background-image:url'],
+body.darkMode [style*='background: url'],
+body.darkMode [style*='background-image: url'],
 body.darkMode [background],
 body.darkMode twitterwidget,
 body.darkMode .sr-reader,
@@ -73,4 +71,3 @@ body.darkMode twitterwidget .NaturalImage-image {
   -webkit-filter: invert(100%);
   filter: invert(100%);
 }
-

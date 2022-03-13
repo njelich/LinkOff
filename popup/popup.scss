@@ -1,8 +1,8 @@
 @charset "utf-8";
-@import "../node_modules/@yaireo/tagify/src/tagify";
-@import "../node_modules/bulma/bulma.sass";
-@import "../node_modules/bulma-switch/src/sass/index.sass";
-@import "../node_modules/@creativebulma/bulma-divider/src/sass/index.sass";
+@import '../node_modules/@yaireo/tagify/src/tagify';
+@import '../node_modules/bulma/bulma.sass';
+@import '../node_modules/bulma-switch/src/sass/index.sass';
+@import '../node_modules/@creativebulma/bulma-divider/src/sass/index.sass';
 // Fixed width
 body {
   width: 400px;
@@ -47,15 +47,15 @@ body {
       box-sizing: border-box;
     }
     &:before {
-      content: "ENABLED";
+      content: 'ENABLED';
       padding-left: 15px;
-      background-color: #00D1B2;
-      color: #FFFFFF;
+      background-color: #00d1b2;
+      color: #ffffff;
     }
     &:after {
-      content: "DISABLED";
+      content: 'DISABLED';
       padding-right: 15px;
-      background-color: #EEEEEE;
+      background-color: #eeeeee;
       color: #999999;
       text-align: right;
     }
@@ -64,7 +64,7 @@ body {
     display: block;
     width: 50px;
     margin: 5px;
-    background: #FFFFFF;
+    background: #ffffff;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -74,20 +74,20 @@ body {
   }
 }
 
-.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
   margin-left: 0;
 }
 
-.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0px;
 }
 
-:root{
-  --tags-border-color       : #00D1B2 !important;
-  --tags-hover-border-color : #00D1B2 !important;
-  --tags-focus-border-color : rgba(76, 175, 80, 0) !important;
-  --tagify-dd-color-primary : #00D1B2 !important;
-  --tagify-dd-color-primary:rgba(76, 175, 80, 0)  !important;
+:root {
+  --tags-border-color: #00d1b2 !important;
+  --tags-hover-border-color: #00d1b2 !important;
+  --tags-focus-border-color: rgba(76, 175, 80, 0) !important;
+  --tagify-dd-color-primary: #00d1b2 !important;
+  --tagify-dd-color-primary: rgba(76, 175, 80, 0) !important;
   --tagify-dd-bg-color: #f8f8ff !important;
 }
 
@@ -99,7 +99,7 @@ body {
     flex: 100%;
     border: 1px solid var(--tags-border-color);
     margin-bottom: 1em;
-    transition: .1s;
+    transition: 0.1s;
     &:hover {
       border-color: var(--tags-hover-border-color);
     }
