@@ -37,12 +37,15 @@ async function doIt(response) {
   // Hide feed
 
   let keywords = getKeywords(response)
-  if (res('main-toggle', true) || res('hide-whole-feed', true)) {
+  if (res('main-toggle', true) && res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
-  } else if (res('main-toggle', true) || res('hide-whole-feed', false)) {
+  } else if (
+    (res('main-toggle', true) && res('hide-whole-feed', false)) ||
+    keywords != oldKeywords
+  ) {
     toggleFeed(false)
     showOther('feeds')
     clearInterval(keywordInterval)
@@ -285,7 +288,7 @@ function blockByKeywords(keywords, disablePostCount) {
             post.classList.add(mode, 'showIcon')
             post.onclick = () => {
               post.classList.remove('hide', 'dim', 'showIcon')
-              post.dataset.hidden = false
+              post.dataset.hidden = 'shown'
             }
 
             // Add attribute to track already hidden posts
@@ -523,6 +526,7 @@ let lastUrl = window.location.href
 setInterval(() => {
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
+    oldReponse = {}
     getStorageAndDoIt()
     if (window.location.href.includes('/messaging/'))
       setupDeleteMessagesButton()
