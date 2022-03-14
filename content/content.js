@@ -3,8 +3,10 @@
 // Main function
 
 let mode = 'hide'
-
+let reentrancyGuard
 async function doIt(res) {
+  if (reentrancyGuard) return
+  reentrancyGuard = true
   // Set Mode
   mode = res['gentle-mode'] ? 'dim' : 'hide'
 
@@ -28,10 +30,12 @@ async function doIt(res) {
     if (res['hide-whole-feed']) {
       toggleFeed(true)
       hideOther('feeds')
+      clearInterval(keywordInterval)
       resetBlockedPosts()
     } else {
       toggleFeed(false)
       showOther('feeds')
+      clearInterval(keywordInterval)
       resetBlockedPosts()
       blockByKeywords(res)
     }
@@ -39,6 +43,7 @@ async function doIt(res) {
     //Feed
     toggleFeed(false)
     showOther('feeds')
+    clearInterval(keywordInterval)
     resetBlockedPosts()
   }
   //Toggle feed sorting order
@@ -105,6 +110,7 @@ async function doIt(res) {
   } else {
     showOther('news-module')
   }
+  reentrancyGuard = false
 }
 
 function getStorageAndDoIt() {
@@ -163,16 +169,18 @@ async function showOther(className) {
 
 let keywordInterval
 let postCountPrompted = false
+let oldKeywords = []
+let runs = 0
 
 function resetBlockedPosts() {
-  clearInterval(keywordInterval)
+  console.log(`LinkOff: Reset blocked posts (${runs} runs)`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden]'
+    '[data-id*="urn:li:activity"][data-hidden=false]'
   )
 
   posts.forEach((post) => {
     post.classList.remove('hide', 'dim', 'showIcon')
-    post.dataset.hidden = false
+    delete post.dataset.hidden
   })
 }
 
@@ -189,7 +197,7 @@ function blockByKeywords(res) {
   if (res['hide-videos'])
     keywords.push('id="vjs_video_', 'feed-shared-linkedin-video')
   if (res['hide-links']) keywords.push('https://lnkd.in/')
-  if (res['hide-images']) keywords.push('class="feed-shared-image__image"')
+  if (res['hide-images']) keywords.push('class="feed-shared-image')
   if (res['hide-promoted']) keywords.push('Promoted')
   if (res['hide-shared']) keywords.push('feed-shared-mini-update-v2')
   if (res['hide-followed']) keywords.push('following')
@@ -206,14 +214,30 @@ function blockByKeywords(res) {
     keywords.push('href="https://www.linkedin.com/company/')
   if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
 
+  if (oldKeywords.some((kw) => !keywords.includes(kw))) {
+    let hiddenPosts = document.querySelectorAll(
+      '[data-id*="urn:li:activity"][data-hidden=true]'
+    )
+
+    hiddenPosts.forEach((post) => {
+      post.classList.remove('hide', 'dim', 'showIcon')
+      delete post.dataset.hidden
+    })
+
+    oldKeywords = keywords
+  }
+
   let posts
 
   if (keywords.length)
     keywordInterval = setInterval(() => {
+      if (runs % 10 == 0) resetBlockedPosts()
       // Select posts which are not already hidden
       posts = document.querySelectorAll(
         '[data-id*="urn:li:activity"]:not([data-hidden])'
       )
+
+      console.log(`LinkOfF: Found ${posts.length} unblocked posts`)
 
       // Filter only if there are enough posts to load more
       if (posts.length > 5 || mode == 'dim') {
@@ -238,6 +262,9 @@ function blockByKeywords(res) {
                 'data-id'
               )} for keyword ${keywords[keywordIndex]}`
             )
+          } else {
+            post.classList.remove('hide', 'dim', 'showIcon')
+            post.dataset.hidden = false
           }
         })
       } else {
@@ -248,7 +275,9 @@ function blockByKeywords(res) {
           )
         }
       }
-    }, 100)
+
+      runs++
+    }, 350)
 }
 
 // Toggle sort by recent
@@ -313,11 +342,11 @@ function enableWideMode() {
     document.getElementsByClassName(
       'scaffold-layout__inner scaffold-layout-container scaffold-layout-container--reflow'
     )[0] || wideModeDiv
-  wideModeDiv.classList.add('wide-mode')
+  if (wideModeDiv) wideModeDiv.classList.add('wide-mode')
 }
 
 function disableWideMode() {
-  wideModeDiv.classList.remove('wide-mode')
+  if (wideModeDiv) wideModeDiv.classList.remove('wide-mode')
 }
 
 //Taken from https://github.com/sweaver2112/LinkedIn-dark-theme-hack
