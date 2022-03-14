@@ -8,7 +8,9 @@ async function doIt(response) {
   if (JSON.stringify(oldReponse) == JSON.stringify(response)) return
 
   function res(field, bool) {
-    const changed = response[field] != oldReponse[field]
+    const changed =
+      response[field] != oldReponse[field] ||
+      response['gentle-mode'] != oldReponse['gentle-mode']
     if (changed) console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
     return changed && response[field] == bool
   }
@@ -33,6 +35,8 @@ async function doIt(response) {
   }
 
   // Hide feed
+
+  let keywords = getKeywords(response)
   if (res('main-toggle', true) || res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
@@ -43,7 +47,7 @@ async function doIt(response) {
     showOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
-    blockByKeywords(response)
+    blockByKeywords(keywords, response['disable-postcount-prompt'])
   }
   if (res('main-toggle', false)) {
     //Feed
@@ -215,7 +219,7 @@ function resetAllPosts() {
   })
 }
 
-function blockByKeywords(res) {
+function getKeywords(res) {
   let keywords =
     res['feed-keywords'] == '' ? [] : res['feed-keywords'].split(',')
   if (res['hide-by-age'] !== 'disabled')
@@ -245,11 +249,16 @@ function blockByKeywords(res) {
     keywords.push('href="https://www.linkedin.com/company/')
   if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
 
+  console.log('LinkOff: Current keywords are', keywords)
+  return keywords
+}
+
+function blockByKeywords(keywords, disablePostCount) {
   if (oldKeywords.some((kw) => !keywords.includes(kw))) {
     resetAllPosts()
-
-    oldKeywords = keywords
   }
+
+  oldKeywords = keywords
 
   let posts
 
@@ -292,7 +301,7 @@ function blockByKeywords(res) {
           }
         })
       } else {
-        if (!postCountPrompted && !res['disable-postcount-prompt']) {
+        if (!postCountPrompted && !disablePostCount) {
           postCountPrompted = true //Prompt only once when loading linkedin
           alert(
             'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
