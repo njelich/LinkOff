@@ -7,6 +7,15 @@ let mode = 'hide'
 async function doIt(res) {
   // Set Mode
   mode = res['gentle-mode'] ? 'dim' : 'hide'
+
+  // Set wide mode
+  if (res['wide-mode']) {
+    enableWideMode()
+  } else {
+    disableWideMode()
+  }
+
+  // Set dark theme
   if (res['dark-mode']) {
     enableDarkTheme()
   } else {
@@ -19,18 +28,18 @@ async function doIt(res) {
     if (res['hide-whole-feed']) {
       toggleFeed(true)
       hideOther('feeds')
-      clearInterval(keywordInterval)
+      resetBlockedPosts()
     } else {
       toggleFeed(false)
       showOther('feeds')
-      clearInterval(keywordInterval)
+      resetBlockedPosts()
       blockByKeywords(res)
     }
   } else {
     //Feed
     toggleFeed(false)
     showOther('feeds')
-    clearInterval(keywordInterval)
+    resetBlockedPosts()
   }
   //Toggle feed sorting order
   if (
@@ -183,7 +192,10 @@ async function toggleFeed(shown) {
 
 async function hideOther(className, showIcon = true) {
   const elements = await waitForClassName(className)
-  for (let el of elements) el.classList.add(mode, showIcon && 'showIcon')
+  for (let el of elements) {
+    el.classList.remove('hide', 'dim', 'showIcon')
+    el.classList.add(mode, showIcon && 'showIcon')
+  }
 }
 
 async function showOther(className) {
@@ -195,6 +207,18 @@ async function showOther(className) {
 
 let keywordInterval
 let postCountPrompted = false
+
+function resetBlockedPosts() {
+  clearInterval(keywordInterval)
+  let posts = document.querySelectorAll(
+    '[data-id*="urn:li:activity"][data-hidden]'
+  )
+
+  posts.forEach((post) => {
+    post.classList.remove('hide', 'dim', 'showIcon')
+    post.dataset.hidden = false
+  })
+}
 
 function blockByKeywords(res) {
   console.log('res', res)
@@ -237,21 +261,28 @@ function blockByKeywords(res) {
       )
 
       // Filter only if there are enough posts to load more
-      if (posts.length > 10) {
+      if (posts.length > 5 || mode == 'dim') {
         posts.forEach((post) => {
+          let keywordIndex
           if (
-            keywords.some((keyword) => {
+            keywords.some((keyword, index) => {
+              keywordIndex = index
               return post.innerHTML.indexOf(keyword) !== -1
             })
           ) {
             post.classList.add(mode, 'showIcon')
             post.onclick = () => {
-              post.classList.remove(mode, 'showIcon')
+              post.classList.remove('hide', 'dim', 'showIcon')
               post.dataset.hidden = false
             }
 
             // Add attribute to track already hidden posts
             post.dataset.hidden = true
+            console.log(
+              `Blocked post ${post.getAttribute('data-id')} for keyword ${
+                keywords[keywordIndex]
+              }`
+            )
           }
         })
       } else {
@@ -317,6 +348,29 @@ window.mobileCheck = function () {
       check = true
   })(navigator.userAgent || navigator.vendor || window.opera)
   return check
+}
+
+// Wide mode toggler
+
+let wideModeDiv
+function enableWideMode() {
+  wideModeDiv =
+    document.getElementsByClassName(
+      'scaffold-layout__inner scaffold-layout-container scaffold-layout-container--reflow'
+    )[0] || wideModeDiv
+  wideModeDiv.classList.remove(
+    'scaffold-layout__inner',
+    'scaffold-layout-container',
+    'scaffold-layout-container--reflow'
+  )
+}
+
+function disableWideMode() {
+  wideModeDiv.classList.add(
+    'scaffold-layout__inner',
+    'scaffold-layout-container',
+    'scaffold-layout-container--reflow'
+  )
 }
 
 //Taken from https://github.com/sweaver2112/LinkedIn-dark-theme-hack
