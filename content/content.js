@@ -201,7 +201,7 @@ let runs = 0
 function resetBlockedPosts() {
   console.log(`LinkOff: Reset blocked posts (${runs} runs)`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden=false]'
+    '[data-id*="urn:li:activity"][data-hidden=false], [data-id*="urn:li:aggregate"][data-hidden=false]'
   )
 
   posts.forEach((post) => {
@@ -213,7 +213,7 @@ function resetBlockedPosts() {
 function resetAllPosts() {
   console.log(`LinkOff: Resetting all posts`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden=true]'
+    '[data-id*="urn:li:activity"][data-hidden=true], [data-id*="urn:li:aggregate"][data-hidden=true]'
   )
 
   posts.forEach((post) => {
@@ -270,7 +270,7 @@ function blockByKeywords(keywords, disablePostCount) {
       if (runs % 10 == 0) resetBlockedPosts()
       // Select posts which are not already hidden
       posts = document.querySelectorAll(
-        '[data-id*="urn:li:activity"]:not([data-hidden])'
+        '[data-id*="urn:li:activity"]:not([data-hidden]), [data-id*="urn:li:aggregate"]:not([data-hidden])'
       )
 
       console.log(`LinkOff: Found ${posts.length} unblocked posts`)
