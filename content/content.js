@@ -4,113 +4,128 @@
 
 let mode = 'hide'
 let reentrancyGuard
-async function doIt(res) {
-  if (reentrancyGuard) return
-  reentrancyGuard = true
+async function doIt(response) {
+  if (JSON.stringify(reentrancyGuard) == JSON.stringify(response)) return
+
+  function res(field, bool) {
+    return response[field] != reentrancyGuard[field] && response[field] == bool
+  }
+
   // Set Mode
-  mode = res['gentle-mode'] ? 'dim' : 'hide'
+  mode = response['gentle-mode'] ? 'dim' : 'hide'
 
   // Set wide mode
-  if (res['wide-mode']) {
+
+  if (res('wide-mode', true)) {
     enableWideMode()
-  } else {
+  } else if (res('wide-mode', false)) {
     disableWideMode()
   }
 
   // Set dark theme
-  if (res['dark-mode']) {
+
+  if (res('dark-mode', true)) {
     enableDarkTheme()
-  } else {
+  } else if (res('dark-mode', false)) {
     disableDarkTheme()
   }
 
-  // Hide stuff
-  if (res['main-toggle']) {
-    //Feed
-    if (res['hide-whole-feed']) {
-      toggleFeed(true)
-      hideOther('feeds')
-      clearInterval(keywordInterval)
-      resetBlockedPosts()
-    } else {
-      toggleFeed(false)
-      showOther('feeds')
-      clearInterval(keywordInterval)
-      resetBlockedPosts()
-      blockByKeywords(res)
-    }
-  } else {
+  // Hide feed
+  if (res('main-toggle', true) || res('hide-whole-feed', true)) {
+    toggleFeed(true)
+    hideOther('feeds')
+    clearInterval(keywordInterval)
+    resetBlockedPosts()
+  } else if (res('main-toggle', true) || res('hide-whole-feed', false)) {
+    toggleFeed(false)
+    showOther('feeds')
+    clearInterval(keywordInterval)
+    resetBlockedPosts()
+    blockByKeywords(response)
+  }
+  if (res('main-toggle', false)) {
     //Feed
     toggleFeed(false)
     showOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
+    resetAllPosts()
   }
+
   //Toggle feed sorting order
   if (
-    res['main-toggle'] &&
-    res['sort-by-recent'] &&
+    (res('main-toggle', true) || res('sort-by-recent', true)) &&
     (window.location.href == 'https://www.linkedin.com/feed/' ||
       window.location.href == 'https://www.linkedin.com/')
   )
     sortByRecent()
+
   // Hide LinkedIn learning prompts and ads
-  if (res['main-toggle'] && res['hide-linkedin-learning']) {
+  if (res('main-toggle', true) || res('hide-linkedin-learning', true)) {
     hideOther('learning-top-courses')
     hideOther('pv-course-recommendations')
-  } else {
+  } else if (
+    res('main-toggle', false) ||
+    res('hide-linkedin-learning', false)
+  ) {
     showOther('learning-top-courses')
     showOther('pv-course-recommendations')
   }
+
   // Hide ads across linkedin
-  if (res['main-toggle'] && res['hide-advertisements']) {
+  if (res('main-toggle', true) || res('hide-advertisements', true)) {
     hideOther('ad-banner-container')
     hideOther('ad-banner-container artdeco-card')
     hideOther('ad-banner-container is-header-zone')
     hideOther('ads-container')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-advertisements', false)) {
     showOther('ad-banner-container')
     showOther('ad-banner-container artdeco-card')
 
     showOther('ad-banner-container is-header-zone')
     showOther('ads-container')
   }
+
   // Hide feed area community and follow panels
-  if (res['main-toggle'] && res['hide-community-panel']) {
+  if (res('main-toggle', true) || res('hide-community-panel', true)) {
     hideOther('community-panel')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-community-panel', false)) {
     showOther('community-panel')
   }
-  if (res['main-toggle'] && res['hide-follow-recommendations']) {
+
+  if (res('main-toggle', true) || res('hide-follow-recommendations', true)) {
     hideOther('feed-follows-module')
-  } else {
+  } else if (
+    res('main-toggle', false) ||
+    res('hide-follow-recommendations', false)
+  ) {
     showOther('feed-follows-module')
   }
-  // Hide account building prompts
-  if (res['main-toggle'] && res['hide-account-building']) {
-    hideOther('mn-abi-form')
 
+  // Hide account building prompts
+  if (res('main-toggle', true) || res('hide-account-building', true)) {
+    hideOther('mn-abi-form')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-account-building', false)) {
     showOther('mn-abi-form')
     showOther('artdeco-card mb4 overflow-hidden ember-view')
   }
+
   // Hide premium upsell prompts
-  if (res['main-toggle'] && res['hide-premium']) {
+  if (res('main-toggle', true) || res('hide-premium', true)) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-premium', false)) {
     showOther('premium-upsell-link')
     showOther('gp-promo-embedded-card-three__card')
   }
 
   // Hide news
-  if (res['main-toggle'] && res['hide-news']) {
+  if (res('main-toggle', true) || res('hide-news', true)) {
     hideOther('news-module')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
   }
-  reentrancyGuard = false
 }
 
 function getStorageAndDoIt() {
@@ -184,6 +199,18 @@ function resetBlockedPosts() {
   })
 }
 
+function resetAllPosts() {
+  console.log(`LinkOff: Resetting all posts`)
+  let posts = document.querySelectorAll(
+    '[data-id*="urn:li:activity"][data-hidden=true]'
+  )
+
+  posts.forEach((post) => {
+    post.classList.remove('hide', 'dim', 'showIcon')
+    delete post.dataset.hidden
+  })
+}
+
 function blockByKeywords(res) {
   let keywords =
     res['feed-keywords'] == '' ? [] : res['feed-keywords'].split(',')
@@ -215,14 +242,7 @@ function blockByKeywords(res) {
   if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
 
   if (oldKeywords.some((kw) => !keywords.includes(kw))) {
-    let hiddenPosts = document.querySelectorAll(
-      '[data-id*="urn:li:activity"][data-hidden=true]'
-    )
-
-    hiddenPosts.forEach((post) => {
-      post.classList.remove('hide', 'dim', 'showIcon')
-      delete post.dataset.hidden
-    })
+    resetAllPosts()
 
     oldKeywords = keywords
   }
