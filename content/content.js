@@ -111,50 +111,6 @@ function getStorageAndDoIt() {
   chrome.storage.local.get(null, doIt)
 }
 
-// Add message selection button
-
-let isListenerInstalled
-chrome.runtime.onMessage.addListener(function (request) {
-  if (request['on-message-page'] && !isListenerInstalled) {
-    const menuContainer = document.querySelector(
-      '.msg-conversations-container__dropdown-container > div'
-    )
-
-    const observer = new MutationObserver(function () {
-      const menu = menuContainer.querySelector('ul')
-
-      if (!menu || menu.children.length > 3) return
-
-      const selectMenuItem = document.createElement('div')
-
-      selectMenuItem.classList.add(
-        'artdeco-dropdown__item',
-        'artdeco-dropdown__item--is-dropdown',
-        'ember-view'
-      )
-      selectMenuItem.textContent = 'Select all for deletion'
-
-      selectMenuItem.onclick = function () {
-        document
-          .querySelector(
-            '.msg-conversations-container__title-row button.artdeco-dropdown__trigger'
-          )
-          .click()
-        selectMessagesForDeletion()
-      }
-
-      menu.appendChild(selectMenuItem)
-    })
-
-    observer.observe(menuContainer, {
-      attributes: false,
-      childList: true,
-      subtree: false,
-      characterData: false,
-    })
-  }
-})
-
 // Toggle feed
 
 async function toggleFeed(shown) {
@@ -221,7 +177,6 @@ function resetBlockedPosts() {
 }
 
 function blockByKeywords(res) {
-  console.log('res', res)
   let keywords =
     res['feed-keywords'] == '' ? [] : res['feed-keywords'].split(',')
   if (res['hide-by-age'] !== 'disabled')
@@ -279,9 +234,9 @@ function blockByKeywords(res) {
             // Add attribute to track already hidden posts
             post.dataset.hidden = true
             console.log(
-              `Blocked post ${post.getAttribute('data-id')} for keyword ${
-                keywords[keywordIndex]
-              }`
+              `LinkOff: Blocked post ${post.getAttribute(
+                'data-id'
+              )} for keyword ${keywords[keywordIndex]}`
             )
           }
         })
@@ -400,6 +355,50 @@ function disableDarkTheme() {
   document.body.appendChild(style)
 }
 
+// Add message selection button
+
+async function setupDeleteMessagesButton() {
+  console.log('LinkOff: Waiting')
+  await waitForClassName('msg-conversations-container__dropdown-container')
+  console.log('LinkOff: Adding')
+  const menuContainer = document.querySelector(
+    '.msg-conversations-container__dropdown-container > div'
+  )
+
+  const observer = new MutationObserver(function () {
+    const menu = menuContainer.querySelector('ul')
+
+    if (!menu || menu.children.length > 3) return
+
+    const selectMenuItem = document.createElement('div')
+
+    selectMenuItem.classList.add(
+      'artdeco-dropdown__item',
+      'artdeco-dropdown__item--is-dropdown',
+      'ember-view'
+    )
+    selectMenuItem.textContent = 'Select all for deletion (LinkOff)'
+
+    selectMenuItem.onclick = function () {
+      document
+        .querySelector(
+          '.msg-conversations-container__title-row button.artdeco-dropdown__trigger'
+        )
+        .click()
+      selectMessagesForDeletion()
+    }
+
+    menu.appendChild(selectMenuItem)
+  })
+
+  observer.observe(menuContainer, {
+    attributes: false,
+    childList: true,
+    subtree: false,
+    characterData: false,
+  })
+}
+
 //Modified from https://gist.github.com/twhitacre/d4536183c22a2f5a8c7c427df04acc90
 async function selectMessagesForDeletion() {
   const container = document.querySelector(
@@ -463,6 +462,8 @@ setInterval(() => {
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
     getStorageAndDoIt()
+    if (window.location.href.includes('/messaging/'))
+      setupDeleteMessagesButton()
   }
 }, 500)
 
@@ -470,6 +471,11 @@ setInterval(() => {
 
 if (document.readyState != 'loading') {
   getStorageAndDoIt()
+  if (window.location.href.includes('/messaging/')) setupDeleteMessagesButton()
 } else {
-  document.addEventListener('DOMContentLoaded', getStorageAndDoIt)
+  document.addEventListener('DOMContentLoaded', () => {
+    getStorageAndDoIt()
+    if (window.location.href.includes('/messaging/'))
+      setupDeleteMessagesButton()
+  })
 }
