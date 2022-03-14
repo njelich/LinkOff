@@ -38,6 +38,14 @@
   zoom: 1;
 }
 
+.wide-mode {
+  margin-left: 0rem !important;
+  margin-right: 0rem !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  width: 100% !important;
+}
+
 body.darkMode {
   -webkit-filter: invert(100%);
   filter: invert(100%);

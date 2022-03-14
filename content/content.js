@@ -313,11 +313,11 @@ function enableWideMode() {
     document.getElementsByClassName(
       'scaffold-layout__inner scaffold-layout-container scaffold-layout-container--reflow'
     )[0] || wideModeDiv
-  wideModeDiv.classList.remove('scaffold-layout-container--reflow')
+  wideModeDiv.classList.add('wide-mode')
 }
 
 function disableWideMode() {
-  wideModeDiv.classList.add('scaffold-layout-container--reflow')
+  wideModeDiv.classList.remove('wide-mode')
 }
 
 //Taken from https://github.com/sweaver2112/LinkedIn-dark-theme-hack
