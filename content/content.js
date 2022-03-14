@@ -3,12 +3,14 @@
 // Main function
 
 let mode = 'hide'
-let reentrancyGuard
+let oldReponse = {}
 async function doIt(response) {
-  if (JSON.stringify(reentrancyGuard) == JSON.stringify(response)) return
+  if (JSON.stringify(oldReponse) == JSON.stringify(response)) return
 
   function res(field, bool) {
-    return response[field] != reentrancyGuard[field] && response[field] == bool
+    const changed = response[field] != oldReponse[field]
+    if (changed) console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
+    return changed && response[field] == bool
   }
 
   // Set Mode
@@ -126,6 +128,8 @@ async function doIt(response) {
   } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
   }
+
+  oldReponse = response
 }
 
 function getStorageAndDoIt() {
@@ -257,7 +261,7 @@ function blockByKeywords(res) {
         '[data-id*="urn:li:activity"]:not([data-hidden])'
       )
 
-      console.log(`LinkOfF: Found ${posts.length} unblocked posts`)
+      console.log(`LinkOff: Found ${posts.length} unblocked posts`)
 
       // Filter only if there are enough posts to load more
       if (posts.length > 5 || mode == 'dim') {
