@@ -7,10 +7,13 @@ let oldReponse = {}
 async function doIt(response) {
   if (JSON.stringify(oldReponse) == JSON.stringify(response)) return
 
+  const enabled = response['main-toggle']
+
   function res(field, bool) {
     const changed =
       response[field] != oldReponse[field] ||
-      response['gentle-mode'] != oldReponse['gentle-mode']
+      response['gentle-mode'] != oldReponse['gentle-mode'] ||
+      response['main-toggle'] != oldReponse['main-toggle']
     if (changed) console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
     return changed && response[field] == bool
   }
@@ -37,14 +40,14 @@ async function doIt(response) {
   // Hide feed
 
   let keywords = getKeywords(response)
-  if (res('main-toggle', true) && res('hide-whole-feed', true)) {
+  if (enabled && res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
   } else if (
-    (res('main-toggle', true) && res('hide-whole-feed', false)) ||
-    keywords != oldKeywords
+    enabled &&
+    (res('hide-whole-feed', false) || keywords != oldKeywords)
   ) {
     toggleFeed(false)
     showOther('feeds')
@@ -63,14 +66,15 @@ async function doIt(response) {
 
   //Toggle feed sorting order
   if (
-    (res('main-toggle', true) || res('sort-by-recent', true)) &&
+    enabled &&
+    res('sort-by-recent', true) &&
     (window.location.href == 'https://www.linkedin.com/feed/' ||
       window.location.href == 'https://www.linkedin.com/')
   )
     sortByRecent()
 
   // Hide LinkedIn learning prompts and ads
-  if (res('main-toggle', true) || res('hide-linkedin-learning', true)) {
+  if (enabled && res('hide-linkedin-learning', true)) {
     hideOther('learning-top-courses')
     hideOther('pv-course-recommendations')
   } else if (
@@ -82,7 +86,7 @@ async function doIt(response) {
   }
 
   // Hide ads across linkedin
-  if (res('main-toggle', true) || res('hide-advertisements', true)) {
+  if (enabled && res('hide-advertisements', true)) {
     hideOther('ad-banner-container')
     hideOther('ad-banner-container artdeco-card')
     hideOther('ad-banner-container is-header-zone')
@@ -90,19 +94,18 @@ async function doIt(response) {
   } else if (res('main-toggle', false) || res('hide-advertisements', false)) {
     showOther('ad-banner-container')
     showOther('ad-banner-container artdeco-card')
-
     showOther('ad-banner-container is-header-zone')
     showOther('ads-container')
   }
 
   // Hide feed area community and follow panels
-  if (res('main-toggle', true) || res('hide-community-panel', true)) {
+  if (enabled && res('hide-community-panel', true)) {
     hideOther('community-panel')
   } else if (res('main-toggle', false) || res('hide-community-panel', false)) {
     showOther('community-panel')
   }
 
-  if (res('main-toggle', true) || res('hide-follow-recommendations', true)) {
+  if (enabled && res('hide-follow-recommendations', true)) {
     hideOther('feed-follows-module')
   } else if (
     res('main-toggle', false) ||
@@ -112,7 +115,7 @@ async function doIt(response) {
   }
 
   // Hide account building prompts
-  if (res('main-toggle', true) || res('hide-account-building', true)) {
+  if (enabled && res('hide-account-building', true)) {
     hideOther('mn-abi-form')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
@@ -121,7 +124,7 @@ async function doIt(response) {
   }
 
   // Hide premium upsell prompts
-  if (res('main-toggle', true) || res('hide-premium', true)) {
+  if (enabled && res('hide-premium', true)) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
   } else if (res('main-toggle', false) || res('hide-premium', false)) {
@@ -130,7 +133,7 @@ async function doIt(response) {
   }
 
   // Hide news
-  if (res('main-toggle', true) || res('hide-news', true)) {
+  if (enabled && res('hide-news', true)) {
     hideOther('news-module')
   } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
