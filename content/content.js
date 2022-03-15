@@ -322,19 +322,30 @@ function blockByKeywords(keywords, disablePostCount) {
 // Toggle sort by recent
 
 async function sortByRecent() {
-  const dropdownTrigger = await waitForSelector(
-    'button[data-control-name="feed_sort_dropdown_trigger"]'
-  )
+  const dropdownTrigger = (
+    await waitForSelector('li-icon[aria-label="Sort order dropdown button"]')
+  ).parentElement.parentElement
+  const parent = dropdownTrigger.parentElement
   if (dropdownTrigger.textContent.includes('Top')) {
     dropdownTrigger.click()
-    const recentOption = await waitForSelector(
-      'div[data-control-name="feed_sort_toggle_chron"]'
+    const recentOption = await waitForSelectorScoped(
+      'ul > li:nth-child(2) > div',
+      parent
     )
     recentOption.click()
   }
 }
 
 // Wait for selector implementation
+
+async function waitForSelectorScoped(selector, scope) {
+  while (scope.querySelector(`:scope ${selector}`) === null) {
+    await new Promise((resolve) => {
+      requestAnimationFrame(resolve)
+    })
+  }
+  return scope.querySelector(`:scope ${selector}`)
+}
 
 async function waitForSelector(selector) {
   while (document.querySelector(selector) === null) {
