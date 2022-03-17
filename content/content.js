@@ -3,114 +3,143 @@
 // Main function
 
 let mode = 'hide'
-let reentrancyGuard
-async function doIt(res) {
-  if (reentrancyGuard) return
-  reentrancyGuard = true
+let oldReponse = {}
+async function doIt(response) {
+  if (JSON.stringify(oldReponse) == JSON.stringify(response)) return
+
+  const enabled = response['main-toggle']
+
+  function res(field, bool) {
+    const changed =
+      response[field] != oldReponse[field] ||
+      response['gentle-mode'] != oldReponse['gentle-mode'] ||
+      response['main-toggle'] != oldReponse['main-toggle']
+    if (changed) console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
+    return changed && response[field] == bool
+  }
+
   // Set Mode
-  mode = res['gentle-mode'] ? 'dim' : 'hide'
+  mode = response['gentle-mode'] ? 'dim' : 'hide'
 
   // Set wide mode
-  if (res['wide-mode']) {
+
+  if (res('wide-mode', true)) {
     enableWideMode()
-  } else {
+  } else if (res('wide-mode', false)) {
     disableWideMode()
   }
 
   // Set dark theme
-  if (res['dark-mode']) {
+
+  if (res('dark-mode', true)) {
     enableDarkTheme()
-  } else {
+  } else if (res('dark-mode', false)) {
     disableDarkTheme()
   }
 
-  // Hide stuff
-  if (res['main-toggle']) {
-    //Feed
-    if (res['hide-whole-feed']) {
-      toggleFeed(true)
-      hideOther('feeds')
-      clearInterval(keywordInterval)
-      resetBlockedPosts()
-    } else {
-      toggleFeed(false)
-      showOther('feeds')
-      clearInterval(keywordInterval)
-      resetBlockedPosts()
-      blockByKeywords(res)
-    }
-  } else {
+  // Hide feed
+
+  let keywords = getKeywords(response)
+  if (enabled && res('hide-whole-feed', true)) {
+    toggleFeed(true)
+    hideOther('feeds')
+    clearInterval(keywordInterval)
+    resetBlockedPosts()
+  } else if (
+    enabled &&
+    (res('hide-whole-feed', false) || keywords != oldKeywords)
+  ) {
+    toggleFeed(false)
+    showOther('feeds')
+    clearInterval(keywordInterval)
+    resetBlockedPosts()
+    blockByKeywords(keywords, response['disable-postcount-prompt'])
+  }
+  if (res('main-toggle', false)) {
     //Feed
     toggleFeed(false)
     showOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
+    resetAllPosts()
   }
+
   //Toggle feed sorting order
   if (
-    res['main-toggle'] &&
-    res['sort-by-recent'] &&
+    enabled &&
+    res('sort-by-recent', true) &&
     (window.location.href == 'https://www.linkedin.com/feed/' ||
       window.location.href == 'https://www.linkedin.com/')
   )
     sortByRecent()
+
   // Hide LinkedIn learning prompts and ads
-  if (res['main-toggle'] && res['hide-linkedin-learning']) {
+  if (enabled && res('hide-linkedin-learning', true)) {
     hideOther('learning-top-courses')
     hideOther('pv-course-recommendations')
-  } else {
+  } else if (
+    res('main-toggle', false) ||
+    res('hide-linkedin-learning', false)
+  ) {
     showOther('learning-top-courses')
     showOther('pv-course-recommendations')
   }
+
   // Hide ads across linkedin
-  if (res['main-toggle'] && res['hide-advertisements']) {
+  if (enabled && res('hide-advertisements', true)) {
     hideOther('ad-banner-container')
     hideOther('ad-banner-container artdeco-card')
     hideOther('ad-banner-container is-header-zone')
     hideOther('ads-container')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-advertisements', false)) {
     showOther('ad-banner-container')
     showOther('ad-banner-container artdeco-card')
-
     showOther('ad-banner-container is-header-zone')
     showOther('ads-container')
   }
+
   // Hide feed area community and follow panels
-  if (res['main-toggle'] && res['hide-community-panel']) {
+  if (enabled && res('hide-community-panel', true)) {
     hideOther('community-panel')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-community-panel', false)) {
     showOther('community-panel')
   }
-  if (res['main-toggle'] && res['hide-follow-recommendations']) {
+
+  if (enabled && res('hide-follow-recommendations', true)) {
     hideOther('feed-follows-module')
-  } else {
+  } else if (
+    res('main-toggle', false) ||
+    res('hide-follow-recommendations', false)
+  ) {
     showOther('feed-follows-module')
   }
-  // Hide account building prompts
-  if (res['main-toggle'] && res['hide-account-building']) {
-    hideOther('mn-abi-form')
 
+  // Hide account building prompts
+  if (enabled && res('hide-account-building', true)) {
+    hideOther('mn-abi-form')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-account-building', false)) {
     showOther('mn-abi-form')
     showOther('artdeco-card mb4 overflow-hidden ember-view')
   }
+
   // Hide premium upsell prompts
-  if (res['main-toggle'] && res['hide-premium']) {
+  if (enabled && res('hide-premium', true)) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-premium', false)) {
     showOther('premium-upsell-link')
     showOther('gp-promo-embedded-card-three__card')
   }
 
   // Hide news
-  if (res['main-toggle'] && res['hide-news']) {
+  if (enabled && res('hide-news', true)) {
     hideOther('news-module')
-  } else {
+  } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
   }
-  reentrancyGuard = false
+
+  oldReponse = response
 }
 
 function getStorageAndDoIt() {
@@ -175,7 +204,7 @@ let runs = 0
 function resetBlockedPosts() {
   console.log(`LinkOff: Reset blocked posts (${runs} runs)`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden=false]'
+    '[data-id*="urn:li:activity"][data-hidden=false], [data-id*="urn:li:aggregate"][data-hidden=false]'
   )
 
   posts.forEach((post) => {
@@ -184,7 +213,19 @@ function resetBlockedPosts() {
   })
 }
 
-function blockByKeywords(res) {
+function resetAllPosts() {
+  console.log(`LinkOff: Resetting all posts`)
+  let posts = document.querySelectorAll(
+    '[data-id*="urn:li:activity"][data-hidden=true], [data-id*="urn:li:aggregate"][data-hidden=true]'
+  )
+
+  posts.forEach((post) => {
+    post.classList.remove('hide', 'dim', 'showIcon')
+    delete post.dataset.hidden
+  })
+}
+
+function getKeywords(res) {
   let keywords =
     res['feed-keywords'] == '' ? [] : res['feed-keywords'].split(',')
   if (res['hide-by-age'] !== 'disabled')
@@ -214,18 +255,16 @@ function blockByKeywords(res) {
     keywords.push('href="https://www.linkedin.com/company/')
   if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
 
+  console.log('LinkOff: Current keywords are', keywords)
+  return keywords
+}
+
+function blockByKeywords(keywords, disablePostCount) {
   if (oldKeywords.some((kw) => !keywords.includes(kw))) {
-    let hiddenPosts = document.querySelectorAll(
-      '[data-id*="urn:li:activity"][data-hidden=true]'
-    )
-
-    hiddenPosts.forEach((post) => {
-      post.classList.remove('hide', 'dim', 'showIcon')
-      delete post.dataset.hidden
-    })
-
-    oldKeywords = keywords
+    resetAllPosts()
   }
+
+  oldKeywords = keywords
 
   let posts
 
@@ -234,10 +273,10 @@ function blockByKeywords(res) {
       if (runs % 10 == 0) resetBlockedPosts()
       // Select posts which are not already hidden
       posts = document.querySelectorAll(
-        '[data-id*="urn:li:activity"]:not([data-hidden])'
+        '[data-id*="urn:li:activity"]:not([data-hidden]), [data-id*="urn:li:aggregate"]:not([data-hidden])'
       )
 
-      console.log(`LinkOfF: Found ${posts.length} unblocked posts`)
+      console.log(`LinkOff: Found ${posts.length} unblocked posts`)
 
       // Filter only if there are enough posts to load more
       if (posts.length > 5 || mode == 'dim') {
@@ -252,7 +291,7 @@ function blockByKeywords(res) {
             post.classList.add(mode, 'showIcon')
             post.onclick = () => {
               post.classList.remove('hide', 'dim', 'showIcon')
-              post.dataset.hidden = false
+              post.dataset.hidden = 'shown'
             }
 
             // Add attribute to track already hidden posts
@@ -268,7 +307,7 @@ function blockByKeywords(res) {
           }
         })
       } else {
-        if (!postCountPrompted && !res['disable-postcount-prompt']) {
+        if (!postCountPrompted && !disablePostCount) {
           postCountPrompted = true //Prompt only once when loading linkedin
           alert(
             'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
@@ -283,19 +322,30 @@ function blockByKeywords(res) {
 // Toggle sort by recent
 
 async function sortByRecent() {
-  const dropdownTrigger = await waitForSelector(
-    'button[data-control-name="feed_sort_dropdown_trigger"]'
-  )
+  const dropdownTrigger = (
+    await waitForSelector('li-icon[aria-label="Sort order dropdown button"]')
+  ).parentElement.parentElement
+  const parent = dropdownTrigger.parentElement
   if (dropdownTrigger.textContent.includes('Top')) {
     dropdownTrigger.click()
-    const recentOption = await waitForSelector(
-      'div[data-control-name="feed_sort_toggle_chron"]'
+    const recentOption = await waitForSelectorScoped(
+      'ul > li:nth-child(2) > div',
+      parent
     )
     recentOption.click()
   }
 }
 
 // Wait for selector implementation
+
+async function waitForSelectorScoped(selector, scope) {
+  while (scope.querySelector(`:scope ${selector}`) === null) {
+    await new Promise((resolve) => {
+      requestAnimationFrame(resolve)
+    })
+  }
+  return scope.querySelector(`:scope ${selector}`)
+}
 
 async function waitForSelector(selector) {
   while (document.querySelector(selector) === null) {
@@ -490,6 +540,7 @@ let lastUrl = window.location.href
 setInterval(() => {
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
+    oldReponse = {}
     getStorageAndDoIt()
     if (window.location.href.includes('/messaging/'))
       setupDeleteMessagesButton()
