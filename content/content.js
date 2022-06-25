@@ -9,6 +9,7 @@ async function doIt(response) {
 
   const enabled = response['main-toggle']
 
+  // checks if filter needs updating, used below
   function res(field, bool) {
     const changed =
       response[field] != oldReponse[field] ||
@@ -116,11 +117,29 @@ async function doIt(response) {
 
   // Hide account building prompts
   if (enabled && res('hide-account-building', true)) {
-    hideOther('mn-abi-form')
+    hideOther('artdeco-card ember-view mt2')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
-    showOther('mn-abi-form')
+    showOther('artdeco-card ember-view mt2')
     showOther('artdeco-card mb4 overflow-hidden ember-view')
+  }
+
+  // Hide viewership s building prompts
+  if (enabled && res('hide-account-building', true)) {
+    hideOther('artdeco-card ember-view mt2')
+    hideOther('artdeco-card mb4 overflow-hidden ember-view')
+  } else if (res('main-toggle', false) || res('hide-account-building', false)) {
+    showOther('artdeco-card ember-view mt2')
+    showOther('artdeco-card mb4 overflow-hidden ember-view')
+  }
+
+  // Hide network building prompts
+  if (enabled && res('hide-network-building', true)) {
+    hideOther('mn-abi-form')
+    hideOther('pv-profile-pymk__container artdeco-card')
+  } else if (res('main-toggle', false) || res('hide-network-building', false)) {
+    showOther('mn-abi-form')
+    showOther('pv-profile-pymk__container artdeco-card')
   }
 
   // Hide premium upsell prompts
@@ -437,9 +456,8 @@ function disableDarkTheme() {
 // Add message selection button
 
 async function setupDeleteMessagesButton() {
-  console.log('LinkOff: Waiting')
+  console.log('LinkOff: Waiting for Messages to load')
   await waitForClassName('msg-conversations-container__dropdown-container')
-  console.log('LinkOff: Adding')
   const menuContainer = document.querySelector(
     '.msg-conversations-container__dropdown-container > div'
   )
@@ -466,6 +484,8 @@ async function setupDeleteMessagesButton() {
         .click()
       selectMessagesForDeletion()
     }
+
+    console.log('LinkOff: Adding "Select messages for deletion" button')
 
     menu.appendChild(selectMenuItem)
   })
@@ -527,6 +547,53 @@ async function selectMessagesForDeletion() {
   }
   alert('Click the trash can icon at the top to delete all messages.')
 }
+
+function getAllButtons() {
+  return document.querySelectorAll('button.is-following') || []
+}
+
+async function unfollowAll() {
+  let buttons = getAllButtons()
+
+  if (!buttons.length) console.log('LinkOff: Successfully unfollowed all')
+
+  for (let button of buttons) {
+    window.scrollTo(0, button.offsetTop - 260)
+    button.click()
+
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  console.log(
+    `LinkOff: Unfollowing the following interests`,
+    buttons.map(
+      (b) =>
+        b.parentElement.querySelector('.follows-recommendation-card__name')
+          .innerText
+    )
+  )
+
+  window.scrollTo(0, document.body.scrollHeight)
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  buttons = getAllButtons()
+  if (buttons.length) unfollowAll()
+}
+
+// Actions listener
+
+chrome.runtime.onMessage.addListener(async (req) => {
+  if (req['unfollow-all']) {
+    if (!window.location.href.includes('/feed/following/')) {
+      alert(
+        'No messages. Are you on the follows page (/feed/following)?\n\nIf not, please navigate to following using the LinkedIn navbar and then click the Unfollow All button again.'
+      )
+      return
+    } else {
+      await unfollowAll()
+    }
+  }
+})
 
 // Storage listener
 
