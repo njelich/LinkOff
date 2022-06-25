@@ -23,75 +23,78 @@ No more seeing unwanted likes and comments by your connections. Block the feed o
 Also available on Firefox. Coming soon to Opera and other browsers.
 
 🚀 Features
->⭐️ Option to hide the whole feed 
->
->⭐️ Post filtering by content (polls, videos, promoted, shared, etc) 
->
->⭐️ Hide posts by companies or specific people 
->
->⭐️ Filter by custom keywords (politics, coronavirus, vaccination, Noah Jelich, whatever) 
->
->⭐️ Hide posts shown due to interactions (comments, reactions, followed by connections) 
->
->⭐️ Hide irrelevant old posts (older than an hour, day, week, month) 
 
->⭐️ Select messages for mass deletion (clean your inbox) 
+> ⭐️ Option to hide the whole feed
 >
->⭐️ MESSAGE FILTERS COMING SOON 
+> ⭐️ Post filtering by content (polls, videos, promoted, shared, etc)
+>
+> ⭐️ Hide posts by companies or specific people
+>
+> ⭐️ Filter by custom keywords (politics, coronavirus, vaccination, Noah Jelich, whatever)
+>
+> ⭐️ Hide posts shown due to interactions (comments, reactions, followed by connections)
+>
+> ⭐️ Hide irrelevant old posts (older than an hour, day, week, month)
 
->⭐️ JOB FILTERING COMING SOON 
+> ⭐️ Select messages for mass deletion (clean your inbox)
+>
+> ⭐️ MESSAGE FILTERS COMING SOON
 
->⭐️ Block ads on LinkedIn (banners, and sidebar) 
->
->⭐️ Hide LinkedIn learning and course recommendations 
->
->⭐️ Hide community panel and follow recommendations 
->
->⭐️ Stop LinkedIn premium upsell pestering 
->
->⭐️ Toggle-able dark mode 
+> ⭐️ Unfollow all collections
 
->⭐️ Fully configurable to suit your need! 
->
->⭐️ Completely FREE and with NO ADS 
+> ⭐️ JOB FILTERING COMING SOON
 
->⭐️ Made with ❤️ by Noah Jelich 
+> ⭐️ Block ads on LinkedIn (banners, and sidebar)
+>
+> ⭐️ Hide LinkedIn learning and course recommendations
+>
+> ⭐️ Hide community panel and follow recommendations
+>
+> ⭐️ Stop LinkedIn premium upsell pestering
+>
+> ⭐️ Toggle-able dark mode
+
+> ⭐️ Fully configurable to suit your need!
+>
+> ⭐️ Completely FREE and with NO ADS
+
+> ⭐️ Made with ❤️ by Noah Jelich
 
 🚀 Frequently Asked Questions
 
->⭐️ Are you going to make a Tampermonkey/Greasemonkey script?
+> ⭐️ Are you going to make a Tampermonkey/Greasemonkey script?
 >
-Unfortunately, no. I do not have time to maintain any more code
->⭐️ What about Vivaldi/Brave/Edge/Opera and other browsers?
+> Unfortunately, no. I do not have time to maintain any more code
+> ⭐️ What about Vivaldi/Brave/Edge/Opera and other browsers?
 >
-The extension can be natively installed on all chromium browsers
->⭐️ What about Safari and MacOs?
+> The extension can be natively installed on all chromium browsers
+> ⭐️ What about Safari and MacOs?
 >
-The store charges 100$ per year to post apps, which I cannot afford
->⭐️ How can I use this on mobile?
+> The store charges 100$ per year to post apps, which I cannot afford
+> ⭐️ How can I use this on mobile?
 >
-Since neither Chrome or Firefox allow for extensions in mobile browsers, you need to install a chromium distribution that does. I recommend Kiwi Browser (if you have any issues, please report them, still testing mobile support)
+> Since neither Chrome or Firefox allow for extensions in mobile browsers, you need to install a chromium distribution that does. I recommend Kiwi Browser (if you have any issues, please report them, still testing mobile support)
 
 ### Contributing
 
 Please create an issue before submitting a pull request.
 
-Use npm to install dependencies, simply run `npm i`. To rebuild the CSS from SCSS run `npm run css-build`. 
+Use npm to install dependencies, simply run `npm i`. To rebuild the CSS from SCSS run `npm run css-build`.
 
 To install the extension locally follow the instructions below for your browser.
 
 **Firefox**
 
- * Type about:debugging in the Firefox URL bar and press enter.
- * Click This Firefox on the left, and then Load Temporary Add-on... in the middle
- * Navigate to the location of the folder you unzipped, select the manifest.json file inside.
+- Type about:debugging in the Firefox URL bar and press enter.
+- Click This Firefox on the left, and then Load Temporary Add-on... in the middle
+- Navigate to the location of the folder you unzipped, select the manifest.json file inside.
 
 **Chromium**
 
- * Type chrome://extensions in the Chrome URL bar and press enter.
- * Enable developer mode using the toggle on the right
- * Click Load Unpacked on the left side of the screen.
- * Navigate to the location of the folder you unzipped, and select it.
+- Type chrome://extensions in the Chrome URL bar and press enter.
+- Enable developer mode using the toggle on the right
+- Click Load Unpacked on the left side of the screen.
+- Navigate to the location of the folder you unzipped, and select it.
 
 #### Commit message format
 
@@ -104,6 +107,7 @@ Each commit message consists of a **header**, a **body**, and a **footer**.
 <BLANK LINE>
 <footer>
 ```
+
 The `<header>` format should be as follows:
 
 ```
@@ -115,7 +119,6 @@ The `<header>` format should be as follows:
   │
   └─⫸ Commit Type: feat|fix|perf
 ```
-
 
 ##### Revert
 
@@ -129,9 +132,9 @@ If the prefix is `feat`, `fix` or `perf`, it will appear in the changelog. Howev
 
 The subject contains succinct description of the change:
 
-* use the imperative, present tense: "change" not "changed" nor "changes"
-* don't capitalize first letter
-* no dot (.) at the end
+- use the imperative, present tense: "change" not "changed" nor "changes"
+- don't capitalize first letter
+- no dot (.) at the end
 
 ##### Body
 
