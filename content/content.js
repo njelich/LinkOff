@@ -267,7 +267,9 @@ function getKeywords(res) {
       'loves this',
       'finds this insightful',
       'celebrates this',
-      'is curious about this'
+      'is curious about this',
+      'supports this',
+      'finds this funny'
     )
   if (res['hide-commented-on']) keywords.push('commented on this')
   if (res['hide-by-companies'])
