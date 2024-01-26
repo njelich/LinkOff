@@ -1,5 +1,7 @@
 # LinkOff - LinkedIn Filter and Customizer 🧹
 
+## LOOKING FOR NEW MAINTAINER, APPLY [HERE](https://github.com/njelich/LinkOff/issues/54)
+
 LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.
 
 <p>
