@@ -170,27 +170,26 @@ function getStorageAndDoIt() {
 async function toggleFeed(shown) {
   let attempts = 0
   let success = false
-
+  let className = 'scaffold-finite-scroll__content' // feed element css class
+  if (window.location.href == 'https://www.linkedin.com/jobs/'){
+    // dont hide this element on jobs page. Only hide on home feed instead.
+    return
+  }
   while (!success && attempts < 50) {
     await new Promise((resolve) => {
-      setTimeout(() => {
-        if (
-          document.getElementsByClassName('artdeco-dropdown') &&
-          document.getElementsByClassName('artdeco-dropdown')[1] &&
-          document.getElementsByClassName('artdeco-dropdown')[1]
-            .nextElementSibling
-        ) {
-          if (shown) {
-            document
-              .getElementsByClassName('artdeco-dropdown')[1]
-              .nextElementSibling.classList.add('hide')
-          } else {
-            document
-              .getElementsByClassName('artdeco-dropdown')[1]
-              .nextElementSibling.classList.remove('hide', 'dim')
-          }
-          success = true
+      setTimeout(() => {       
+        if (shown) {
+          document
+          .getElementsByClassName(className).item(0)
+          .classList.add('hide')
+          console.log(`LinkOff: feed disabled`)
+        } else {
+          document
+          .getElementsByClassName(className).item(0)
+          .classList.remove('hide')
+          console.log(`LinkOff: feed enabled`)
         }
+        success = true
         attempts = attempts + 1
         resolve()
       }, 100 + attempts * 10)
