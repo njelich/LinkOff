@@ -171,8 +171,8 @@ async function toggleFeed(shown) {
   let attempts = 0
   let success = false
   let className = 'scaffold-finite-scroll__content' // feed element css class
-  if (window.location.href == 'https://www.linkedin.com/jobs/'){
-    // dont hide this element on jobs page. Only hide on home feed instead.
+  if (window.location.href != 'https://www.linkedin.com/feed/'){
+    // dont hide this element on notifications & jobs page. Only hide on home feed instead.
     return
   }
   while (!success && attempts < 50) {
