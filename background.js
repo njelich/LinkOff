@@ -28,6 +28,7 @@ chrome.storage.local.get(null, function (res) {
       'hide-videos': false,
       'hide-whole-feed': false,
       'hide-liked': true,
+      'hide-suggested': true,
       'hide-other-reactions': false,
       'main-toggle': true,
       'sort-by-recent': true,
