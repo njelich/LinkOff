@@ -1,3 +1,14 @@
+@supports (-webkit-user-select: none) {
+  :root {
+    --url_header: url('chrome-extension://__MSG_@@extension_id__/icons/forbidden.svg');
+  }
+}
+@supports (-moz-user-select: none) {
+  :root {
+    --url_header: url('moz-extension://__MSG_@@extension_id__/icons/forbidden.svg');
+  }
+}
+
 .hide {
   display: None;
 }
@@ -26,7 +37,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-image: url('chrome-extension://__MSG_@@extension_id__/icons/forbidden.svg');
+  background-image: var(--url_header);
   background-size: cover;
   width: 30px;
   height: 30px;
