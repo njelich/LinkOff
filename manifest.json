@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "LinkOff - Filter and Customizer for LinkedIn™",
   "short_name": "LinkOff",
   "author": "Noah Jelich",
@@ -11,32 +11,27 @@
     "128": "icons/icon128.png"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "service_worker.js",
+    "scripts": ["service_worker.js"],
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.linkedin.com/*"
-      ],
-      "js": [
-        "content/content.js"
-      ],
-      "css": [
-        "content/content.css"
-      ],
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
-    "icons/forbidden.svg"
+    {
+      "resources": ["icons/forbidden.svg"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
   ],
-  "browser_action": {
+  "action": {
     "default_popup": "popup/popup.html"
   },
-  "permissions": [
-    "https://www.linkedin.com/*",
-    "storage"
-  ]
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "permissions": ["storage"]
 }
