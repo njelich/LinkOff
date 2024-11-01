@@ -171,22 +171,24 @@ async function toggleFeed(shown) {
   let attempts = 0
   let success = false
   let className = 'scaffold-finite-scroll__content' // feed element css class
-  if (window.location.href != 'https://www.linkedin.com/feed/'){
+  if (window.location.href != 'https://www.linkedin.com/feed/') {
     // dont hide this element on notifications & jobs page. Only hide on home feed instead.
     return
   }
   while (!success && attempts < 50) {
     await new Promise((resolve) => {
-      setTimeout(() => {       
+      setTimeout(() => {
         if (shown) {
           document
-          .getElementsByClassName(className).item(0)
-          .classList.add('hide')
+            .getElementsByClassName(className)
+            .item(0)
+            .classList.add('hide')
           console.log(`LinkOff: feed disabled`)
         } else {
           document
-          .getElementsByClassName(className).item(0)
-          .classList.remove('hide')
+            .getElementsByClassName(className)
+            .item(0)
+            .classList.remove('hide')
           console.log(`LinkOff: feed enabled`)
         }
         success = true
