@@ -35,6 +35,8 @@ chrome.runtime.onInstalled.addListener((details) => {
           'main-toggle': true,
           'sort-by-recent': true,
           'hide-carousels': false,
+          'hide-job-guidance': false,
+          'hide-ai-button': false,
         })
     })
   }

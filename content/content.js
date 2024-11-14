@@ -150,10 +150,12 @@ async function doIt(response) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
     hideOther('artdeco-card overflow-hidden ph1 mb2', false)
+    hideOtherByIndex('artdeco-tab ember-view', 1, false)
   } else if (res('main-toggle', false) || res('hide-premium', false)) {
     showOther('premium-upsell-link')
     showOther('gp-promo-embedded-card-three__card')
     showOther('artdeco-card overflow-hidden ph1 mb2', false)
+    showOtherByIndex('artdeco-tab ember-view', 1, false)
   }
 
   // Hide news
@@ -169,6 +171,19 @@ async function doIt(response) {
     hideOther('notification-badge__count', false, 'hide')
   } else {
     showOther('notification-badge__count')
+  }
+
+  if (res('hide-job-guidance', true)) {
+    hideOther('artdeco-card mb2 pt5 pb4', false)
+  } else if (res('main-toggle', false) || res('hide-job-guidance', false)) {
+    showOther('artdeco-card mb2 pt5 pb4')
+  }
+
+  // Hide AI button
+  if (res('hide-ai-button', true)) {
+    hideOther('ember-view link-without-hover-state artdeco-button', false)
+  } else if (res('main-toggle', false) || res('hide-ai-button', false)) {
+    showOther('ember-view link-without-hover-state artdeco-button')
   }
 
   oldResponse = response
@@ -216,6 +231,7 @@ async function toggleFeed(shown) {
 
 async function hideOther(className, showIcon = true, forcedMode = null) {
   const elements = await waitForClassName(className)
+
   for (let el of elements) {
     el.classList.remove('hide', 'dim', 'showIcon')
     el.classList.add(forcedMode || mode)
@@ -229,6 +245,22 @@ async function hideOther(className, showIcon = true, forcedMode = null) {
 async function showOther(className) {
   const elements = await waitForClassName(className)
   for (let el of elements) el.classList.remove('hide', 'dim', 'showIcon')
+}
+
+// Toggle arbitrary element based on index
+async function hideOtherByIndex(className, index, showIcon = true) {
+  const elements = await waitForClassName(className)
+  const element = elements[index]
+
+  element.classList.remove('hide', 'dim', 'showIcon')
+  element.classList.add(mode, showIcon && 'showIcon')
+}
+
+async function showOtherByIndex(className, index) {
+  const elements = await waitForClassName(className)
+  const element = elements[index]
+
+  element.classList.remove('hide', 'dim', 'showIcon')
 }
 
 // Block by keywords
@@ -398,12 +430,25 @@ async function waitForSelector(selector) {
   return document.querySelector(selector)
 }
 
+const checkElementAndPlaceholder = (className) => {
+  const found = document.getElementsByClassName(className)
+
+  if (found.length > 0) {
+    return Array.from(found).some((element) =>
+      element.innerHTML.includes('skeleton')
+    )
+  }
+
+  return true
+}
+
 async function waitForClassName(className) {
-  while (!document.getElementsByClassName(className).length) {
+  while (checkElementAndPlaceholder(className)) {
     await new Promise((resolve) => {
       requestAnimationFrame(resolve)
     })
   }
+
   return document.getElementsByClassName(className)
 }
 
