@@ -40,29 +40,30 @@ async function doIt(response) {
   }
 
   // Hide feed
-  let keywords = getKeywords(response)
+  let feedKeywords = getFeedKeywords(response)
 
   if (enabled && res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
-    clearInterval(keywordInterval)
+    clearInterval(feedKeywordInterval)
     resetBlockedPosts()
   } else if (
     (enabled && res('hide-whole-feed', false)) ||
-    keywords != oldKeywords
+    feedKeywords != oldFeedKeywords
   ) {
     toggleFeed(false)
     showOther('feeds')
-    clearInterval(keywordInterval)
+    clearInterval(feedKeywordInterval)
     resetBlockedPosts()
-    blockByKeywords(keywords, response['disable-postcount-prompt'])
+    blockByFeedKeywords(feedKeywords, response['disable-postcount-prompt'])
   }
 
   if (res('main-toggle', false)) {
     //Feed
     toggleFeed(false)
     showOther('feeds')
-    clearInterval(keywordInterval)
+    clearInterval(feedKeywordInterval)
+    clearInterval(jobKeywordInterval)
     resetBlockedPosts()
     resetAllPosts()
   }
@@ -186,6 +187,13 @@ async function doIt(response) {
     showOther('ember-view link-without-hover-state artdeco-button')
   }
 
+  // Hide jobs by keywords
+  let jobKeywords = response['job-keywords'].split(',')
+
+  if (jobKeywords.length > 0) {
+    blockByJobKeywords(jobKeywords)
+  }
+
   oldResponse = response
 }
 
@@ -265,15 +273,17 @@ async function showOtherByIndex(className, index) {
 
 // Block by keywords
 
-let keywordInterval
+let feedKeywordInterval
+let jobKeywordInterval
 let postCountPrompted = false
-let oldKeywords = []
+let oldFeedKeywords = []
+let oldJobKeywords = []
 let runs = 0
 
 function resetBlockedPosts() {
   console.log(`LinkOff: Reset blocked posts (${runs} runs)`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden=false], [data-id*="urn:li:aggregate"][data-hidden=false]'
+    '[data-id*="urn:li:activity"][data-hidden=false], [data-id*="urn:li:aggregate"][data-hidden=false], [data-occludable-job-id][data-hidden=false]'
   )
 
   posts.forEach((post) => {
@@ -285,7 +295,7 @@ function resetBlockedPosts() {
 function resetAllPosts() {
   console.log(`LinkOff: Resetting all posts`)
   let posts = document.querySelectorAll(
-    '[data-id*="urn:li:activity"][data-hidden=true], [data-id*="urn:li:aggregate"][data-hidden=true]'
+    '[data-id*="urn:li:activity"][data-hidden=true], [data-id*="urn:li:aggregate"][data-hidden=true], [data-occludable-job-id][data-hidden=true]'
   )
 
   posts.forEach((post) => {
@@ -294,27 +304,27 @@ function resetAllPosts() {
   })
 }
 
-function getKeywords(res) {
-  let keywords =
+function getFeedKeywords(res) {
+  let feedKeywords =
     res['feed-keywords'] == '' ? [] : res['feed-keywords'].split(',')
   if (res['hide-by-age'] !== 'disabled')
-    keywords.push(
+    feedKeywords.push(
       { hour: 'h • ', day: 'd • ', week: 'w • ', month: 'mo • ' }[
         res['hide-by-age']
       ]
     )
-  if (res['hide-polls']) keywords.push('poll')
+  if (res['hide-polls']) feedKeywords.push('poll')
   if (res['hide-videos'])
-    keywords.push('id="vjs_video_', 'feed-shared-linkedin-video')
-  if (res['hide-links']) keywords.push('https://lnkd.in/')
+    feedKeywords.push('id="vjs_video_', 'feed-shared-linkedin-video')
+  if (res['hide-links']) feedKeywords.push('https://lnkd.in/')
   if (res['hide-images'])
-    keywords.push('class="update-components-image__image-link"')
-  if (res['hide-promoted']) keywords.push('Promoted')
-  if (res['hide-shared']) keywords.push('feed-shared-mini-update-v2')
-  if (res['hide-followed']) keywords.push('following')
-  if (res['hide-liked']) keywords.push('likes this', 'like this')
+    feedKeywords.push('class="update-components-image__image-link')
+  if (res['hide-promoted']) feedKeywords.push('Promoted')
+  if (res['hide-shared']) feedKeywords.push('feed-shared-mini-update-v2')
+  if (res['hide-followed']) feedKeywords.push('following')
+  if (res['hide-liked']) feedKeywords.push('likes this', 'like this')
   if (res['hide-other-reactions'])
-    keywords.push(
+    feedKeywords.push(
       'loves this',
       'finds this insightful',
       'celebrates this',
@@ -322,28 +332,29 @@ function getKeywords(res) {
       'supports this',
       'finds this funny'
     )
-  if (res['hide-commented-on']) keywords.push('commented on this')
+  if (res['hide-commented-on']) feedKeywords.push('commented on this')
   if (res['hide-by-companies'])
-    keywords.push('href="https://www.linkedin.com/company/')
-  if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
-  if (res['hide-suggested']) keywords.push('Suggested')
-  if (res['hide-carousels']) keywords.push('iframe')
+    feedKeywords.push('href="https://www.linkedin.com/company/')
+  if (res['hide-by-people'])
+    feedKeywords.push('href="https://www.linkedin.com/in/')
+  if (res['hide-suggested']) feedKeywords.push('Suggested')
+  if (res['hide-carousels']) feedKeywords.push('iframe')
 
-  console.log('LinkOff: Current keywords are', keywords)
-  return keywords
+  console.log('LinkOff: Current keywords are', feedKeywords)
+  return feedKeywords
 }
 
-function blockByKeywords(keywords, disablePostCount) {
-  if (oldKeywords.some((kw) => !keywords.includes(kw))) {
+function blockByFeedKeywords(keywords, disablePostCount) {
+  if (oldFeedKeywords.some((kw) => !keywords.includes(kw))) {
     resetAllPosts()
   }
 
-  oldKeywords = keywords
+  oldFeedKeywords = keywords
 
   let posts
 
   if (keywords.length)
-    keywordInterval = setInterval(() => {
+    feedKeywordInterval = setInterval(() => {
       if (runs % 10 == 0) resetBlockedPosts()
       // Select posts which are not already hidden
       posts = document.querySelectorAll(
@@ -388,6 +399,60 @@ function blockByKeywords(keywords, disablePostCount) {
           )
         }
       }
+
+      runs++
+    }, 350)
+}
+
+function blockByJobKeywords(keywords) {
+  if (!window.location.href.startsWith('https://www.linkedin.com/jobs/')) {
+    return
+  }
+
+  if (oldJobKeywords.some((kw) => !keywords.includes(kw))) {
+    resetAllPosts()
+  }
+
+  oldFeedKeywords = keywords
+
+  let posts
+
+  if (keywords.length)
+    jobKeywordInterval = setInterval(() => {
+      if (runs % 10 == 0) resetBlockedPosts()
+      // Select posts which are not already hidden
+      posts = document.querySelectorAll(
+        '[data-occludable-job-id]:not([data-hidden])'
+      )
+
+      console.log(`LinkOff: Found ${posts.length} unblocked jobs`)
+
+      posts.forEach((post) => {
+        let keywordIndex
+        if (
+          keywords.some((keyword, index) => {
+            keywordIndex = index
+            return post.innerHTML.indexOf(keyword) !== -1
+          })
+        ) {
+          post.classList.add(mode, 'showIcon')
+          post.onclick = () => {
+            post.classList.remove('hide', 'dim', 'showIcon')
+            post.dataset.hidden = 'shown'
+          }
+
+          // Add attribute to track already hidden posts
+          post.dataset.hidden = true
+          console.log(
+            `LinkOff: Blocked job ${post.getAttribute(
+              'data-occludable-job-id'
+            )} for keyword ${keywords[keywordIndex]}`
+          )
+        } else {
+          post.classList.remove('hide', 'dim', 'showIcon')
+          post.dataset.hidden = false
+        }
+      })
 
       runs++
     }, 350)

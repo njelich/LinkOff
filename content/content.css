@@ -57,3 +57,37 @@
   padding-right: 2rem !important;
   width: 100% !important;
 }
+
+body.darkMode {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+body.darkMode img,
+body.darkMode video,
+body.darkMode :not(object):not(body) > embed,
+body.darkMode object,
+body.darkMode svg image,
+body.darkMode [style*='background:url'],
+body.darkMode [style*='background-image:url'],
+body.darkMode [style*='background: url'],
+body.darkMode [style*='background-image: url'],
+body.darkMode [background],
+body.darkMode twitterwidget,
+body.darkMode .sr-reader,
+body.darkMode .sr-backdrop {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
+body.darkMode [style*="background:url"] *,
+body.darkMode [style*="background-image:url"] *,
+body.darkMode [style*="background: url"] *,
+body.darkMode [style*="background-image: url"] *,
+body.darkMode input,
+body.darkMode [background] *,
+body.darkMode img[src^="https://s0.wp.com/latex.php"],
+body.darkMode twitterwidget .NaturalImage-image {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}

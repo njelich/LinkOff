@@ -6,6 +6,7 @@ chrome.runtime.onInstalled.addListener((details) => {
         chrome.storage.local.set({
           initialized: 'v0.5',
           'feed-keywords': '',
+          'job-keywords': '',
           'gentle-mode': true,
           'dark-mode': false,
           'hide-account-building': true,
