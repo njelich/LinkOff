@@ -342,20 +342,20 @@ function blockByKeywords(keywords, disablePostCount) {
 }
 
 // Toggle sort by recent
-
 async function sortByRecent() {
-  const dropdownTrigger = (
-    await waitForSelector('li-icon[aria-label="Sort order dropdown button"]')
-  ).parentElement.parentElement
+  const dropdownTrigger = await waitForSelector(
+    'button.full-width.artdeco-dropdown__trigger.artdeco-dropdown__trigger--placement-bottom'
+  )
+
   const parent = dropdownTrigger.parentElement
-  if (dropdownTrigger.textContent.includes('Top')) {
-    dropdownTrigger.click()
-    const recentOption = await waitForSelectorScoped(
-      'ul > li:nth-child(2) > div',
-      parent
-    )
-    recentOption.click()
-  }
+
+  dropdownTrigger.click()
+
+  const recentOption = await waitForSelectorScoped(
+    'ul > li:nth-child(2) > div.artdeco-dropdown__item.artdeco-dropdown__item--is-dropdown',
+    parent
+  )
+  recentOption.click()
 }
 
 // Wait for selector implementation
