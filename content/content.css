@@ -20,8 +20,7 @@
   position: relative !important;
 }
 
-.dim:not(:hover) >,
-* > * > * {
+.dim:not(:hover) > * > * > * {
   max-height: 150px !important;
   overflow: hidden !important;
 }
