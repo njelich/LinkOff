@@ -33,6 +33,7 @@ chrome.runtime.onInstalled.addListener((details) => {
           'hide-other-reactions': false,
           'main-toggle': true,
           'sort-by-recent': true,
+          'hide-carousel': false,
         })
     })
   }
