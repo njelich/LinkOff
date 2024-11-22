@@ -39,27 +39,25 @@ async function doIt(response) {
     disableDarkTheme()
   }
 
-  oldResponse = response
-
-  if (!enabled) {
-    return
-  }
-
   // Hide feed
   let keywords = getKeywords(response)
 
-  if (res('hide-whole-feed', true)) {
+  if (enabled && res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
-  } else if (res('hide-whole-feed', false) || keywords != oldKeywords) {
+  } else if (
+    (enabled && res('hide-whole-feed', false)) ||
+    keywords != oldKeywords
+  ) {
     toggleFeed(false)
     showOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
     blockByKeywords(keywords, response['disable-postcount-prompt'])
   }
+
   if (res('main-toggle', false)) {
     //Feed
     toggleFeed(false)
@@ -71,6 +69,7 @@ async function doIt(response) {
 
   //Toggle feed sorting order
   if (
+    enabled &&
     res('sort-by-recent', true) &&
     (window.location.href == 'https://www.linkedin.com/feed/' ||
       window.location.href == 'https://www.linkedin.com/')
@@ -78,7 +77,7 @@ async function doIt(response) {
     sortByRecent()
 
   // Hide LinkedIn learning prompts and ads
-  if (res('hide-linkedin-learning', true)) {
+  if (enabled && res('hide-linkedin-learning', true)) {
     hideOther('learning-top-courses')
     hideOther('pv-course-recommendations')
   } else if (
@@ -90,7 +89,8 @@ async function doIt(response) {
   }
 
   // Hide ads across linkedin
-  if (res('hide-advertisements', true)) {
+
+  if (enabled && res('hide-advertisements', true)) {
     hideOther('ad-banner-container')
     hideOther('ad-banner-container artdeco-card')
     hideOther('ad-banner-container is-header-zone')
@@ -103,13 +103,13 @@ async function doIt(response) {
   }
 
   // Hide feed area community and follow panels
-  if (res('hide-community-panel', true)) {
+  if (enabled && res('hide-community-panel', true)) {
     hideOther('community-panel')
   } else if (res('main-toggle', false) || res('hide-community-panel', false)) {
     showOther('community-panel')
   }
 
-  if (res('hide-follow-recommendations', true)) {
+  if (enabled && res('hide-follow-recommendations', true)) {
     hideOther('feed-follows-module')
   } else if (
     res('main-toggle', false) ||
@@ -119,7 +119,7 @@ async function doIt(response) {
   }
 
   // Hide account building prompts
-  if (res('hide-account-building', true)) {
+  if (enabled && res('hide-account-building', true)) {
     hideOther('artdeco-card ember-view mt2')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
@@ -128,7 +128,7 @@ async function doIt(response) {
   }
 
   // Hide viewership s building prompts
-  if (res('hide-account-building', true)) {
+  if (enabled && res('hide-account-building', true)) {
     hideOther('artdeco-card ember-view mt2')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
@@ -137,7 +137,7 @@ async function doIt(response) {
   }
 
   // Hide network building prompts
-  if (res('hide-network-building', true)) {
+  if (enabled && res('hide-network-building', true)) {
     hideOther('mn-abi-form')
     hideOther('pv-profile-pymk__container artdeco-card')
   } else if (res('main-toggle', false) || res('hide-network-building', false)) {
@@ -146,26 +146,32 @@ async function doIt(response) {
   }
 
   // Hide premium upsell prompts
-  if (res('hide-premium', true)) {
+  if (enabled && res('hide-premium', true)) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
+    hideOther('artdeco-card overflow-hidden ph1 mb2', false)
   } else if (res('main-toggle', false) || res('hide-premium', false)) {
     showOther('premium-upsell-link')
     showOther('gp-promo-embedded-card-three__card')
+    showOther('artdeco-card overflow-hidden ph1 mb2', false)
   }
 
   // Hide news
-  if (res('hide-news', true)) {
+  if (enabled && res('hide-news', true)) {
     hideOther('news-module')
+    hideOther('news-module--with-game')
   } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
+    showOther('news-module--with-game')
   }
 
-  if (res('hide-notification-count', true)) {
+  if (enabled && res('hide-notification-count', true)) {
     hideOther('notification-badge__count', false, 'hide')
   } else {
     showOther('notification-badge__count')
   }
+
+  oldResponse = response
 }
 
 function getStorageAndDoIt() {
