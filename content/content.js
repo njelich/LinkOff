@@ -289,6 +289,8 @@ function getKeywords(res) {
     keywords.push('href="https://www.linkedin.com/company/')
   if (res['hide-by-people']) keywords.push('href="https://www.linkedin.com/in/')
   if (res['hide-suggested']) keywords.push('Suggested')
+  if (res['hide-carousels']) keywords.push('iframe')
+
   console.log('LinkOff: Current keywords are', keywords)
   return keywords
 }
