@@ -3,18 +3,19 @@
 // Main function
 
 let mode = 'hide'
-let oldReponse = {}
+let oldResponse = {}
+
 async function doIt(response) {
-  if (JSON.stringify(oldReponse) == JSON.stringify(response)) return
+  if (JSON.stringify(oldResponse) == JSON.stringify(response)) return
 
   const enabled = response['main-toggle']
 
   // checks if filter needs updating, used below
   function res(field, bool) {
     const changed =
-      response[field] != oldReponse[field] ||
-      response['gentle-mode'] != oldReponse['gentle-mode'] ||
-      response['main-toggle'] != oldReponse['main-toggle']
+      response[field] != oldResponse[field] ||
+      response['gentle-mode'] != oldResponse['gentle-mode'] ||
+      response['main-toggle'] != oldResponse['main-toggle']
     if (changed) console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
     return changed && response[field] == bool
   }
@@ -38,18 +39,21 @@ async function doIt(response) {
     disableDarkTheme()
   }
 
-  // Hide feed
+  oldResponse = response
 
+  if (!enabled) {
+    return
+  }
+
+  // Hide feed
   let keywords = getKeywords(response)
-  if (enabled && res('hide-whole-feed', true)) {
+
+  if (res('hide-whole-feed', true)) {
     toggleFeed(true)
     hideOther('feeds')
     clearInterval(keywordInterval)
     resetBlockedPosts()
-  } else if (
-    enabled &&
-    (res('hide-whole-feed', false) || keywords != oldKeywords)
-  ) {
+  } else if (res('hide-whole-feed', false) || keywords != oldKeywords) {
     toggleFeed(false)
     showOther('feeds')
     clearInterval(keywordInterval)
@@ -67,7 +71,6 @@ async function doIt(response) {
 
   //Toggle feed sorting order
   if (
-    enabled &&
     res('sort-by-recent', true) &&
     (window.location.href == 'https://www.linkedin.com/feed/' ||
       window.location.href == 'https://www.linkedin.com/')
@@ -75,7 +78,7 @@ async function doIt(response) {
     sortByRecent()
 
   // Hide LinkedIn learning prompts and ads
-  if (enabled && res('hide-linkedin-learning', true)) {
+  if (res('hide-linkedin-learning', true)) {
     hideOther('learning-top-courses')
     hideOther('pv-course-recommendations')
   } else if (
@@ -87,7 +90,7 @@ async function doIt(response) {
   }
 
   // Hide ads across linkedin
-  if (enabled && res('hide-advertisements', true)) {
+  if (res('hide-advertisements', true)) {
     hideOther('ad-banner-container')
     hideOther('ad-banner-container artdeco-card')
     hideOther('ad-banner-container is-header-zone')
@@ -100,13 +103,13 @@ async function doIt(response) {
   }
 
   // Hide feed area community and follow panels
-  if (enabled && res('hide-community-panel', true)) {
+  if (res('hide-community-panel', true)) {
     hideOther('community-panel')
   } else if (res('main-toggle', false) || res('hide-community-panel', false)) {
     showOther('community-panel')
   }
 
-  if (enabled && res('hide-follow-recommendations', true)) {
+  if (res('hide-follow-recommendations', true)) {
     hideOther('feed-follows-module')
   } else if (
     res('main-toggle', false) ||
@@ -116,7 +119,7 @@ async function doIt(response) {
   }
 
   // Hide account building prompts
-  if (enabled && res('hide-account-building', true)) {
+  if (res('hide-account-building', true)) {
     hideOther('artdeco-card ember-view mt2')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
@@ -125,7 +128,7 @@ async function doIt(response) {
   }
 
   // Hide viewership s building prompts
-  if (enabled && res('hide-account-building', true)) {
+  if (res('hide-account-building', true)) {
     hideOther('artdeco-card ember-view mt2')
     hideOther('artdeco-card mb4 overflow-hidden ember-view')
   } else if (res('main-toggle', false) || res('hide-account-building', false)) {
@@ -134,7 +137,7 @@ async function doIt(response) {
   }
 
   // Hide network building prompts
-  if (enabled && res('hide-network-building', true)) {
+  if (res('hide-network-building', true)) {
     hideOther('mn-abi-form')
     hideOther('pv-profile-pymk__container artdeco-card')
   } else if (res('main-toggle', false) || res('hide-network-building', false)) {
@@ -143,7 +146,7 @@ async function doIt(response) {
   }
 
   // Hide premium upsell prompts
-  if (enabled && res('hide-premium', true)) {
+  if (res('hide-premium', true)) {
     hideOther('premium-upsell-link', false)
     hideOther('gp-promo-embedded-card-three__card')
   } else if (res('main-toggle', false) || res('hide-premium', false)) {
@@ -152,13 +155,17 @@ async function doIt(response) {
   }
 
   // Hide news
-  if (enabled && res('hide-news', true)) {
+  if (res('hide-news', true)) {
     hideOther('news-module')
   } else if (res('main-toggle', false) || res('hide-news', false)) {
     showOther('news-module')
   }
 
-  oldReponse = response
+  if (res('hide-notification-count', true)) {
+    hideOther('notification-badge__count', false, 'hide')
+  } else {
+    showOther('notification-badge__count')
+  }
 }
 
 function getStorageAndDoIt() {
@@ -201,11 +208,15 @@ async function toggleFeed(shown) {
 
 // Toggle arbitrary element
 
-async function hideOther(className, showIcon = true) {
+async function hideOther(className, showIcon = true, forcedMode = null) {
   const elements = await waitForClassName(className)
   for (let el of elements) {
     el.classList.remove('hide', 'dim', 'showIcon')
-    el.classList.add(mode, showIcon && 'showIcon')
+    el.classList.add(forcedMode || mode)
+
+    if (showIcon) {
+      el.classList.add('showIcon')
+    }
   }
 }
 
@@ -610,7 +621,7 @@ let lastUrl = window.location.href
 setInterval(() => {
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
-    oldReponse = {}
+    oldResponse = {}
     getStorageAndDoIt()
     if (window.location.href.includes('/messaging/'))
       setupDeleteMessagesButton()

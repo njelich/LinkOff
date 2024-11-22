@@ -10,7 +10,7 @@
 }
 
 .hide {
-  display: None;
+  display: none !important;
 }
 
 .dim:not(:hover) > * {

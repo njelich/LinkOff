@@ -25,6 +25,7 @@ chrome.runtime.onInstalled.addListener((details) => {
           'hide-premium': true,
           'hide-news': false,
           'hide-promoted': true,
+          'hide-notification-count': false,
           'hide-shared': false,
           'hide-videos': false,
           'hide-whole-feed': false,
