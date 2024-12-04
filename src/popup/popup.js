@@ -1,5 +1,3 @@
-'use strict'
-
 // Tab functionality
 
 const openTab = (tabName) => (event) => {

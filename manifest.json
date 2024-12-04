@@ -6,48 +6,42 @@
   "version": "1.7.0",
   "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "src/icons/icon16.png",
+    "48": "src/icons/icon48.png",
+    "128": "src/icons/icon128.png"
   },
   "background": {
-    "service_worker": "service_worker.js",
-    "scripts": [
-      "service_worker.js"
-    ],
+    "service_worker": "src/service_worker.js",
+    "scripts": ["src/service_worker.js"],
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.linkedin.com/*"
-      ],
-      "js": [
-        "content/content.js"
-      ],
-      "css": [
-        "content/content.css"
-      ],
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["src/content/content.js"],
+      "css": ["src/content/content.css"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "icons/forbidden.svg"
+        "/src/icons/forbidden.svg",
+        "/src/index.js",
+        "/src/utils.js",
+        "/src/constants.js",
+        "/src/features/feed.js",
+        "/src/features/general.js",
+        "/src/features/jobs.js",
+        "/src/features/misc.js",
+        "/src/features/message.js"
       ],
-      "matches": [
-        "https://www.linkedin.com/*"
-      ]
+      "matches": ["https://www.linkedin.com/*"]
     }
   ],
   "action": {
-    "default_popup": "popup/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
-  "host_permissions": [
-    "https://www.linkedin.com/*"
-  ],
-  "permissions": [
-    "storage"
-  ]
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "permissions": ["storage"]
 }
