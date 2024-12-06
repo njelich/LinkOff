@@ -1,5 +1,3 @@
-'use strict'
-
 // Tab functionality
 
 const openTab = (tabName) => (event) => {
@@ -142,13 +140,34 @@ const feedTagify = new Tagify(feedKeywords, {
     valuesArr.map((item) => item.value).join(', '),
 })
 
-function onChange(e) {
+const jobKeywords = document.querySelector('input[id=hide-by-job-keywords]')
+const jobTagify = new Tagify(jobKeywords, {
+  whitelist: [],
+  dropdown: {
+    position: 'input',
+    enabled: 0,
+    placeAbove: true,
+  },
+  originalInputValueFormat: (valuesArr) =>
+    valuesArr.map((item) => item.value).join(', '),
+})
+
+function onFeedChange(e) {
   chrome.storage.local.set({ 'feed-keywords': e.target.value }, () => {})
 }
-feedKeywords.addEventListener('change', onChange)
+
+feedKeywords.addEventListener('change', onFeedChange)
+
+function onJobChange(e) {
+  chrome.storage.local.set({ 'job-keywords': e.target.value }, () => {})
+}
+jobKeywords.addEventListener('change', onJobChange)
 
 window.onload = function () {
   chrome.storage.local.get('feed-keywords', function (res) {
     feedTagify.addTags(res['feed-keywords'])
+  })
+  chrome.storage.local.get('job-keywords', function (res) {
+    jobTagify.addTags(res['job-keywords'])
   })
 }
