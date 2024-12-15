@@ -198,19 +198,35 @@
         <option value="day">a day</option>
         <option value="week">a week</option>
         <option value="month">a month</option>
+        <option value="year">a year</option>
       </select>
     </div>
   </div>
 
   <div id="Jobs" class="px-4 pb-4 content-tab">
-    <div class="block">
-      <h2 class="title is-2 has-text-centered">COMING SOON</h2>
-      <p class="has-text-centered">
-        I'm working hard on writing the new features in this category. If you'd
-        like to help, please make a feature request on
-        <a href="https://github.com/njelich/LinkOff">github</a> or share the
-        extension with your colleagues.
-      </p>
+    <div class="field">
+      <input id="hide-job-guidance" class="switch" type="checkbox" />
+      <label for="hide-job-guidance">Hide job guidance</label>
+    </div>
+
+    <div class="field">
+      <input id="hide-ai-button" class="switch" type="checkbox" />
+      <label for="hide-ai-button">Hide AI button</label>
+    </div>
+
+    <div class="field">
+      <input id="hide-promoted-jobs" class="switch" type="checkbox" />
+      <label for="hide-promoted-jobs">Hide promoted</label>
+    </div>
+
+    <div class="divider">Hide jobs by keywords</div>
+
+    <div class="field">
+      <input
+        id="hide-by-job-keywords"
+        placeholder="Add keywords"
+        class="tagify--outside"
+      />
     </div>
   </div>
 
@@ -295,5 +311,5 @@
 
   <link href="../lib/tagify.css" rel="stylesheet" type="text/css" />
   <script language="javascript" src="../lib/tagify.min.js"></script>
-  <script language="javascript" src="popup.js"></script>
+  <script language="javascript" src="popup.js" type="module"></script>
 </body>

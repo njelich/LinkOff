@@ -1,16 +1,21 @@
 @supports (-webkit-user-select: none) {
   :root {
-    --url_header: url('chrome-extension://__MSG_@@extension_id__/icons/forbidden.svg');
-  }
-}
-@supports (-moz-user-select: none) {
-  :root {
-    --url_header: url('moz-extension://__MSG_@@extension_id__/icons/forbidden.svg');
+    --hide-icon: url('chrome-extension://__MSG_@@extension_id__/src/icons/forbidden.svg');
   }
 }
 
-.hide {
+@supports (-moz-user-select: none) {
+  :root {
+    --hide-icon: url('moz-extension://__MSG_@@extension_id__/src/icons/forbidden.svg');
+  }
+}
+
+.hide[class] {
   display: none !important;
+}
+
+.dim:not(:hover) {
+  box-shadow: none;
 }
 
 .dim:not(:hover) > * {
@@ -18,6 +23,7 @@
   filter: alpha(opacity=5) !important;
   zoom: 1 !important;
   position: relative !important;
+  box-shadow: none;
 }
 
 .dim:not(:hover) > * > * > * {
@@ -30,6 +36,10 @@
   overflow: visible;
 }
 
+.dim.showIcon {
+  position: relative;
+}
+
 .dim.showIcon:not(:hover)::after {
   content: '';
   position: absolute;
@@ -37,7 +47,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-image: var(--url_header);
+  background-image: var(--hide-icon);
   background-size: cover;
   width: 30px;
   height: 30px;
