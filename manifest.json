@@ -3,7 +3,7 @@
   "name": "LinkOff - Filter and Customizer for LinkedIn™",
   "short_name": "LinkOff",
   "author": "Noah Jelich",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
   "browser_specific_settings": {
     "gecko": {
