@@ -5,6 +5,16 @@
   "author": "Noah Jelich",
   "version": "1.8.0",
   "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "linkoff_gecko@jelich.cc",
+      "strict_min_version": "58.0"
+    },
+    "gecko_android": {
+      "id": "linkoff_gecko_android@jelich.cc",
+      "strict_min_version": "58.0"
+    }
+  },
   "icons": {
     "16": "src/icons/icon16.png",
     "48": "src/icons/icon48.png",
