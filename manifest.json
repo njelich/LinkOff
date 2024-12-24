@@ -7,11 +7,11 @@
   "description": "LinkOff cleans and customizes LinkedIn. It filters out the junk, leaving behind the posts and page elements that you want to see.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "linkoff_gecko@jelich.cc",
+      "id": "{dc212c1b-5965-471e-ac34-56c908222386}",
       "strict_min_version": "58.0"
     },
     "gecko_android": {
-      "id": "linkoff_gecko_android@jelich.cc",
+      "id": "{dc212c1b-5965-471e-ac34-56c908222386}",
       "strict_min_version": "58.0"
     }
   },
