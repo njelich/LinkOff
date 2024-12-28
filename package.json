@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "css-build": "sass --no-source-map popup/popup.scss popup/popup.css",
+    "css-build": "sass --no-source-map --load-path=node_modules src/popup/popup.scss src/popup/popup.css",
     "css-watch": "npm run css-build -- --watch",
     "start": "npm run css-watch",
     "lint": "eslint . --ignore-path .eslintignore"
@@ -14,7 +14,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1",
-    "sass": "^1.80.4"
+    "sass": "^1.83.0"
   },
   "release": {
     "branches": [

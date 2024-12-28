@@ -134,7 +134,8 @@ const getFeedKeywords = (response) => {
       'text::celebrates this',
       'text::is curious about this',
       'text::supports this',
-      'text::finds this funny'
+      'text::finds this funny',
+      'text::reposted this'
     )
   if (response['hide-commented-on']) keywords.push('text::commented on this')
   if (response['hide-by-companies'])
@@ -148,16 +149,12 @@ const getFeedKeywords = (response) => {
   return keywords
 }
 
-const hidePost = (post, mode) => {
-  post.classList.add(mode, 'showIcon')
-
-  post.onclick = () => {
-    post.classList.remove('hide', 'dim', 'showIcon')
-    post.dataset.hidden = 'shown'
+const saveHiddenPosts = (postId) => {
+  const hiddenPosts = JSON.parse(localStorage.getItem('hiddenPosts') || '[]')
+  if (!hiddenPosts.includes(postId)) {
+    hiddenPosts.push(postId)
+    localStorage.setItem('hiddenPosts', JSON.stringify(hiddenPosts))
   }
-
-  // Add attribute to track already hidden posts
-  post.dataset.hidden = true
 }
 
 const blockByFeedKeywords = (keywords, mode, disablePostCount) => {
@@ -171,6 +168,7 @@ const blockByFeedKeywords = (keywords, mode, disablePostCount) => {
   if (keywords.length)
     feedKeywordInterval = setInterval(() => {
       if (runs % 10 === 0) resetBlockedPosts()
+
       // Select posts which are not already hidden
       posts = document.querySelectorAll(
         getCustomSelectors(FEED_SELECTORS, 'pristine')
@@ -179,13 +177,13 @@ const blockByFeedKeywords = (keywords, mode, disablePostCount) => {
       console.log(`LinkOff: Found ${posts.length} unblocked posts`)
 
       // Filter only if there are enough posts to load more
-      if (posts.length > 5 || mode == 'dim') {
+      if (posts.length > 5 || mode === 'dim') {
         posts.forEach((post) => {
           let keywordIndex
+          const postId = post.getAttribute('data-id')
 
           const containsKeyword = keywords.some((keyword, index) => {
             keywordIndex = index
-
             const splitted = keyword.split('::')
 
             if (splitted.length > 1) {
@@ -196,21 +194,24 @@ const blockByFeedKeywords = (keywords, mode, disablePostCount) => {
           })
 
           if (containsKeyword) {
-            hidePost(post, mode)
-
             console.log(
-              `LinkOff: Blocked post ${post.getAttribute(
-                'data-id'
-              )} for keyword ${keywords[keywordIndex]}`
+              `LinkOff: Blocking and removing post ${postId} for keyword ${keywords[keywordIndex]}`
             )
+
+            // Save the post ID to localStorage
+            saveHiddenPosts(postId)
+
+            // Remove the post from the DOM
+            post.remove()
           } else {
+            // Ensure the post is visible if not blocked
             post.classList.remove('hide', 'dim', 'showIcon')
             post.dataset.hidden = false
           }
         })
       } else {
         if (!postCountPrompted && !disablePostCount) {
-          postCountPrompted = true //Prompt only once when loading linkedin
+          postCountPrompted = true // Prompt only once when loading LinkedIn
           alert(
             'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
           )
