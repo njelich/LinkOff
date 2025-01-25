@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "css-build": "sass --no-source-map popup/popup.scss popup/popup.css",
+    "css-build": "sass --no-source-map src/popup/popup.scss src/popup/popup.css",
     "css-watch": "npm run css-build -- --watch",
     "start": "npm run css-watch",
     "lint": "eslint . --ignore-path .eslintignore"
@@ -20,5 +20,8 @@
     "branches": [
       "master"
     ]
+  },
+  "dependencies": {
+    "@creativebulma/bulma-tooltip": "^1.2.0"
   }
 }

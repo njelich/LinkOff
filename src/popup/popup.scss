@@ -1,8 +1,10 @@
 @charset "utf-8";
-@import '../node_modules/@yaireo/tagify/src/tagify';
-@import '../node_modules/bulma/bulma.sass';
-@import '../node_modules/bulma-switch/src/sass/index.sass';
-@import '../node_modules/@creativebulma/bulma-divider/src/sass/index.sass';
+@import '../../node_modules/@yaireo/tagify/src/tagify.scss';
+@import '../../node_modules/bulma/bulma.sass';
+@import '../../node_modules/bulma-switch/src/sass/index.sass';
+@import '../../node_modules/@creativebulma/bulma-divider/src/sass/index.sass';
+@import '../../node_modules/@creativebulma/bulma-tooltip/src/sass/index.sass';
+
 // Fixed width
 body {
   width: 400px;
@@ -108,4 +110,12 @@ body {
     transition: 0s;
     border-color: var(--tags-focus-border-color);
   }
+}
+
+.icon {
+  height: 18px;
+}
+
+.has-tooltip-arrow {
+  border-bottom: none !important;
 }
