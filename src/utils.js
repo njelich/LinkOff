@@ -186,3 +186,41 @@ export const resetJobs = () => {
     delete post.dataset.hidden
   })
 }
+
+
+export const hideAncestorByChildClassName = async (childClassName, ancestorSelector, mode, showIcon = true) => {
+  const elements = await waitForClassName(childClassName)
+
+  for (let el of elements) {
+    const parent = el.closest(ancestorSelector)
+
+    if (!parent) return
+
+    parent.classList.remove('hide', 'dim', 'showIcon')
+    parent.classList.add(mode)
+
+    if (showIcon) {
+      parent.classList.add('showIcon')
+    }
+
+    forceCallback(
+      () => parent.classList.contains(mode),
+      () => {
+        parent.classList.remove('hide', 'dim', 'showIcon')
+        parent.classList.add(mode)
+
+        if (showIcon) {
+          parent.classList.add('showIcon')
+        }
+      }
+    )
+  }
+}
+
+export const showAncestorByChildClassName = async (childClassName, ancestorSelector) => {
+  const elements = await waitForClassName(childClassName)
+  for (let el of elements) {
+
+    el.closest(ancestorSelector)?.classList.remove('hide', 'dim', 'showIcon')
+  }
+}
