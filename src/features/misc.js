@@ -1,6 +1,8 @@
 import {
+  hideAncestorByChildClassName,
   hideByClassName,
   hideByClassNameAndIndex,
+  showAncestorByChildClassName,
   showByClassName,
   showByClassNameAndIndex,
 } from '../utils.js'
@@ -10,14 +12,12 @@ const showLearning = () => {
   showByClassName('learning-top-courses')
   showByClassName('pv-course-recommendations')
 }
+
 const handleLearning = (getRes, mode) => {
   if (getRes('hide-linkedin-learning', true)) {
     hideByClassName('learning-top-courses', mode)
     hideByClassName('pv-course-recommendations', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-linkedin-learning', false)
-  ) {
+  } else {
     showLearning()
   }
 }
@@ -36,10 +36,7 @@ const handleAdvertisement = (getRes, mode) => {
     hideByClassName('ads-container', mode)
     hideByClassName('ad-banner', mode)
     hideByClassName('pv-right-rail__sticky-ad-banner', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-advertisements', false)
-  ) {
+  } else {
     showAdvertisement()
   }
 }
@@ -51,10 +48,7 @@ const showCommunity = () => {
 const handleCommunity = (getRes, mode) => {
   if (getRes('hide-community-panel', true)) {
     hideByClassName('community-panel', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-community-panel', false)
-  ) {
+  } else {
     showCommunity()
   }
 }
@@ -67,10 +61,7 @@ const showFollow = () => {
 const handleFollow = (getRes, mode) => {
   if (getRes('hide-follow-recommendations', true)) {
     hideByClassName('feed-follows-module', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-follow-recommendations', false)
-  ) {
+  } else {
     showFollow()
   }
 }
@@ -84,10 +75,7 @@ const handleAccountBuilding = (getRes, mode) => {
   if (getRes('hide-account-building', true)) {
     hideByClassName('artdeco-card ember-view mt2', mode)
     hideByClassName('artdeco-card mb4 overflow-hidden ember-view', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-account-building', false)
-  ) {
+  } else {
     showAccountBuilding()
   }
 }
@@ -102,10 +90,7 @@ const handleNetworkBuilding = (getRes, mode) => {
   if (getRes('hide-network-building', true)) {
     hideByClassName('mn-abi-form', mode)
     hideByClassName('pv-profile-pymk__container artdeco-card', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-network-building', false)
-  ) {
+  } else {
     showNetworkBuilding()
   }
 }
@@ -129,7 +114,7 @@ const handlePremium = (getRes, mode) => {
     hideByClassName('pvs-entity--blurred', mode, false)
     hideByClassName('artdeco-card premium-accent-bar', mode)
     hideByClassNameAndIndex('artdeco-tab ember-view', 1, mode, false)
-  } else if (getRes('main-toggle', false) || getRes('hide-premium', false)) {
+  } else {
     showPremium()
   }
 }
@@ -143,7 +128,7 @@ const handleNews = (getRes, mode) => {
   if (getRes('hide-news', true)) {
     hideByClassName('news-module', mode)
     hideByClassName('news-module--with-game', mode)
-  } else if (getRes('main-toggle', false) || getRes('hide-news', false)) {
+  } else {
     showNews()
   }
 }
@@ -161,6 +146,19 @@ const handleNotifications = (getRes) => {
   }
 }
 
+//  Show/Hide profile counters
+const showProfileCounters = () => {
+  showAncestorByChildClassName('entity-list-wrapper', '.artdeco-card')
+}
+
+const handleProfileCounters = (getRes, mode) => {
+  if (getRes('hide-profile-counters', true)) {
+    hideAncestorByChildClassName('entity-list-wrapper', '.artdeco-card', mode, false)
+  } else {
+    showNotifications()
+  }
+}
+
 const showAll = () => {
   showNews()
   showNotifications()
@@ -171,6 +169,7 @@ const showAll = () => {
   showFollow()
   showPremium()
   showLearning()
+  showProfileCounters()
 }
 
 let interval
@@ -185,6 +184,7 @@ const handleAll = (getRes, mode) => {
   handleNews(getRes, mode)
   handleAdvertisement(getRes, mode)
   handleNotifications(getRes)
+  handleProfileCounters(getRes, mode)
 }
 
 export default (getRes, enabled, mode) => {

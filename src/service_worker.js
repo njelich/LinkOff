@@ -37,6 +37,7 @@ chrome.runtime.onInstalled.addListener((details) => {
           'hide-news': false,
           'hide-promoted': true,
           'hide-notification-count': false,
+          'hide-profile-counters': false,
           'hide-community-panel': true,
           // Jobs
           'job-keywords': '',
