@@ -1,6 +1,8 @@
 export const FEED_SELECTORS = [
   '[data-id*="urn:li:activity"]',
   '[data-id*="urn:li:aggregate"]',
+  '[data-urn*="urn:li:activity"]',
+  '[data-urn*="urn:li:aggregate"]',
 ]
 
 export const JOB_SELECTORS = [

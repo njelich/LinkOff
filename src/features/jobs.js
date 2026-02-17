@@ -10,6 +10,8 @@ let runs = 0
 let jobKeywordInterval
 let jobKeywords = []
 let oldJobKeywords = []
+const isLinkedInHost = (hostname) =>
+  hostname === 'linkedin.com' || hostname === 'www.linkedin.com'
 
 const getJobKeywords = (response) => {
   let jobKeywords =
@@ -24,7 +26,11 @@ const getJobKeywords = (response) => {
 }
 
 const blockByJobKeywords = (keywords, mode) => {
-  if (!window.location.href.startsWith('https://www.linkedin.com/jobs/')) return
+  if (
+    !isLinkedInHost(window.location.hostname) ||
+    !window.location.pathname.startsWith('/jobs/')
+  )
+    return
 
   if (oldJobKeywords.some((kw) => !keywords.includes(kw))) {
     resetJobs()

@@ -12,6 +12,8 @@ let feedKeywordInterval
 let postCountPrompted = false
 let feedKeywords = []
 let oldFeedKeywords = []
+const isLinkedInHost = (hostname) =>
+  hostname === 'linkedin.com' || hostname === 'www.linkedin.com'
 
 const handleAgeFiltering = (keywords, age) => {
   const ageKeywords = {
@@ -126,7 +128,7 @@ const getFeedKeywords = (response) => {
   if (response['hide-shared']) keywords.push('feed-shared-mini-update-v2')
   if (response['hide-followed']) keywords.push('text::following')
   if (response['hide-liked'])
-    keywords.push('text::likes this', 'text::like this')
+    keywords.push('text::likes this', 'text::like this', 'text::liked this')
   if (response['hide-other-reactions'])
     keywords.push(
       'text::loves this',
@@ -137,10 +139,8 @@ const getFeedKeywords = (response) => {
       'text::finds this funny'
     )
   if (response['hide-commented-on']) keywords.push('text::commented on this')
-  if (response['hide-by-companies'])
-    keywords.push('href="https://www.linkedin.com/company/')
-  if (response['hide-by-people'])
-    keywords.push('href="https://www.linkedin.com/in/')
+  if (response['hide-by-companies']) keywords.push('linkedin.com/company/')
+  if (response['hide-by-people']) keywords.push('linkedin.com/in/')
   if (response['hide-suggested']) keywords.push('text::Suggested')
   if (response['hide-carousels']) keywords.push('iframe')
 
@@ -225,7 +225,10 @@ const toggleFeed = async (shown) => {
   let attempts = 0
   let success = false
   let className = 'scaffold-finite-scroll__content' // feed element css class
-  if (window.location.href != 'https://www.linkedin.com/feed/') {
+  if (
+    !isLinkedInHost(window.location.hostname) ||
+    window.location.pathname !== '/feed/'
+  ) {
     // dont hide this element on notifications & jobs page. Only hide on home feed instead.
     return
   }
@@ -257,8 +260,8 @@ const toggleFeed = async (shown) => {
 // Toggle sort by recent
 const handleSortByRecent = async () => {
   if (
-    window.location.href !== 'https://www.linkedin.com/feed/' &&
-    window.location.href !== 'https://www.linkedin.com/'
+    !isLinkedInHost(window.location.hostname) ||
+    (window.location.pathname !== '/feed/' && window.location.pathname !== '/')
   ) {
     return
   }

@@ -30,7 +30,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.linkedin.com/*"
+        "https://www.linkedin.com/*",
+        "https://linkedin.com/*"
       ],
       "js": [
         "src/content/content.js"
@@ -55,7 +56,8 @@
         "/src/features/message.js"
       ],
       "matches": [
-        "https://www.linkedin.com/*"
+        "https://www.linkedin.com/*",
+        "https://linkedin.com/*"
       ]
     }
   ],
@@ -63,7 +65,8 @@
     "default_popup": "src/popup/popup.html"
   },
   "host_permissions": [
-    "https://www.linkedin.com/*"
+    "https://www.linkedin.com/*",
+    "https://linkedin.com/*"
   ],
   "permissions": [
     "storage"
