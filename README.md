@@ -53,8 +53,6 @@ Also available on Firefox. Coming soon to Opera and other browsers.
 > ⭐️ Hide community panel and follow recommendations
 >
 > ⭐️ Stop LinkedIn premium upsell pestering
->
-> ⭐️ Toggle-able dark mode
 
 > ⭐️ Fully configurable to suit your need!
 >
@@ -149,4 +147,3 @@ The footer should contain any information about **Breaking Changes** and is also
 reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
-

@@ -1,21 +1,16 @@
 import { JOB_SELECTORS } from '../constants.js'
-import {
-  getCustomSelectors,
-  hideByClassName,
-  resetJobs,
-  showByClassName,
-} from '../utils.js'
+import { getCustomSelector, resetJobs } from '../utils.js'
 
 let runs = 0
 let jobKeywordInterval
 let jobKeywords = []
 let oldJobKeywords = []
 
-const getJobKeywords = (response) => {
+const getJobKeywords = (config) => {
   let jobKeywords =
-    response['job-keywords'] == '' ? [] : response['job-keywords'].split(',')
+    config['job-keywords'] == '' ? [] : config['job-keywords'].split(',')
 
-  if (response['hide-promoted-jobs']) {
+  if (config['hide-promoted-jobs']) {
     jobKeywords.push('Promoted')
   }
 
@@ -38,9 +33,7 @@ const blockByJobKeywords = (keywords, mode) => {
     jobKeywordInterval = setInterval(() => {
       if (runs % 10 === 0) resetJobs()
 
-      posts = document.querySelectorAll(
-        getCustomSelectors(JOB_SELECTORS, 'all')
-      )
+      posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
 
       console.log(`LinkOff: Found ${posts.length} unblocked jobs`)
 
@@ -73,44 +66,47 @@ const blockByJobKeywords = (keywords, mode) => {
 const resetAll = () => {
   clearInterval(jobKeywordInterval)
   resetJobs()
-  showJobGuidance()
-  showAiButton()
+  // showJobGuidance()
+  // showAiButton()
 }
 
-// Show/Hide Job Guidance
-const showJobGuidance = () => {
-  showByClassName('artdeco-card mb2 pt5')
-}
-const handleJobGuidance = (getRes, mode) => {
-  if (getRes('hide-job-guidance', true)) {
-    hideByClassName('artdeco-card mb2 pt5', mode)
-  } else if (
-    getRes('main-toggle', false) ||
-    getRes('hide-job-guidance', false)
-  ) {
-    showJobGuidance()
-  }
-}
+// // Show/Hide Job Guidance
+// const showJobGuidance = () => {
+//   // showByClassName('artdeco-card mb2 pt5')
+// }
+// const handleJobGuidance = (checkNeedUpdate, mode) => {
+//   if (checkNeedUpdate('hide-job-guidance', true)) {
+//     // hideByClassName('artdeco-card mb2 pt5', mode)
+//   } else if (
+//     checkNeedUpdate('main-toggle', false) ||
+//     checkNeedUpdate('hide-job-guidance', false)
+//   ) {
+//     showJobGuidance()
+//   }
+// }
 
-// Show/Hide AI Button
-const showAiButton = () => {
-  showByClassName('ember-view link-without-hover-state artdeco-button')
-}
+// // Show/Hide AI Button
+// const showAiButton = () => {
+//   // showByClassName('ember-view link-without-hover-state artdeco-button')
+// }
 
-const handleAiButton = (getRes, mode) => {
-  if (getRes('hide-ai-button', true)) {
-    hideByClassName(
-      'ember-view link-without-hover-state artdeco-button',
-      mode,
-      false
-    )
-  } else if (getRes('main-toggle', false) || getRes('hide-ai-button', false)) {
-    showAiButton()
-  }
-}
+// const handleAiButton = (checkNeedUpdate, mode) => {
+//   if (checkNeedUpdate('hide-ai-button', true)) {
+//     // hideByClassName(
+//     //   'ember-view link-without-hover-state artdeco-button',
+//     //   mode,
+//     //   false
+//     // )
+//   } else if (
+//     checkNeedUpdate('main-toggle', false) ||
+//     checkNeedUpdate('hide-ai-button', false)
+//   ) {
+//     showAiButton()
+//   }
+// }
 
-export default (getRes, enabled, mode, response) => {
-  if (getRes('main-toggle', false)) {
+export default (checkNeedUpdate, enabled, mode, config) => {
+  if (checkNeedUpdate('main-toggle', false)) {
     resetAll()
 
     return
@@ -118,7 +114,7 @@ export default (getRes, enabled, mode, response) => {
 
   if (!enabled) return
 
-  jobKeywords = getJobKeywords(response)
+  jobKeywords = getJobKeywords(config)
 
   // Hide by keywords
   if (jobKeywords !== oldJobKeywords || jobKeywords.length === 0) {
@@ -127,7 +123,7 @@ export default (getRes, enabled, mode, response) => {
     blockByJobKeywords(jobKeywords, mode)
   }
 
-  handleJobGuidance(getRes, mode)
+  // handleJobGuidance(checkNeedUpdate, mode)
 
-  handleAiButton(getRes, mode)
+  // handleAiButton(checkNeedUpdate, mode)
 }
