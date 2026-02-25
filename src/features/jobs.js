@@ -50,9 +50,7 @@ const blockByJobKeywords = (keywords, mode) => {
           post.classList.add(mode, 'showIcon')
 
           console.log(
-            `LinkOff: Blocked job ${post.getAttribute(
-              'data-occludable-job-id'
-            )} for keyword ${keywords[keywordIndex]}`
+            `LinkOff: Blocked job for keyword ${keywords[keywordIndex]}`
           )
         } else {
           post.classList.remove('hide', 'dim', 'showIcon')
@@ -66,44 +64,7 @@ const blockByJobKeywords = (keywords, mode) => {
 const resetAll = () => {
   clearInterval(jobKeywordInterval)
   resetJobs()
-  // showJobGuidance()
-  // showAiButton()
 }
-
-// // Show/Hide Job Guidance
-// const showJobGuidance = () => {
-//   // showByClassName('artdeco-card mb2 pt5')
-// }
-// const handleJobGuidance = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-job-guidance', true)) {
-//     // hideByClassName('artdeco-card mb2 pt5', mode)
-//   } else if (
-//     checkNeedUpdate('main-toggle', false) ||
-//     checkNeedUpdate('hide-job-guidance', false)
-//   ) {
-//     showJobGuidance()
-//   }
-// }
-
-// // Show/Hide AI Button
-// const showAiButton = () => {
-//   // showByClassName('ember-view link-without-hover-state artdeco-button')
-// }
-
-// const handleAiButton = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-ai-button', true)) {
-//     // hideByClassName(
-//     //   'ember-view link-without-hover-state artdeco-button',
-//     //   mode,
-//     //   false
-//     // )
-//   } else if (
-//     checkNeedUpdate('main-toggle', false) ||
-//     checkNeedUpdate('hide-ai-button', false)
-//   ) {
-//     showAiButton()
-//   }
-// }
 
 export default (checkNeedUpdate, enabled, mode, config) => {
   if (checkNeedUpdate('main-toggle', false)) {
@@ -122,8 +83,4 @@ export default (checkNeedUpdate, enabled, mode, config) => {
 
     blockByJobKeywords(jobKeywords, mode)
   }
-
-  // handleJobGuidance(checkNeedUpdate, mode)
-
-  // handleAiButton(checkNeedUpdate, mode)
 }

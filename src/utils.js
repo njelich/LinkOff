@@ -18,18 +18,6 @@ const checkElementAndPlaceholderBySelector = (selector, scope = undefined) => {
   return true
 }
 
-// const checkElementAndPlaceholderByClassName = (className) => {
-//   const found = document.getElementsByClassName(className)
-
-//   if (found.length > 0) {
-//     return Array.from(found).some((element) =>
-//       element.innerHTML.includes('skeleton')
-//     )
-//   }
-
-//   return true
-// }
-
 export const waitForSelectorScoped = async (selector, scope) => {
   while (checkElementAndPlaceholderBySelector(`:scope ${selector}`, scope)) {
     await new Promise((resolve) => {
@@ -59,16 +47,6 @@ export const waitForSelectorAll = async (selector) => {
 
   return document.querySelectorAll(selector)
 }
-
-// export const waitForClassName = async (className) => {
-//   while (checkElementAndPlaceholderByClassName(className)) {
-//     await new Promise((resolve) => {
-//       requestAnimationFrame(resolve)
-//     })
-//   }
-
-//   return document.getElementsByClassName(className)
-// }
 
 const forceCallback = (condition, cb) => {
   let runs = 0
@@ -134,29 +112,6 @@ export const showParentBySelector = async (selectors) => {
   for (let el of elements)
     el.parentElement.classList.remove('hide', 'dim', 'showIcon')
 }
-
-// export const forceHideBySelector = async (selectors) => {
-//   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-//   const elements = await waitForSelectorAll(selector)
-
-//   for (let el of elements) el.style.display = 'none'
-// }
-
-// export const forceShowBySelector = async (selectors) => {
-//   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-//   const elements = await waitForSelectorAll(selector)
-
-//   for (let el of elements) el.style.display = 'inherit'
-// }
-
-// export const showByClassNameAndIndex = async (className, index) => {
-//   const elements = await waitForClassName(className)
-//   const element = elements[index]
-
-//   element.classList.remove('hide', 'dim', 'showIcon')
-// }
 
 export const getCustomSelector = (selectors, type) => {
   let result = []

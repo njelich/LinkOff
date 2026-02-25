@@ -248,7 +248,11 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
 }
 
 const toggleFeed = async (shown) => {
-  if (window.location.href != 'https://www.linkedin.com/feed/') return
+  if (
+    window.location.href !== 'https://www.linkedin.com/feed/' &&
+    window.location.href !== 'https://www.linkedin.com/'
+  )
+    return
 
   if (shown) {
     document.querySelector(FEED_SELECTOR).classList.remove('hide')
