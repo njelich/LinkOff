@@ -28,21 +28,16 @@ chrome.runtime.onInstalled.addListener((details) => {
           'hide-links': false,
           'hide-polls': true,
           // Misc
-          'hide-linkedin-learning': true,
-          'hide-premium': true,
-          'hide-account-building': true,
           'hide-network-building': true,
+          'hide-premium': true,
           'hide-advertisements': true,
           'hide-follow-recommendations': true,
           'hide-news': false,
           'hide-promoted': true,
           'hide-notification-count': false,
           'hide-profile-counters': false,
-          'hide-community-panel': true,
           // Jobs
           'job-keywords': '',
-          'hide-job-guidance': false,
-          'hide-ai-button': false,
           'hide-promoted-jobs': false,
         })
     })

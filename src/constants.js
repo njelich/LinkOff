@@ -1,9 +1,5 @@
 // Job selectors
-export const JOB_SELECTORS = [
-  '[data-job-id]',
-  '[data-occludable-job-id]',
-  '.discovery-templates-vertical-list__list-item',
-]
+export const JOB_SELECTORS = ['[data-view-name="job-card"]']
 
 // Feed selectors
 export const FEED_SELECTOR =
@@ -17,37 +13,30 @@ export const DROPDOWN_TRIGGER_SELECTOR =
 export const RECENT_OPTION_SELECTOR =
   'div[data-view-name="feed-sort-view-set-recent"]'
 
-export const VIDEO_SELECTOR = 'video'
-
-export const IMAGE_SELECTOR =
-  'div[data-view-name="feed-update-image"] > figure > img'
-
-export const CAROUSEL_SELECTOR = 'ul > li > figure > img'
-
 export const WIDE_MODE_SELECTOR = 'main > div'
 
-export const PREMIUM_NAV_UPSELL_SELECTOR =
-  '[data-view-name="premium-nav-upsell-text"]'
-
-export const PREMIUM_IDENTITY_UPSELL_ANCESTOR_SELECTOR =
-  '[data-view-name="identity-module"] + div'
-
-export const PREMIUM_IDENTITY_UPSELL_CHILD_SELECTOR =
-  '[data-view-name="identity-module-upsell"]'
-
+export const VIDEO_KEYWORD = 'video'
+export const IMAGE_KEYWORD = 'data-view-name="feed-update-image"'
+export const CAROUSEL_KEYWORD = 'data-view-name="feed-document-container"'
 export const POLLS_KEYWORD = 'poll'
 export const LINKS_KEYWORD = 'https://lnkd.in/'
 export const PROMOTED_KEYWORD = 'Promoted'
-export const SHARED_KEYWORD = 'feed-shared-mini-update-v2'
+export const SHARED_KEYWORD = 'reposted'
 export const FOLLOWED_KEYWORD = 'following'
 export const LIKED_KEYWORDS = ['likes this', 'like this']
 export const OTHER_REACTIONS_KEYWORDS = [
   'loves this',
+  'love this',
   'finds this insightful',
+  'find this insightful',
   'celebrates this',
+  'celebrate this',
   'is curious about this',
+  'are curious about this',
   'supports this',
+  'support this',
   'finds this funny',
+  'find this funny',
 ]
 export const COMMENTED_ON_KEYWORD = 'commented on this'
 export const BY_COMPANIES_KEYWORD = 'href="https://www.linkedin.com/company/'
@@ -60,6 +49,10 @@ export const VISIBLE_SELECTOR = '[data-hidden=false]'
 export const BLOCKED_SELECTOR = '[data-hidden=true]'
 
 // Misc selectors
+export const NETWORK_BUILDING_SELECTOR = '[data-view-name="pymk-feed-update"]'
+
+export const FOLLOWS_SELECTOR = '[data-view-name="edge-creation-follow-action"]'
+
 export const UNFOLLOW_ALL_BUTTON_SELECTOR =
   'button[aria-label^="Click to stop"]'
 
@@ -67,7 +60,18 @@ export const ADVERTISEMENT_CONTAINER_SELECTOR =
   "iframe[componentkey='MainFeedDesktopNav_feed_ad']"
 
 export const PROFILE_COUNTERS_SELECTOR =
-  "[data-view-name='home-nav-left-rail-growth-widgets-creator-analytics']"
+  "[data-view-name^='home-nav-left-rail-growth-widgets']"
 
 export const NOTIFICATION_COUNT_SELECTOR =
   "[data-view-name='navigation-notifications'] > span > svg + span"
+
+export const NEWS_MODULE_SELECTOR = '[data-view-name="news-module"]'
+
+export const PREMIUM_NAV_UPSELL_SELECTOR =
+  '[data-view-name="premium-nav-upsell-text"]'
+
+export const PREMIUM_IDENTITY_UPSELL_SELECTOR =
+  '[data-view-name="identity-module-upsell"]'
+
+export const PREMIUM_UPSELL_CARD_SELECTOR =
+  '[data-view-name="premium-upsell-card"]'

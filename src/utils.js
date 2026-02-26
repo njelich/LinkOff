@@ -18,26 +18,8 @@ const checkElementAndPlaceholderBySelector = (selector, scope = undefined) => {
   return true
 }
 
-// const checkElementAndPlaceholderByClassName = (className) => {
-//   const found = document.getElementsByClassName(className)
-
-//   if (found.length > 0) {
-//     return Array.from(found).some((element) =>
-//       element.innerHTML.includes('skeleton')
-//     )
-//   }
-
-//   return true
-// }
-
-export const waitForSelectorScoped = async (selector, scope) => {
-  while (checkElementAndPlaceholderBySelector(`:scope ${selector}`, scope)) {
-    await new Promise((resolve) => {
-      requestAnimationFrame(resolve)
-    })
-  }
-
-  return scope.querySelector(`:scope ${selector}`)
+export const removeHideClasses = (element) => {
+  element.classList.remove('hide', 'dim', 'showIcon')
 }
 
 export const waitForSelector = async (selector) => {
@@ -60,43 +42,27 @@ export const waitForSelectorAll = async (selector) => {
   return document.querySelectorAll(selector)
 }
 
-// export const waitForClassName = async (className) => {
-//   while (checkElementAndPlaceholderByClassName(className)) {
-//     await new Promise((resolve) => {
-//       requestAnimationFrame(resolve)
-//     })
-//   }
-
-//   return document.getElementsByClassName(className)
-// }
-
-const forceCallback = (condition, cb) => {
-  let runs = 0
-
-  const interval = setInterval(() => {
-    if (condition() || runs >= 10) {
-      clearInterval(interval)
-      return
-    }
-
-    cb()
-    runs += 1
-  }, 350)
-}
-
 export const hideBySelector = async (selectors, mode, showIcon = true) => {
   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
 
   const elements = await waitForSelectorAll(selector)
 
   for (let el of elements) {
-    el.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(el)
     el.classList.add(mode)
 
     if (showIcon) {
       el.classList.add('showIcon')
     }
   }
+}
+
+export const showBySelector = async (selectors) => {
+  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
+
+  const elements = await waitForSelectorAll(selector)
+
+  for (let el of elements) removeHideClasses(el)
 }
 
 export const hideParentBySelector = async (
@@ -109,7 +75,7 @@ export const hideParentBySelector = async (
   const elements = await waitForSelectorAll(selector)
 
   for (let el of elements) {
-    el.parentElement.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(el.parentElement)
     el.parentElement.classList.add(mode)
 
     if (showIcon) {
@@ -118,45 +84,55 @@ export const hideParentBySelector = async (
   }
 }
 
-export const showBySelector = async (selectors) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) el.classList.remove('hide', 'dim', 'showIcon')
-}
-
 export const showParentBySelector = async (selectors) => {
   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
 
   const elements = await waitForSelectorAll(selector)
 
-  for (let el of elements)
-    el.parentElement.classList.remove('hide', 'dim', 'showIcon')
+  for (let el of elements) removeHideClasses(el.parentElement)
 }
 
-// export const forceHideBySelector = async (selectors) => {
-//   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
+export const hideAncestorIndexBySelector = async (
+  selectors,
+  index,
+  mode,
+  showIcon = true
+) => {
+  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
 
-//   const elements = await waitForSelectorAll(selector)
+  const elements = await waitForSelectorAll(selector)
 
-//   for (let el of elements) el.style.display = 'none'
-// }
+  for (let el of elements) {
+    let ancestor = el
 
-// export const forceShowBySelector = async (selectors) => {
-//   const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
+    for (let i = 1; i <= index; i++) {
+      ancestor = ancestor.parentElement
+    }
 
-//   const elements = await waitForSelectorAll(selector)
+    removeHideClasses(ancestor)
+    ancestor.classList.add(mode)
 
-//   for (let el of elements) el.style.display = 'inherit'
-// }
+    if (showIcon) {
+      ancestor.classList.add('showIcon')
+    }
+  }
+}
 
-// export const showByClassNameAndIndex = async (className, index) => {
-//   const elements = await waitForClassName(className)
-//   const element = elements[index]
+export const showAncestorIndexBySelector = async (selectors, index) => {
+  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
 
-//   element.classList.remove('hide', 'dim', 'showIcon')
-// }
+  const elements = await waitForSelectorAll(selector)
+
+  for (let el of elements) {
+    let ancestor = el
+
+    for (let i = 1; i <= index; i++) {
+      ancestor = ancestor.parentElement
+    }
+
+    removeHideClasses(ancestor)
+  }
+}
 
 export const getCustomSelector = (selectors, type) => {
   let result = []
@@ -184,6 +160,18 @@ export const getCustomSelector = (selectors, type) => {
   return result.join(',')
 }
 
+export const hidePost = (post, mode) => {
+  post.classList.add(mode, 'showIcon')
+
+  post.onclick = () => {
+    post.classList.remove('hide', 'dim', 'showIcon')
+    post.dataset.hidden = 'shown'
+  }
+
+  // Add attribute to track already hidden posts
+  post.dataset.hidden = true
+}
+
 export const resetShownPosts = () => {
   console.log('LinkOff: Reset shown posts')
 
@@ -192,7 +180,7 @@ export const resetShownPosts = () => {
   )
 
   posts.forEach((post) => {
-    post.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(post)
     delete post.dataset.hidden
   })
 }
@@ -205,7 +193,7 @@ export const resetBlockedPosts = () => {
   )
 
   posts.forEach((post) => {
-    post.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(post)
     delete post.dataset.hidden
   })
 }
@@ -216,7 +204,7 @@ export const resetJobs = () => {
   let posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
 
   posts.forEach((post) => {
-    post.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(post)
     delete post.dataset.hidden
   })
 }
@@ -238,24 +226,14 @@ export const hideAncestorByChildSelector = async (
 
     if (!parent) return
 
-    parent.classList.remove('hide', 'dim', 'showIcon')
+    removeHideClasses(parent)
     parent.classList.add(mode)
+
+    parent.dataset.hidden = true
 
     if (showIcon) {
       parent.classList.add('showIcon')
     }
-
-    forceCallback(
-      () => parent.classList.contains(mode),
-      () => {
-        parent.classList.remove('hide', 'dim', 'showIcon')
-        parent.classList.add(mode)
-
-        if (showIcon) {
-          parent.classList.add('showIcon')
-        }
-      }
-    )
   }
 }
 
@@ -265,7 +243,13 @@ export const showAncestorByChildSelector = async (
 ) => {
   const elements = await waitForSelectorAll(childSelector)
   for (let el of elements) {
-    el.closest(ancestorSelector)?.classList.remove('hide', 'dim', 'showIcon')
+    const ancestor = el.closest(ancestorSelector)
+
+    if (!ancestor) return
+
+    removeHideClasses(ancestor)
+
+    ancestor.dataset.hidden = false
   }
 }
 

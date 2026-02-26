@@ -1,5 +1,3 @@
-// import { waitForClassName } from '../utils.js'
-
 // Modified from https://gist.github.com/twhitacre/d4536183c22a2f5a8c7c427df04acc90
 const selectMessagesForDeletion = async () => {
   const container = document.querySelector(
@@ -54,7 +52,6 @@ const selectMessagesForDeletion = async () => {
 export const setupDeleteMessagesButton = async () => {
   console.log('LinkOff: Waiting for Messages to load')
 
-  // await waitForClassName('msg-conversations-container__dropdown-container')
   const menuContainer = document.querySelector(
     '.msg-conversations-container__dropdown-container > div'
   )
