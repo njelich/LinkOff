@@ -26,12 +26,12 @@
   box-shadow: none;
 }
 
-.dim:not(:hover) > * > * > * {
+.dim:not(:hover) {
   max-height: 150px !important;
   overflow: hidden !important;
 }
 
-.dim:hover > * > * > * {
+.dim:hover {
   max-height: auto;
   overflow: visible;
 }

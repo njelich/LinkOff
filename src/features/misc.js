@@ -1,22 +1,22 @@
 import {
   ADVERTISEMENT_CONTAINER_SELECTOR,
+  FOLLOWS_SELECTOR,
+  NEWS_MODULE_SELECTOR,
   NOTIFICATION_COUNT_SELECTOR,
-  PREMIUM_IDENTITY_UPSELL_ANCESTOR_SELECTOR,
-  PREMIUM_IDENTITY_UPSELL_CHILD_SELECTOR,
+  PREMIUM_IDENTITY_UPSELL_SELECTOR,
   PREMIUM_NAV_UPSELL_SELECTOR,
   PROFILE_COUNTERS_SELECTOR,
   UNFOLLOW_ALL_BUTTON_SELECTOR,
 } from '../constants.js'
 import {
-  hideAncestorByChildSelector,
   hideBySelector,
   hideParentBySelector,
-  showAncestorByChildSelector,
   showBySelector,
   showParentBySelector,
+  showAncestorIndexBySelector,
+  hideAncestorIndexBySelector,
 } from '../utils.js'
 
-// Show/Hide ads across linkedin
 const showAdvertisement = () => {
   showParentBySelector(ADVERTISEMENT_CONTAINER_SELECTOR)
 }
@@ -29,7 +29,6 @@ const handleAdvertisement = (checkNeedUpdate, mode) => {
   }
 }
 
-//  Show/Hide notification count
 const showNotifications = () => {
   showBySelector(NOTIFICATION_COUNT_SELECTOR)
 }
@@ -37,121 +36,46 @@ const showNotifications = () => {
 const handleNotifications = (checkNeedUpdate) => {
   if (checkNeedUpdate('hide-notification-count', true)) {
     hideBySelector(NOTIFICATION_COUNT_SELECTOR, 'hide', false)
-  } else {
+  } else if (checkNeedUpdate('hide-notification-count', false)) {
     showNotifications()
   }
 }
 
-//  Show/Hide profile counters
 const showProfileCounters = () => {
-  showParentBySelector(PROFILE_COUNTERS_SELECTOR)
+  showAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3)
 }
 
 const handleProfileCounters = (checkNeedUpdate, mode) => {
   if (checkNeedUpdate('hide-profile-counters', true)) {
-    hideParentBySelector(PROFILE_COUNTERS_SELECTOR, mode, false)
+    hideAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3, mode, false)
   } else if (checkNeedUpdate('hide-profile-counters', false)) {
     showProfileCounters()
   }
 }
 
-// Show/Hide news
-// const showNews = () => {
-//   // showByClassName('news-module')
-//   // showByClassName('news-module--with-game')
-// }
-// const handleNews = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-news', true)) {
-//     // hideByClassName('news-module', mode)
-//     // hideByClassName('news-module--with-game', mode)
-//   } else if (checkNeedUpdate('hide-news', false)) {
-//     showNews()
-//   }
-// }
+const showNews = () => {
+  showBySelector(NEWS_MODULE_SELECTOR)
+}
 
-// // Show/Hide LinkedIn learning prompts and ads
-// const showLearning = () => {
-//   showByClassName('learning-top-courses')
-//   showByClassName('pv-course-recommendations')
-// }
-
-// const handleLearning = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-linkedin-learning', true)) {
-//     hideByClassName('learning-top-courses', mode)
-//     hideByClassName('pv-course-recommendations', mode)
-//   } else if (checkNeedUpdate('hide-linkedin-learning', false)) {
-//     showLearning()
-//   }
-// }
-
-// // Show/Hide community panels
-// const showCommunity = () => {
-//   showByClassName('community-panel')
-// }
-// const handleCommunity = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-community-panel', true)) {
-//     hideByClassName('community-panel', mode)
-//   } else if (checkNeedUpdate('hide-community-panel', false)) {
-//     showCommunity()
-//   }
-// }
-
-// // Show/Hide follow panels
-// const showFollow = () => {
-//   showByClassName('feed-follows-module')
-// }
-
-// const handleFollow = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-follow-recommendations', true)) {
-//     hideByClassName('feed-follows-module', mode)
-//   } else if (checkNeedUpdate('hide-follow-recommendations', false)) {
-//     showFollow()
-//   }
-// }
-
-// // Show/Hide account building prompts
-// const showAccountBuilding = () => {
-//   showByClassName('artdeco-card ember-view mt2')
-//   showByClassName('artdeco-card mb4 overflow-hidden ember-view')
-// }
-// const handleAccountBuilding = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-account-building', true)) {
-//     hideByClassName('artdeco-card ember-view mt2', mode)
-//     hideByClassName('artdeco-card mb4 overflow-hidden ember-view', mode)
-//   } else if (checkNeedUpdate('hide-account-building', false)) {
-//     showAccountBuilding()
-//   }
-// }
-
-// // Show/Hide network building prompts
-// const showNetworkBuilding = () => {
-//   showByClassName('mn-abi-form')
-//   showByClassName('pv-profile-pymk__container artdeco-card')
-// }
-
-// const handleNetworkBuilding = (checkNeedUpdate, mode) => {
-//   if (checkNeedUpdate('hide-network-building', true)) {
-//     hideByClassName('mn-abi-form', mode)
-//     hideByClassName('pv-profile-pymk__container artdeco-card', mode)
-//   } else if (checkNeedUpdate('hide-network-building', false)) {
-//     showNetworkBuilding()
-//   }
-// }
+const handleNews = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-news', true)) {
+    hideBySelector(NEWS_MODULE_SELECTOR, mode, false)
+  } else if (checkNeedUpdate('hide-news', false)) {
+    showNews()
+  }
+}
 
 const showPremium = () => {
   showBySelector(PREMIUM_NAV_UPSELL_SELECTOR)
-  showAncestorByChildSelector(
-    PREMIUM_IDENTITY_UPSELL_CHILD_SELECTOR,
-    PREMIUM_IDENTITY_UPSELL_ANCESTOR_SELECTOR
-  )
+  showAncestorIndexBySelector(PREMIUM_IDENTITY_UPSELL_SELECTOR, 2)
 }
 
 const handlePremium = (checkNeedUpdate, mode) => {
   if (checkNeedUpdate('hide-premium', true)) {
     hideBySelector(PREMIUM_NAV_UPSELL_SELECTOR, mode, false)
-    hideAncestorByChildSelector(
-      PREMIUM_IDENTITY_UPSELL_CHILD_SELECTOR,
-      PREMIUM_IDENTITY_UPSELL_ANCESTOR_SELECTOR,
+    hideAncestorIndexBySelector(
+      PREMIUM_IDENTITY_UPSELL_SELECTOR,
+      2,
       mode,
       false
     )
@@ -160,13 +84,20 @@ const handlePremium = (checkNeedUpdate, mode) => {
   }
 }
 
+const showFollowRecommendations = () => {
+  showAncestorIndexBySelector(FOLLOWS_SELECTOR, 7)
+}
+
+const handleFollowRecommendations = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-follow-recommendations', true)) {
+    hideAncestorIndexBySelector(FOLLOWS_SELECTOR, 7, mode, false)
+  } else if (checkNeedUpdate('hide-follow-recommendations', false)) {
+    showFollowRecommendations()
+  }
+}
 const showAll = () => {
-  // showNews()
-  // showAccountBuilding()
-  // showNetworkBuilding()
-  // showCommunity()
-  // showFollow()
-  // showLearning()
+  showFollowRecommendations()
+  showNews()
   showProfileCounters()
   showNotifications()
   showPremium()
@@ -174,12 +105,8 @@ const showAll = () => {
 }
 
 const handleAll = (checkNeedUpdate, mode) => {
-  // handleLearning(checkNeedUpdate, mode)
-  // handleCommunity(checkNeedUpdate, mode)
-  // handleFollow(checkNeedUpdate, mode)
-  // handleAccountBuilding(checkNeedUpdate, mode)
-  // handleNetworkBuilding(checkNeedUpdate, mode)
-  // handleNews(checkNeedUpdate, mode)
+  handleFollowRecommendations(checkNeedUpdate, mode)
+  handleNews(checkNeedUpdate, mode)
   handleProfileCounters(checkNeedUpdate, mode)
   handleNotifications(checkNeedUpdate)
   handlePremium(checkNeedUpdate, mode)
@@ -199,6 +126,7 @@ export const unfollowAll = async () => {
   }
 
   window.scrollTo(0, document.body.scrollHeight)
+
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
   buttons = document.querySelectorAll(UNFOLLOW_ALL_BUTTON_SELECTOR) || []

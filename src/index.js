@@ -63,9 +63,13 @@ chrome.runtime.onMessage.addListener(async (req) => {
 })
 
 // Track url changes
-let lastUrl = window.location.href
+let lastUrl
+
+const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
 
 setInterval(() => {
+  if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
     oldConfig = {}
@@ -76,20 +80,3 @@ setInterval(() => {
     }
   }
 }, 500)
-
-// On load
-if (document.readyState !== 'loading') {
-  initialize()
-
-  if (window.location.href.includes('/messaging/')) {
-    setupDeleteMessagesButton()
-  }
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    initialize()
-
-    if (window.location.href.includes('/messaging/')) {
-      setupDeleteMessagesButton()
-    }
-  })
-}
