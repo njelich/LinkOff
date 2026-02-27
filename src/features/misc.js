@@ -1,213 +1,120 @@
 import {
-  hideAncestorByChildClassName,
-  hideByClassName,
-  hideByClassNameAndIndex,
-  showAncestorByChildClassName,
-  showByClassName,
-  showByClassNameAndIndex,
+  ADVERTISEMENT_CONTAINER_SELECTOR,
+  FOLLOWS_SELECTOR,
+  NEWS_MODULE_SELECTOR,
+  NOTIFICATION_COUNT_SELECTOR,
+  PREMIUM_IDENTITY_UPSELL_SELECTOR,
+  PREMIUM_NAV_UPSELL_SELECTOR,
+  PROFILE_COUNTERS_SELECTOR,
+  UNFOLLOW_ALL_BUTTON_SELECTOR,
+} from '../constants.js'
+import {
+  hideBySelector,
+  hideParentBySelector,
+  showBySelector,
+  showParentBySelector,
+  showAncestorIndexBySelector,
+  hideAncestorIndexBySelector,
 } from '../utils.js'
 
-// Show/Hide LinkedIn learning prompts and ads
-const showLearning = () => {
-  showByClassName('learning-top-courses')
-  showByClassName('pv-course-recommendations')
-}
-
-const handleLearning = (getRes, mode) => {
-  if (getRes('hide-linkedin-learning', true)) {
-    hideByClassName('learning-top-courses', mode)
-    hideByClassName('pv-course-recommendations', mode)
-  } else {
-    showLearning()
-  }
-}
-
-// Show/Hide ads across linkedin
 const showAdvertisement = () => {
-  showByClassName('ad-banner-container')
-  showByClassName('ads-container')
-  showByClassName('ad-banner')
-  showByClassName('pv-right-rail__sticky-ad-banner')
+  showParentBySelector(ADVERTISEMENT_CONTAINER_SELECTOR)
 }
 
-const handleAdvertisement = (getRes, mode) => {
-  if (getRes('hide-advertisements', true)) {
-    hideByClassName('ad-banner-container', mode)
-    hideByClassName('ads-container', mode)
-    hideByClassName('ad-banner', mode)
-    hideByClassName('pv-right-rail__sticky-ad-banner', mode)
-  } else {
+const handleAdvertisement = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-advertisements', true)) {
+    hideParentBySelector(ADVERTISEMENT_CONTAINER_SELECTOR, mode, false)
+  } else if (checkNeedUpdate('hide-advertisements', false)) {
     showAdvertisement()
   }
 }
 
-// Show/Hide community panels
-const showCommunity = () => {
-  showByClassName('community-panel')
+const showNotifications = () => {
+  showBySelector(NOTIFICATION_COUNT_SELECTOR)
 }
-const handleCommunity = (getRes, mode) => {
-  if (getRes('hide-community-panel', true)) {
-    hideByClassName('community-panel', mode)
-  } else {
-    showCommunity()
+
+const handleNotifications = (checkNeedUpdate) => {
+  if (checkNeedUpdate('hide-notification-count', true)) {
+    hideBySelector(NOTIFICATION_COUNT_SELECTOR, 'hide', false)
+  } else if (checkNeedUpdate('hide-notification-count', false)) {
+    showNotifications()
   }
 }
 
-// Show/Hide follow panels
-const showFollow = () => {
-  showByClassName('feed-follows-module')
+const showProfileCounters = () => {
+  showAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3)
 }
 
-const handleFollow = (getRes, mode) => {
-  if (getRes('hide-follow-recommendations', true)) {
-    hideByClassName('feed-follows-module', mode)
-  } else {
-    showFollow()
+const handleProfileCounters = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-profile-counters', true)) {
+    hideAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3, mode, false)
+  } else if (checkNeedUpdate('hide-profile-counters', false)) {
+    showProfileCounters()
   }
 }
 
-// Show/Hide account building prompts
-const showAccountBuilding = () => {
-  showByClassName('artdeco-card ember-view mt2')
-  showByClassName('artdeco-card mb4 overflow-hidden ember-view')
-}
-const handleAccountBuilding = (getRes, mode) => {
-  if (getRes('hide-account-building', true)) {
-    hideByClassName('artdeco-card ember-view mt2', mode)
-    hideByClassName('artdeco-card mb4 overflow-hidden ember-view', mode)
-  } else {
-    showAccountBuilding()
-  }
-}
-
-// Show/Hide network building prompts
-const showNetworkBuilding = () => {
-  showByClassName('mn-abi-form')
-  showByClassName('pv-profile-pymk__container artdeco-card')
-}
-
-const handleNetworkBuilding = (getRes, mode) => {
-  if (getRes('hide-network-building', true)) {
-    hideByClassName('mn-abi-form', mode)
-    hideByClassName('pv-profile-pymk__container artdeco-card', mode)
-  } else {
-    showNetworkBuilding()
-  }
-}
-
-// Show/Hide premium upsell prompts
-const showPremium = () => {
-  showByClassName('premium-upsell-link')
-  showByClassName('gp-promo-embedded-card-three__card')
-  showByClassName('artdeco-card overflow-hidden ph1 mb2')
-  showByClassName('artdeco-card premium-accent-bar')
-  showByClassName('pvs-premium-upsell__container')
-  showByClassName('pvs-entity--blurred')
-  showByClassNameAndIndex('artdeco-tab ember-view', 1)
-}
-const handlePremium = (getRes, mode) => {
-  if (getRes('hide-premium', true)) {
-    hideByClassName('premium-upsell-link', mode, false)
-    hideByClassName('gp-promo-embedded-card-three__card', mode)
-    hideByClassName('artdeco-card overflow-hidden ph1 mb2', mode, false)
-    hideByClassName('pvs-premium-upsell__container', mode, false)
-    hideByClassName('pvs-entity--blurred', mode, false)
-    hideByClassName('artdeco-card premium-accent-bar', mode)
-    hideByClassNameAndIndex('artdeco-tab ember-view', 1, mode, false)
-  } else {
-    showPremium()
-  }
-}
-
-// Show/Hide news
 const showNews = () => {
-  showByClassName('news-module')
-  showByClassName('news-module--with-game')
+  showBySelector(NEWS_MODULE_SELECTOR)
 }
-const handleNews = (getRes, mode) => {
-  if (getRes('hide-news', true)) {
-    hideByClassName('news-module', mode)
-    hideByClassName('news-module--with-game', mode)
-  } else {
+
+const handleNews = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-news', true)) {
+    hideBySelector(NEWS_MODULE_SELECTOR, mode, false)
+  } else if (checkNeedUpdate('hide-news', false)) {
     showNews()
   }
 }
 
-//  Show/Hide notification count
-const showNotifications = () => {
-  showByClassName('notification-badge__count')
+const showPremium = () => {
+  showBySelector(PREMIUM_NAV_UPSELL_SELECTOR)
+  showAncestorIndexBySelector(PREMIUM_IDENTITY_UPSELL_SELECTOR, 2)
 }
 
-const handleNotifications = (getRes) => {
-  if (getRes('hide-notification-count', true)) {
-    hideByClassName('notification-badge__count', 'hide', false)
-  } else {
-    showNotifications()
+const handlePremium = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-premium', true)) {
+    hideBySelector(PREMIUM_NAV_UPSELL_SELECTOR, mode, false)
+    hideAncestorIndexBySelector(
+      PREMIUM_IDENTITY_UPSELL_SELECTOR,
+      2,
+      mode,
+      false
+    )
+  } else if (checkNeedUpdate('hide-premium', false)) {
+    showPremium()
   }
 }
 
-//  Show/Hide profile counters
-const showProfileCounters = () => {
-  showAncestorByChildClassName('entity-list-wrapper', '.artdeco-card')
+const showFollowRecommendations = () => {
+  showAncestorIndexBySelector(FOLLOWS_SELECTOR, 7)
 }
 
-const handleProfileCounters = (getRes, mode) => {
-  if (getRes('hide-profile-counters', true)) {
-    hideAncestorByChildClassName('entity-list-wrapper', '.artdeco-card', mode, false)
-  } else {
-    showNotifications()
+const handleFollowRecommendations = (checkNeedUpdate, mode) => {
+  if (checkNeedUpdate('hide-follow-recommendations', true)) {
+    hideAncestorIndexBySelector(FOLLOWS_SELECTOR, 7, mode, false)
+  } else if (checkNeedUpdate('hide-follow-recommendations', false)) {
+    showFollowRecommendations()
   }
 }
-
 const showAll = () => {
+  showFollowRecommendations()
   showNews()
-  showNotifications()
-  showAccountBuilding()
-  showNetworkBuilding()
-  showAdvertisement()
-  showCommunity()
-  showFollow()
-  showPremium()
-  showLearning()
   showProfileCounters()
+  showNotifications()
+  showPremium()
+  showAdvertisement()
 }
 
-let interval
-
-const handleAll = (getRes, mode) => {
-  handleLearning(getRes, mode)
-  handleCommunity(getRes, mode)
-  handleFollow(getRes, mode)
-  handleAccountBuilding(getRes, mode)
-  handleNetworkBuilding(getRes, mode)
-  handlePremium(getRes, mode)
-  handleNews(getRes, mode)
-  handleAdvertisement(getRes, mode)
-  handleNotifications(getRes)
-  handleProfileCounters(getRes, mode)
+const handleAll = (checkNeedUpdate, mode) => {
+  handleFollowRecommendations(checkNeedUpdate, mode)
+  handleNews(checkNeedUpdate, mode)
+  handleProfileCounters(checkNeedUpdate, mode)
+  handleNotifications(checkNeedUpdate)
+  handlePremium(checkNeedUpdate, mode)
+  handleAdvertisement(checkNeedUpdate, mode)
 }
-
-export default (getRes, enabled, mode) => {
-  if (getRes('main-toggle', false)) {
-    showAll()
-    clearInterval(interval)
-  }
-
-  if (!enabled) return
-
-  handleAll(getRes, mode)
-
-  if (interval) clearInterval(interval)
-
-  interval = setInterval(() => {
-    handleAll(getRes, mode)
-  }, 500)
-}
-
-const BUTTON_SELECTOR = 'button[aria-label^="Click to stop"]'
 
 export const unfollowAll = async () => {
-  let buttons = document.querySelectorAll(BUTTON_SELECTOR) || []
+  let buttons = document.querySelectorAll(UNFOLLOW_ALL_BUTTON_SELECTOR) || []
 
   if (!buttons.length) console.log('LinkOff: Successfully unfollowed all')
 
@@ -219,9 +126,20 @@ export const unfollowAll = async () => {
   }
 
   window.scrollTo(0, document.body.scrollHeight)
+
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  buttons = document.querySelectorAll(BUTTON_SELECTOR) || []
+  buttons = document.querySelectorAll(UNFOLLOW_ALL_BUTTON_SELECTOR) || []
 
   if (buttons.length) unfollowAll()
+}
+
+export default (checkNeedUpdate, enabled, mode) => {
+  if (checkNeedUpdate('main-toggle', false)) {
+    showAll()
+  }
+
+  if (!enabled) return
+
+  handleAll(checkNeedUpdate, mode)
 }

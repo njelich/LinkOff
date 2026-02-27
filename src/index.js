@@ -3,47 +3,49 @@ import doGenerals from './features/general.js'
 import doFeed from './features/feed.js'
 import doMisc, { unfollowAll } from './features/misc.js'
 import doJobs from './features/jobs.js'
+import { shallowEqual } from './utils.js'
 
-let oldResponse = {}
+let oldConfig = {}
+
+const storage = chrome.storage.local
 
 // Main function
-const doIt = async (response) => {
-  if (JSON.stringify(oldResponse) === JSON.stringify(response)) return
+const doIt = async (config) => {
+  if (shallowEqual(oldConfig, config)) return
 
   // checks if filter needs updating, used below
-  const getRes = (field, bool) => {
-    const changed =
-      response[field] !== oldResponse[field] ||
-      response['gentle-mode'] !== oldResponse['gentle-mode'] ||
-      response['main-toggle'] !== oldResponse['main-toggle']
+  const checkNeedUpdate = (field, bool) => {
+    const hasChanged =
+      config[field] !== oldConfig[field] ||
+      config['gentle-mode'] !== oldConfig['gentle-mode'] ||
+      config['main-toggle'] !== oldConfig['main-toggle']
 
-    if (changed) {
-      console.log(`LinkOff: Toggling ${field} to ${response[field]}`)
+    if (hasChanged) {
+      console.log(`LinkOff: Toggling ${field} to ${config[field]}`)
     }
 
-    return changed && response[field] == bool
+    return hasChanged && config[field] === bool
   }
 
-  // Set Mode
-  let mode = response['gentle-mode'] ? 'dim' : 'hide'
+  const mode = config['gentle-mode'] ? 'dim' : 'hide'
+  const enabled = config['main-toggle']
 
-  // Toggle for jobs & feed options
-  const enabled = response['main-toggle']
+  doGenerals(checkNeedUpdate)
+  doFeed(checkNeedUpdate, enabled, mode, config)
+  doJobs(checkNeedUpdate, enabled, mode, config)
+  doMisc(checkNeedUpdate, enabled, mode)
 
-  doGenerals(getRes)
-  doFeed(getRes, enabled, mode, response)
-  doJobs(getRes, enabled, mode, response)
-  doMisc(getRes, enabled, mode)
-
-  oldResponse = response
+  oldConfig = config
 }
 
-const getStorageAndDoIt = () => chrome.storage.local.get(null, doIt)
+const initialize = async () => {
+  const config = await storage.get()
+
+  doIt(config)
+}
 
 // Storage listener
-chrome.storage.onChanged.addListener(() => {
-  getStorageAndDoIt()
-})
+chrome.storage.onChanged.addListener(initialize)
 
 chrome.runtime.onMessage.addListener(async (req) => {
   if (req['unfollow-all']) {
@@ -61,29 +63,20 @@ chrome.runtime.onMessage.addListener(async (req) => {
 })
 
 // Track url changes
-let lastUrl = window.location.href
+let lastUrl
+
+const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+
 setInterval(() => {
+  if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href
-    oldResponse = {}
-    getStorageAndDoIt()
-    if (window.location.href.includes('/messaging/'))
-      setupDeleteMessagesButton()
-  }
-}, 500)
-
-// On load
-if (document.readyState !== 'loading') {
-  getStorageAndDoIt()
-  if (window.location.href.includes('/messaging/')) {
-    setupDeleteMessagesButton()
-  }
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    getStorageAndDoIt()
+    oldConfig = {}
+    initialize()
 
     if (window.location.href.includes('/messaging/')) {
       setupDeleteMessagesButton()
     }
-  })
-}
+  }
+}, 500)
