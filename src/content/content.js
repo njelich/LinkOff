@@ -1,7 +1,15 @@
 'use strict'
 
-const src = chrome.runtime.getURL('src/index.js')
+// Prevent duplicate initialization (e.g. re-injection); avoids spawning extra contexts/workers
+if (self.__linkoffInit) {
+  // already initialized, do nothing
+} else {
+  self.__linkoffInit = true
 
-// We dynamically import files to be able to use ES6 modules
-// Remember to add imported files to web_accessible_resources
-import(src)
+  // Dynamically import the extension's main code as an ES module
+  const src = chrome.runtime.getURL('src/index.js')
+
+  import(src).catch((e) => {
+    console.error('Failed to import LinkOff extension index.js:', e)
+  })
+}

@@ -64,19 +64,42 @@ chrome.runtime.onMessage.addListener(async (req) => {
 
 // Track url changes
 let lastUrl
+let urlCheckIntervalId = null
 
 const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
 
-setInterval(() => {
-  if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+const startUrlCheck = () => {
+  if (urlCheckIntervalId !== null) return
+  urlCheckIntervalId = setInterval(() => {
+    if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
 
-  if (window.location.href !== lastUrl) {
-    lastUrl = window.location.href
-    oldConfig = {}
-    initialize()
+    if (window.location.href !== lastUrl) {
+      lastUrl = window.location.href
+      oldConfig = {}
+      initialize()
 
-    if (window.location.href.includes('/messaging/')) {
-      setupDeleteMessagesButton()
+      if (window.location.href.includes('/messaging/')) {
+        setupDeleteMessagesButton()
+      }
     }
+  }, 500)
+}
+
+const stopUrlCheck = () => {
+  if (urlCheckIntervalId !== null) {
+    clearInterval(urlCheckIntervalId)
+    urlCheckIntervalId = null
   }
-}, 500)
+}
+
+startUrlCheck()
+
+// Clean up interval when tab is hidden so we don't leave a long-lived timer (avoids extra workers)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    stopUrlCheck()
+  } else {
+    startUrlCheck()
+  }
+})
+window.addEventListener('pagehide', stopUrlCheck)
