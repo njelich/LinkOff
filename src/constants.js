@@ -51,9 +51,6 @@ export const BLOCKED_SELECTOR = '[data-hidden=true]'
 // Misc selectors
 export const FOLLOWS_SELECTOR = '[data-view-name="edge-creation-follow-action"]'
 
-export const UNFOLLOW_ALL_BUTTON_SELECTOR =
-  'button[aria-label^="Click to stop"]'
-
 export const ADVERTISEMENT_CONTAINER_SELECTOR =
   "iframe[componentkey='MainFeedDesktopNav_feed_ad']"
 
@@ -67,3 +64,10 @@ export const NEWS_MODULE_SELECTOR = '[data-view-name="news-module"]'
 
 export const PREMIUM_UPSELL_CARD_SELECTOR =
   '[data-view-name="premium-upsell-card"]'
+
+export const FOLLOW_PAGE_URL = '/mynetwork/network-manager/people-follow'
+
+export const UNFOLLOW_ALL_BUTTON_SELECTOR =
+  'button[aria-label^="Click to stop"]'
+
+export const GOOGLE_INTEGRATION_SELECTOR = '.google-auth-button'

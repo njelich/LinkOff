@@ -36,6 +36,7 @@ chrome.runtime.onInstalled.addListener((details) => {
           'hide-promoted': true,
           'hide-notification-count': false,
           'hide-profile-counters': false,
+          'hide-google-integration': false,
           // Jobs
           'job-keywords': '',
           'hide-promoted-jobs': false,

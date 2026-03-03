@@ -1,6 +1,7 @@
 import {
   ADVERTISEMENT_CONTAINER_SELECTOR,
   FOLLOWS_SELECTOR,
+  GOOGLE_INTEGRATION_SELECTOR,
   NEWS_MODULE_SELECTOR,
   NOTIFICATION_COUNT_SELECTOR,
   PREMIUM_IDENTITY_UPSELL_SELECTOR,
@@ -95,6 +96,13 @@ const handleFollowRecommendations = (checkNeedUpdate, mode) => {
     showFollowRecommendations()
   }
 }
+
+const handleGoogleIntegration = (checkNeedUpdate) => {
+  if (checkNeedUpdate('hide-google-integration', true)) {
+    document.querySelector(GOOGLE_INTEGRATION_SELECTOR)?.remove()
+  }
+}
+
 const showAll = () => {
   showFollowRecommendations()
   showNews()
@@ -111,6 +119,7 @@ const handleAll = (checkNeedUpdate, mode) => {
   handleNotifications(checkNeedUpdate)
   handlePremium(checkNeedUpdate, mode)
   handleAdvertisement(checkNeedUpdate, mode)
+  handleGoogleIntegration(checkNeedUpdate, mode)
 }
 
 export const unfollowAll = async () => {
