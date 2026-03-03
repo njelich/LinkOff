@@ -146,8 +146,6 @@ const getFeedKeywords = (config) => {
     handleAgeFiltering(keywords, hideByAge)
   }
 
-  console.log(config)
-
   if (config['hide-carousels']) keywords.push(CAROUSEL_KEYWORD)
   if (config['hide-videos']) keywords.push(VIDEO_KEYWORD)
   if (config['hide-images']) keywords.push(IMAGE_KEYWORD)
@@ -195,7 +193,6 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
           removeHideClasses(post)
           post.dataset.hidden = false
         } else {
-          console.log('prout', keywords[keywordIndex])
           hidePost(post, mode)
         }
       })
