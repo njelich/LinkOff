@@ -4,6 +4,7 @@ import doFeed from './features/feed.js'
 import doMisc, { unfollowAll } from './features/misc.js'
 import doJobs from './features/jobs.js'
 import { shallowEqual } from './utils.js'
+import { FOLLOW_PAGE_URL } from './constants.js'
 
 let oldConfig = {}
 
@@ -49,9 +50,7 @@ chrome.storage.onChanged.addListener(initialize)
 
 chrome.runtime.onMessage.addListener(async (req) => {
   if (req['unfollow-all']) {
-    if (
-      !window.location.href.includes('/mynetwork/network-manager/people-follow')
-    ) {
+    if (!window.location.href.includes(FOLLOW_PAGE_URL)) {
       alert(
         'No messages. Are you on the follows page (/mynetwork/network-manager/people-follow)?\n\nIf not, please navigate to following using the LinkedIn navbar and then click the Unfollow All button again.'
       )
@@ -66,7 +65,7 @@ chrome.runtime.onMessage.addListener(async (req) => {
 let lastUrl
 let urlCheckIntervalId = null
 
-const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+const AUTHORIZED_URLS = ['/', '/feed/', '/jobs/', '/messaging/']
 
 const startUrlCheck = () => {
   if (urlCheckIntervalId !== null) return
