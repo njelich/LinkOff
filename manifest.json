@@ -29,17 +29,11 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://www.linkedin.com/*",
-        "https://linkedin.com/*"
-      ],
-      "js": [
-        "src/content/content.js"
-      ],
-      "css": [
-        "src/content/content.css"
-      ],
-      "run_at": "document_end"
+      "matches": ["https://www.linkedin.com/*", "https://linkedin.com/*"],
+      "js": ["src/content/content.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_end",
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
