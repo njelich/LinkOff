@@ -7,7 +7,6 @@ chrome.runtime.onInstalled.addListener((details) => {
           initialized: 'v0.5',
           // Generals
           'gentle-mode': true,
-          'dark-mode': false,
           'main-toggle': true,
           // Feed
           'hide-whole-feed': false,
