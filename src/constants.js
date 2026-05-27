@@ -1,5 +1,5 @@
 // Job selectors
-export const JOB_SELECTORS = ['[data-view-name="job-card"]']
+export const JOB_SELECTORS = ['.job-card-container', 'div[data-job-id]']
 
 // Feed selectors
 export const FEED_SELECTOR =
