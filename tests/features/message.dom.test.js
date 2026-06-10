@@ -187,6 +187,24 @@ describe('selectMessagesForDeletion', () => {
     expect(window.alert).not.toHaveBeenCalled()
   })
 
+  it('does not resolve after 4 stall ticks — requires exactly 5 to detect stall', async () => {
+    // Kills the `if (scrollHeight === height) → if (true)` mutation on L27.
+    // That mutation makes attempts increment on every tick (even when height grows),
+    // so stall detection fires one tick early (tick 4 instead of tick 5).
+    // Constant height=100: tick 1 isn't a stall (100≠0); ticks 2-4 are stalls
+    // (attempts 0→1→2→3) but only tick 5 satisfies attempts>=3.
+    buildMessagingDOM()
+    await setupDeleteMessagesButton()
+    const button = await addMenuAndGetButton()
+
+    mockScrollHeight(document.querySelector(CONVERSATIONS_LIST), 100)
+    button.onclick()
+
+    await vi.advanceTimersByTimeAsync(4000)
+
+    expect(window.alert).not.toHaveBeenCalled()
+  })
+
   it('does not add a button when a non-ul element is added to the menu container', async () => {
     buildMessagingDOM()
     await setupDeleteMessagesButton()

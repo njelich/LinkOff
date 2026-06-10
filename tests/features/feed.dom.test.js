@@ -83,6 +83,28 @@ describe('runBlockPosts - keyword matching', () => {
     expect(posts[0].dataset.hidden).toBe('false')
   })
 
+  it('hides a post that matches any one keyword when multiple keywords are active', () => {
+    // Kills the some→every mutation: posts contain only ONE of the two active keywords,
+    // so `every` would leave them unblocked while `some` correctly hides them.
+    const posts = buildFeedDOM([
+      'P1', 'P2', 'P3', 'P4',
+      'Promoted post',    // matches 'Promoted' but not 'video'
+      'Watch this video', // matches 'video' but not 'Promoted'
+    ])
+
+    doFeed(neverTrigger, true, 'hide', {
+      ...baseConfig,
+      'hide-promoted': true,
+      'hide-videos': true,
+    })
+    vi.advanceTimersByTime(350)
+
+    const promoted = Array.from(posts).find((p) => p.textContent.includes('Promoted'))
+    const video    = Array.from(posts).find((p) => p.textContent.includes('video'))
+    expect(promoted.classList.contains('hide')).toBe(true)
+    expect(video.classList.contains('hide')).toBe(true)
+  })
+
   it('does not start the interval when there are no keywords', () => {
     const posts = buildFeedDOM(['P1', 'P2', 'P3', 'P4', 'P5', 'P6'])
 
