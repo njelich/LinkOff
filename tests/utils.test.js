@@ -26,6 +26,14 @@ describe('shallowEqual', () => {
   it('returns false when the first object has an extra key', () => {
     expect(shallowEqual({ a: 1, b: 2 }, { a: 1 })).toBe(false)
   })
+
+  it('returns false when the first object has an undefined-valued key absent from the second', () => {
+    expect(shallowEqual({ a: undefined }, {})).toBe(false)
+  })
+
+  it('returns false when objects have the same key count but different key names', () => {
+    expect(shallowEqual({ a: undefined }, { b: 1 })).toBe(false)
+  })
 })
 
 describe('getCustomSelector', () => {
@@ -59,5 +67,9 @@ describe('getCustomSelector', () => {
     expect(getCustomSelector(['.a', '.b'], 'pristine')).toBe(
       '.a[data-hidden=false],.a:not([data-hidden]),.b[data-hidden=false],.b:not([data-hidden])'
     )
+  })
+
+  it('returns an empty string for an unknown type', () => {
+    expect(getCustomSelector(BASE, 'unknown')).toBe('')
   })
 })

@@ -2,3 +2,5 @@
 /.vscode
 node_modules
 /.claude
+.stryker-tmp
+reports

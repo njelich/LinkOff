@@ -1,0 +1,12 @@
+{
+  "testRunner": "vitest",
+  "plugins": ["@stryker-mutator/vitest-runner"],
+  "mutate": [
+    "src/features/feed-keywords.js",
+    "src/features/job-keywords.js",
+    "src/utils.js"
+  ],
+  "coverageAnalysis": "perTest",
+  "reporters": ["clear-text", "progress"],
+  "tempDirName": ".stryker-tmp"
+}
