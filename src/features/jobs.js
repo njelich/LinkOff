@@ -1,22 +1,11 @@
 import { JOB_SELECTORS } from '../constants.js'
 import { getCustomSelector, resetJobs } from '../utils.js'
+import { getJobKeywords } from './job-keywords.js'
 
 let runs = 0
 let jobKeywordInterval
 let jobKeywords = []
 let oldJobKeywords = []
-
-const getJobKeywords = (config) => {
-  let jobKeywords =
-    config['job-keywords'] == '' ? [] : config['job-keywords'].split(',')
-
-  if (config['hide-promoted-jobs']) {
-    jobKeywords.push('Promoted')
-  }
-
-  console.log('LinkOff: Current job keywords are', jobKeywords)
-  return jobKeywords
-}
 
 const blockByJobKeywords = (keywords, mode) => {
   if (!window.location.pathname.startsWith('/jobs/')) return
