@@ -14,6 +14,7 @@
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/vitest-runner": "^9.6.1",
+    "@vitest/coverage-v8": "^4.1.8",
     "@yaireo/tagify": "^4.1.1",
     "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
