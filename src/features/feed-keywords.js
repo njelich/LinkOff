@@ -15,92 +15,42 @@ import {
   VIDEO_KEYWORD,
 } from '../constants.js'
 
+const AGE_UNITS = [
+  { name: 'hour',  suffix: 'h •',  from: 2, to: 24 },
+  { name: 'day',   suffix: 'd •',  from: 2, to: 30 },
+  { name: 'week',  suffix: 'w •',  from: 2, to: 4  },
+  { name: 'month', suffix: 'mo •', from: 2, to: 12 },
+  { name: 'year',  suffix: 'y •',  from: 2, to: 5  },
+]
+
+const KEYWORD_FLAGS = [
+  ['hide-carousels',       [CAROUSEL_KEYWORD]],
+  ['hide-videos',          [VIDEO_KEYWORD]],
+  ['hide-images',          [IMAGE_KEYWORD]],
+  ['hide-polls',           [POLLS_KEYWORD]],
+  ['hide-links',           [LINKS_KEYWORD]],
+  ['hide-promoted',        [PROMOTED_KEYWORD]],
+  ['hide-shared',          [SHARED_KEYWORD]],
+  ['hide-followed',        [FOLLOWED_KEYWORD]],
+  ['hide-liked',           LIKED_KEYWORDS],
+  ['hide-other-reactions', OTHER_REACTIONS_KEYWORDS],
+  ['hide-commented-on',    [COMMENTED_ON_KEYWORD]],
+  ['hide-by-companies',    [BY_COMPANIES_KEYWORD]],
+  ['hide-by-people',       [BY_PEOPLE_KEYWORD]],
+  ['hide-suggested',       [SUGGESTED_KEYWORD]],
+]
+
 const handleAgeFiltering = (keywords, age) => {
-  const ageKeywords = {
-    hour: 'h •',
-    day: 'd •',
-    week: 'w •',
-    month: 'mo •',
-    year: 'y •',
+  const startIndex = AGE_UNITS.findIndex((u) => u.name === age)
+  if (startIndex === -1) return
+
+  const { suffix, from, to } = AGE_UNITS[startIndex]
+  for (let x = from; x <= to; x++) {
+    keywords.push(`${x}${suffix}`)
   }
 
-  const hideByHour = (shouldLoop = true) => {
-    if (shouldLoop) {
-      for (let x = 2; x <= 24; x++) {
-        keywords.push(`${x}${ageKeywords.hour}`)
-      }
-    } else {
-      keywords.push(`${ageKeywords.hour}`)
-    }
-
-    hideByDay(false)
-  }
-
-  const hideByDay = (shouldLoop) => {
-    if (shouldLoop) {
-      for (let x = 2; x <= 30; x++) {
-        keywords.push(`${x}${ageKeywords.day}`)
-      }
-    } else {
-      keywords.push(`${ageKeywords.day}`)
-    }
-
-    hideByWeek(false)
-  }
-
-  const hideByWeek = (shouldLoop) => {
-    if (shouldLoop) {
-      for (let x = 2; x <= 4; x++) {
-        keywords.push(`${x}${ageKeywords.week}`)
-      }
-    } else {
-      keywords.push(`${ageKeywords.week}`)
-    }
-
-    hideByMonth(false)
-  }
-
-  const hideByMonth = (shouldLoop) => {
-    if (shouldLoop) {
-      for (let x = 2; x <= 12; x++) {
-        keywords.push(`${x}${ageKeywords.month}`)
-      }
-    } else {
-      keywords.push(`${ageKeywords.month}`)
-    }
-    hideByYear(false)
-  }
-
-  const hideByYear = (shouldLoop) => {
-    if (shouldLoop) {
-      for (let x = 2; x <= 5; x++) {
-        keywords.push(`${x}${ageKeywords.year}`)
-      }
-    } else {
-      keywords.push(`${ageKeywords.year}`)
-    }
-  }
-
-  switch (age) {
-    case 'hour':
-      hideByHour(keywords)
-      break
-
-    case 'day':
-      hideByDay(keywords)
-      break
-
-    case 'week':
-      hideByWeek(keywords)
-      break
-
-    case 'month':
-      hideByMonth(keywords)
-      break
-
-    case 'year':
-      hideByYear(keywords)
-      break
+  for (let i = startIndex + 1; i < AGE_UNITS.length; i++) {
+    keywords.push(AGE_UNITS[i].suffix)
   }
 }
 
@@ -108,26 +58,11 @@ export const getFeedKeywords = (config) => {
   const keywords =
     config['feed-keywords'] === '' ? [] : config['feed-keywords'].split(',')
 
-  const hideByAge = config['hide-by-age']
+  handleAgeFiltering(keywords, config['hide-by-age'])
 
-  if (hideByAge !== 'disabled') {
-    handleAgeFiltering(keywords, hideByAge)
+  for (const [flag, values] of KEYWORD_FLAGS) {
+    if (config[flag]) keywords.push(...values)
   }
-
-  if (config['hide-carousels']) keywords.push(CAROUSEL_KEYWORD)
-  if (config['hide-videos']) keywords.push(VIDEO_KEYWORD)
-  if (config['hide-images']) keywords.push(IMAGE_KEYWORD)
-  if (config['hide-polls']) keywords.push(POLLS_KEYWORD)
-  if (config['hide-links']) keywords.push(LINKS_KEYWORD)
-  if (config['hide-promoted']) keywords.push(PROMOTED_KEYWORD)
-  if (config['hide-shared']) keywords.push(SHARED_KEYWORD)
-  if (config['hide-followed']) keywords.push(FOLLOWED_KEYWORD)
-  if (config['hide-liked']) keywords.push(...LIKED_KEYWORDS)
-  if (config['hide-other-reactions']) keywords.push(...OTHER_REACTIONS_KEYWORDS)
-  if (config['hide-commented-on']) keywords.push(COMMENTED_ON_KEYWORD)
-  if (config['hide-by-companies']) keywords.push(BY_COMPANIES_KEYWORD)
-  if (config['hide-by-people']) keywords.push(BY_PEOPLE_KEYWORD)
-  if (config['hide-suggested']) keywords.push(SUGGESTED_KEYWORD)
 
   console.log('LinkOff: Current feed keywords are', keywords)
 
