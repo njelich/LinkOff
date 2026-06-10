@@ -28,7 +28,7 @@
   },
   "release": {
     "branches": [
-      "master"
+      "main"
     ]
   }
 }
