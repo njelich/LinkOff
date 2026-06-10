@@ -41,36 +41,33 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
 
   oldFeedKeywords = keywords
 
-  let posts
+  const applyKeywordToPost = (post) => {
+    if (keywords.some((keyword) => post.outerHTML.indexOf(keyword) !== -1)) {
+      hidePost(post, mode)
+    } else {
+      removeHideClasses(post)
+      post.dataset.hidden = false
+    }
+  }
+
+  const promptScrollIfNeeded = () => {
+    if (!postCountPrompted && !disablePostCount) {
+      postCountPrompted = true
+      alert(
+        'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
+      )
+    }
+  }
 
   const runBlockPosts = () => {
     if (runs % 10 === 0) resetBlockedPosts()
-    // Select posts which are not already hidden
-    posts = document.querySelectorAll(
+    const posts = document.querySelectorAll(
       getCustomSelector(POST_SELECTOR, 'pristine')
     )
-
-    // Filter only if there are enough posts to load more
     if (posts.length > 5 || mode == 'dim') {
-      posts.forEach((post) => {
-        const keywordIndex = keywords.findIndex(
-          (keyword) => post.outerHTML.indexOf(keyword) !== -1
-        )
-
-        if (keywordIndex === -1) {
-          removeHideClasses(post)
-          post.dataset.hidden = false
-        } else {
-          hidePost(post, mode)
-        }
-      })
+      posts.forEach(applyKeywordToPost)
     } else {
-      if (!postCountPrompted && !disablePostCount) {
-        postCountPrompted = true
-        alert(
-          'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
-        )
-      }
+      promptScrollIfNeeded()
     }
   }
 

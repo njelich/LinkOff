@@ -22,6 +22,22 @@ export const removeHideClasses = (element) => {
   element.classList.remove('hide', 'dim', 'showIcon')
 }
 
+const resolveSelector = (selectors) =>
+  Array.isArray(selectors) ? selectors.join(',') : selectors
+
+const applyHide = (target, mode, showIcon) => {
+  removeHideClasses(target)
+  target.classList.add(mode)
+  if (showIcon) target.classList.add('showIcon')
+}
+
+const resetBySelector = (selector) => {
+  document.querySelectorAll(selector).forEach((el) => {
+    removeHideClasses(el)
+    delete el.dataset.hidden
+  })
+}
+
 export const waitForSelector = async (selector) => {
   while (checkElementAndPlaceholderBySelector(selector)) {
     await new Promise((resolve) => {
@@ -43,93 +59,39 @@ export const waitForSelectorAll = async (selector) => {
 }
 
 export const hideBySelector = async (selectors, mode, showIcon = true) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) {
-    removeHideClasses(el)
-    el.classList.add(mode)
-
-    if (showIcon) {
-      el.classList.add('showIcon')
-    }
-  }
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) applyHide(el, mode, showIcon)
 }
 
 export const showBySelector = async (selectors) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) removeHideClasses(el)
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) removeHideClasses(el)
 }
 
-export const hideParentBySelector = async (
-  selectors,
-  mode,
-  showIcon = true
-) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) {
-    removeHideClasses(el.parentElement)
-    el.parentElement.classList.add(mode)
-
-    if (showIcon) {
-      el.parentElement.classList.add('showIcon')
-    }
-  }
+export const hideParentBySelector = async (selectors, mode, showIcon = true) => {
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) applyHide(el.parentElement, mode, showIcon)
 }
 
 export const showParentBySelector = async (selectors) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) removeHideClasses(el.parentElement)
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) removeHideClasses(el.parentElement)
 }
 
-export const hideAncestorIndexBySelector = async (
-  selectors,
-  index,
-  mode,
-  showIcon = true
-) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) {
+export const hideAncestorIndexBySelector = async (selectors, index, mode, showIcon = true) => {
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) {
     let ancestor = el
-
-    for (let i = 1; i <= index; i++) {
-      ancestor = ancestor.parentElement
-    }
-
-    removeHideClasses(ancestor)
-    ancestor.classList.add(mode)
-
-    if (showIcon) {
-      ancestor.classList.add('showIcon')
-    }
+    for (let i = 1; i <= index; i++) ancestor = ancestor.parentElement
+    applyHide(ancestor, mode, showIcon)
   }
 }
 
 export const showAncestorIndexBySelector = async (selectors, index) => {
-  const selector = Array.isArray(selectors) ? selectors.join(',') : selectors
-
-  const elements = await waitForSelectorAll(selector)
-
-  for (let el of elements) {
+  const elements = await waitForSelectorAll(resolveSelector(selectors))
+  for (const el of elements) {
     let ancestor = el
-
-    for (let i = 1; i <= index; i++) {
-      ancestor = ancestor.parentElement
-    }
-
+    for (let i = 1; i <= index; i++) ancestor = ancestor.parentElement
     removeHideClasses(ancestor)
   }
 }
@@ -174,39 +136,17 @@ export const hidePost = (post, mode) => {
 
 export const resetShownPosts = () => {
   console.log('LinkOff: Reset shown posts')
-
-  let posts = document.querySelectorAll(
-    getCustomSelector(POST_SELECTOR, 'shown')
-  )
-
-  posts.forEach((post) => {
-    removeHideClasses(post)
-    delete post.dataset.hidden
-  })
+  resetBySelector(getCustomSelector(POST_SELECTOR, 'shown'))
 }
 
 export const resetBlockedPosts = () => {
-  console.log(`LinkOff: Resetting blocked posts`)
-
-  let posts = document.querySelectorAll(
-    getCustomSelector(POST_SELECTOR, 'blocked')
-  )
-
-  posts.forEach((post) => {
-    removeHideClasses(post)
-    delete post.dataset.hidden
-  })
+  console.log('LinkOff: Resetting blocked posts')
+  resetBySelector(getCustomSelector(POST_SELECTOR, 'blocked'))
 }
 
 export const resetJobs = () => {
   console.log('LinkOff: Reset shown jobs')
-
-  let posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
-
-  posts.forEach((post) => {
-    removeHideClasses(post)
-    delete post.dataset.hidden
-  })
+  resetBySelector(getCustomSelector(JOB_SELECTORS, 'all'))
 }
 
 export const hideAncestorByChildSelector = async (

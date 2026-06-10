@@ -15,27 +15,18 @@ const selectMessagesForDeletion = async () => {
     return await new Promise((resolve) => {
       let height = 0
       let attempts = 0
-      if (container) {
-        const interval = setInterval(() => {
-          const { scrollHeight } = container
-          if (scrollHeight > 20000) {
-            clearInterval(interval)
-            resolve()
-          }
-          if (scrollHeight === height) {
-            if (attempts >= 3) {
-              clearInterval(interval)
-              resolve()
-            } else {
-              attempts++
-            }
-          }
-          height = scrollHeight
-          container.scrollTop = scrollHeight
-        }, 1000)
-      } else {
-        alert('The page took too long to load. Please try again.')
-      }
+      const interval = setInterval(() => {
+        const { scrollHeight } = container
+        container.scrollTop = scrollHeight
+        const reachedLimit = scrollHeight > 20000
+        const stalledLongEnough = scrollHeight === height && attempts >= 3
+        if (reachedLimit || stalledLongEnough) {
+          clearInterval(interval)
+          return resolve()
+        }
+        if (scrollHeight === height) attempts++
+        height = scrollHeight
+      }, 1000)
     })
   }
   await loadAllMessages()
