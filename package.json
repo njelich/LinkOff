@@ -6,7 +6,8 @@
     "start": "npm run css-watch",
     "lint": "eslint . --ignore-path .eslintignore",
     "test": "vitest run",
-    "mutate": "stryker run"
+    "mutate": "stryker run",
+    "mutate:report": "stryker run && node scripts/mutation-report.js"
   },
   "devDependencies": {
     "@creativebulma/bulma-divider": "^1.1.0",

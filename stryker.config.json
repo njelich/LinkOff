@@ -4,9 +4,11 @@
   "mutate": [
     "src/features/feed-keywords.js",
     "src/features/job-keywords.js",
+    "src/features/feed.js",
+    "src/features/message.js",
     "src/utils.js"
   ],
   "coverageAnalysis": "perTest",
-  "reporters": ["clear-text", "progress"],
+  "reporters": ["html", "json", "progress"],
   "tempDirName": ".stryker-tmp"
 }
