@@ -5,7 +5,7 @@ export const JOB_SELECTORS = ['.job-card-container', 'div[data-job-id]']
 export const FEED_SELECTOR =
   "[componentkey='container-update-list_mainFeed-lazy-container']"
 
-export const POST_SELECTOR = `${FEED_SELECTOR} > div[data-display-contents="true"] > div`
+export const POST_SELECTOR = `${FEED_SELECTOR} > div[data-lazy-mount-id] > div[data-display-contents="true"] > div`
 
 export const DROPDOWN_TRIGGER_SELECTOR =
   'div[data-view-name="feed-nav-feed-sort-toggle"]'
