@@ -1,0 +1,27 @@
+{
+  "hide-profile-counters": [
+    "Profile viewers"
+  ],
+  "hide-follow-recommendations": [
+    "Add to your feed"
+  ],
+  "hide-news": [
+    "Linkedin News"
+  ],
+  "hide-premium": {
+    "top": [
+      "Retry Premium for",
+      "Try Premium for"
+    ],
+    "sidebar": [
+      "Retry Premium for",
+      "Try Premium for"
+    ]
+  },
+  "hide-games": [
+    "Today's puzzles"
+  ],
+  "common": {
+    "sidebar": "Sidebar"
+  }
+}

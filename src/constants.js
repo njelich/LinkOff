@@ -71,3 +71,5 @@ export const UNFOLLOW_ALL_BUTTON_SELECTOR =
   'button[aria-label^="Click to stop"]'
 
 export const GOOGLE_INTEGRATION_SELECTOR = '.google-auth-button'
+
+export const DEFAULT_LOCALE = 'en'

@@ -143,6 +143,9 @@
   cursor: default;
   transition: 0.13s ease-out;
 }
+.tagify__tag:last-child {
+  margin-right: 5px;
+}
 .tagify__tag > div {
   display: flex;
   flex: 1;
@@ -308,12 +311,11 @@
   white-space: nowrap;
 }
 .tagify__input {
-  flex-grow: 1;
   display: inline-block;
   margin: 5px;
   padding: var(--tag-pad);
   line-height: normal;
-  min-width: 110px;
+  min-width: fit-content;
   min-height: 1.5lh;
   position: relative;
   white-space: pre-wrap;
@@ -321,11 +323,14 @@
   box-sizing: inherit;
   overflow: hidden;
 }
-@-moz-document url-prefix() {}
 .tagify__input:focus {
   outline: none;
 }
-.tagify__input:focus::before {
+.tagify__input:last-child {
+  flex-grow: 1;
+  min-width: 110px;
+}
+.tagify__input:last-child:focus::before {
   transition: 0.2s ease-out;
   opacity: 0;
   transform: translateX(6px);
@@ -333,11 +338,11 @@
   /* IE Edge 12+ CSS styles go here */
 }
 @supports (-ms-ime-align: auto) {
-  .tagify__input:focus::before {
+  .tagify__input:last-child:focus::before {
     display: none;
   }
 }
-.tagify__input:focus:empty::before {
+.tagify__input:last-child:focus:empty::before {
   transition: 0.2s ease-out;
   opacity: 1;
   transform: none;
@@ -345,12 +350,15 @@
   color: var(--placeholder-color-focus);
 }
 @-moz-document url-prefix() {
-  .tagify__input:focus:empty::after {
+  .tagify__input:last-child:focus:empty::after {
     display: none;
   }
 }
-.tagify__input::before {
+.tagify__input:last-child::before {
   content: attr(data-placeholder);
+}
+@-moz-document url-prefix() {}
+.tagify__input::before {
   width: 100%;
   height: 100%;
   margin: auto 0;
