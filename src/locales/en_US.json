@@ -1,0 +1,10 @@
+{
+  "hide-profile-counters": "Profile viewers",
+  "hide-follow-recommendations": "Add to your feed",
+  "hide-news": "",
+  "hide-premium": {
+    "top": "Retry Premium for",
+    "sidebar": "Retry Premium for"
+  },
+  "hide-games": "Today's puzzles"
+}
