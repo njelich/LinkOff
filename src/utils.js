@@ -1,5 +1,7 @@
 import {
   BLOCKED_SELECTOR,
+  DEFAULT_LOCALE,
+  FEED_SELECTOR,
   JOB_SELECTORS,
   POST_SELECTOR,
   PRISTINE_SELECTOR,
@@ -134,6 +136,81 @@ export const showAncestorIndexBySelector = async (selectors, index) => {
   }
 }
 
+const findElementsByTextContent = (textContents, containerSelector) => {
+  const texts = Array.isArray(textContents) ? textContents : [textContents]
+
+  if (!texts.length) return []
+
+  const root = containerSelector
+    ? document.querySelector(containerSelector)
+    : document.body
+
+  if (!root) return []
+
+  const feed = document.querySelector(FEED_SELECTOR)
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) =>
+      feed?.contains(node)
+        ? NodeFilter.FILTER_REJECT
+        : NodeFilter.FILTER_ACCEPT,
+  })
+
+  const elements = new Set()
+
+  let node
+  while ((node = walker.nextNode())) {
+    if (texts.some((text) => node.nodeValue.includes(text))) {
+      elements.add(node.parentElement)
+    }
+  }
+
+  return Array.from(elements)
+}
+
+export const hideAncestorIndexByTextContent = (
+  textContent,
+  index,
+  mode,
+  showIcon = true,
+  containerSelector
+) => {
+  const elements = findElementsByTextContent(textContent, containerSelector)
+
+  for (let el of elements) {
+    let ancestor = el
+
+    for (let i = 1; i <= index; i++) {
+      ancestor = ancestor.parentElement
+    }
+
+    removeHideClasses(ancestor)
+    ancestor.classList.add(mode)
+
+    if (showIcon) {
+      ancestor.classList.add('showIcon')
+    }
+  }
+}
+
+export const showAncestorIndexByTextContent = (
+  textContent,
+  index,
+  containerSelector
+) => {
+  const elements = findElementsByTextContent(textContent, containerSelector)
+
+  for (let el of elements) {
+    let ancestor = el
+
+    for (let i = 1; i <= index; i++) {
+      ancestor = ancestor.parentElement
+    }
+
+    removeHideClasses(ancestor)
+  }
+}
+
 export const getCustomSelector = (selectors, type) => {
   let result = []
 
@@ -250,6 +327,28 @@ export const showAncestorByChildSelector = async (
     removeHideClasses(ancestor)
 
     ancestor.dataset.hidden = false
+  }
+}
+
+const loadLocale = async (locale) => {
+  const url = chrome.runtime.getURL(`src/locales/${locale}.json`)
+
+  const response = await fetch(url)
+
+  if (!response.ok) throw new Error(`LinkOff: no locale file for "${locale}"`)
+
+  return response.json()
+}
+
+export const getLocaleTranslations = async () => {
+  const lang = document.documentElement.lang || DEFAULT_LOCALE
+
+  const locale = lang.toLowerCase().split('-')[0]
+
+  try {
+    return await loadLocale(locale)
+  } catch {
+    return loadLocale(DEFAULT_LOCALE)
   }
 }
 
