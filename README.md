@@ -47,6 +47,7 @@ No more seeing unwanted likes and comments by your connections. Block the feed o
 - Block ads on LinkedIn (banners and sidebar)
 - Hide LinkedIn learning and course recommendations
 - Hide community panel and follow recommendations
+- Hide LinkedIn news and games
 - Stop LinkedIn premium upsell pestering
 - Fully configurable to suit your need!
 - Completely FREE and with NO ADS
