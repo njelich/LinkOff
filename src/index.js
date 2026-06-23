@@ -3,10 +3,11 @@ import doGenerals from './features/general.js'
 import doFeed from './features/feed.js'
 import doMisc, { unfollowAll } from './features/misc.js'
 import doJobs from './features/jobs.js'
-import { shallowEqual } from './utils.js'
+import { getLocaleTranslations, shallowEqual } from './utils.js'
 import { FOLLOW_PAGE_URL } from './constants.js'
 
 let oldConfig = {}
+let translations
 
 const storage = chrome.storage.local
 
@@ -31,10 +32,14 @@ const doIt = async (config) => {
   const mode = config['gentle-mode'] ? 'dim' : 'hide'
   const enabled = config['main-toggle']
 
+  if (!translations) {
+    translations = await getLocaleTranslations()
+  }
+
   doGenerals(checkNeedUpdate)
   doFeed(checkNeedUpdate, enabled, mode, config)
   doJobs(checkNeedUpdate, enabled, mode, config)
-  doMisc(checkNeedUpdate, enabled, mode)
+  doMisc(checkNeedUpdate, enabled, mode, translations)
 
   oldConfig = config
 }

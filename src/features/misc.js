@@ -1,12 +1,7 @@
 import {
   ADVERTISEMENT_CONTAINER_SELECTOR,
-  FOLLOWS_SELECTOR,
   GOOGLE_INTEGRATION_SELECTOR,
-  NEWS_MODULE_SELECTOR,
   NOTIFICATION_COUNT_SELECTOR,
-  PREMIUM_IDENTITY_UPSELL_SELECTOR,
-  PREMIUM_NAV_UPSELL_SELECTOR,
-  PROFILE_COUNTERS_SELECTOR,
   UNFOLLOW_ALL_BUTTON_SELECTOR,
 } from '../constants.js'
 import {
@@ -14,8 +9,8 @@ import {
   hideParentBySelector,
   showBySelector,
   showParentBySelector,
-  showAncestorIndexBySelector,
-  hideAncestorIndexBySelector,
+  hideAncestorIndexByTextContent,
+  showAncestorIndexByTextContent,
 } from '../utils.js'
 
 const showAdvertisement = () => {
@@ -42,58 +37,80 @@ const handleNotifications = (checkNeedUpdate) => {
   }
 }
 
-const showProfileCounters = () => {
-  showAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3)
+const showProfileCounters = (translations) => {
+  showAncestorIndexByTextContent(translations['hide-profile-counters'], 7)
 }
 
-const handleProfileCounters = (checkNeedUpdate, mode) => {
+const handleProfileCounters = (checkNeedUpdate, mode, translations) => {
   if (checkNeedUpdate('hide-profile-counters', true)) {
-    hideAncestorIndexBySelector(PROFILE_COUNTERS_SELECTOR, 3, mode, false)
+    hideAncestorIndexByTextContent(
+      translations['hide-profile-counters'],
+      7,
+      mode,
+      false
+    )
   } else if (checkNeedUpdate('hide-profile-counters', false)) {
-    showProfileCounters()
+    showProfileCounters(translations)
   }
 }
 
-const showNews = () => {
-  showBySelector(NEWS_MODULE_SELECTOR)
+const showNews = (translations) => {
+  showAncestorIndexByTextContent(translations['hide-news'], 4)
 }
 
-const handleNews = (checkNeedUpdate, mode) => {
+const handleNews = (checkNeedUpdate, mode, translations) => {
   if (checkNeedUpdate('hide-news', true)) {
-    hideBySelector(NEWS_MODULE_SELECTOR, mode, false)
+    hideAncestorIndexByTextContent(translations['hide-news'], 4, mode, false)
   } else if (checkNeedUpdate('hide-news', false)) {
-    showNews()
+    showNews(translations)
   }
 }
 
-const showPremium = () => {
-  showBySelector(PREMIUM_NAV_UPSELL_SELECTOR)
-  showAncestorIndexBySelector(PREMIUM_IDENTITY_UPSELL_SELECTOR, 2)
+const showPremium = (translations) => {
+  showAncestorIndexByTextContent(translations['hide-premium'].top, 6, 'header')
+  showAncestorIndexByTextContent(
+    translations['hide-premium'].sidebar,
+    9,
+    `[aria-label="${translations.common.sidebar}"]`
+  )
 }
 
-const handlePremium = (checkNeedUpdate, mode) => {
+const handlePremium = (checkNeedUpdate, mode, translations) => {
   if (checkNeedUpdate('hide-premium', true)) {
-    hideBySelector(PREMIUM_NAV_UPSELL_SELECTOR, mode, false)
-    hideAncestorIndexBySelector(
-      PREMIUM_IDENTITY_UPSELL_SELECTOR,
+    hideAncestorIndexByTextContent(
+      translations['hide-premium'].top,
+      4,
+      mode,
+      false,
+      'header'
+    )
+
+    hideAncestorIndexByTextContent(
+      translations['hide-premium'].sidebar,
+      9,
+      mode,
+      false,
+      `[aria-label="${translations.common.sidebar}"]`
+    )
+  } else if (checkNeedUpdate('hide-premium', false)) {
+    showPremium(translations)
+  }
+}
+
+const showFollowRecommendations = (translations) => {
+  showAncestorIndexByTextContent(translations['hide-follow-recommendations'], 2)
+}
+
+const handleFollowRecommendations = (checkNeedUpdate, mode, translations) => {
+  if (checkNeedUpdate('hide-follow-recommendations', true)) {
+    hideAncestorIndexByTextContent(
+      translations['hide-follow-recommendations'],
       2,
       mode,
       false
     )
-  } else if (checkNeedUpdate('hide-premium', false)) {
-    showPremium()
-  }
-}
-
-const showFollowRecommendations = () => {
-  showAncestorIndexBySelector(FOLLOWS_SELECTOR, 7)
-}
-
-const handleFollowRecommendations = (checkNeedUpdate, mode) => {
-  if (checkNeedUpdate('hide-follow-recommendations', true)) {
-    hideAncestorIndexBySelector(FOLLOWS_SELECTOR, 7, mode, false)
   } else if (checkNeedUpdate('hide-follow-recommendations', false)) {
-    showFollowRecommendations()
+    showFollowRecommendations(translations)
   }
 }
 
@@ -103,21 +120,23 @@ const handleGoogleIntegration = (checkNeedUpdate) => {
   }
 }
 
-const showAll = () => {
-  showFollowRecommendations()
-  showNews()
-  showProfileCounters()
+const showAll = (translations) => {
+  showFollowRecommendations(translations)
+  showNews(translations)
+  showProfileCounters(translations)
+  showPremium(translations)
+
   showNotifications()
-  showPremium()
   showAdvertisement()
 }
 
-const handleAll = (checkNeedUpdate, mode) => {
-  handleFollowRecommendations(checkNeedUpdate, mode)
-  handleNews(checkNeedUpdate, mode)
-  handleProfileCounters(checkNeedUpdate, mode)
+const handleAll = (checkNeedUpdate, mode, translations) => {
+  handleFollowRecommendations(checkNeedUpdate, mode, translations)
+  handleNews(checkNeedUpdate, mode, translations)
+  handleProfileCounters(checkNeedUpdate, mode, translations)
+  handlePremium(checkNeedUpdate, mode, translations)
+
   handleNotifications(checkNeedUpdate)
-  handlePremium(checkNeedUpdate, mode)
   handleAdvertisement(checkNeedUpdate, mode)
   handleGoogleIntegration(checkNeedUpdate, mode)
 }
@@ -143,12 +162,12 @@ export const unfollowAll = async () => {
   if (buttons.length) unfollowAll()
 }
 
-export default (checkNeedUpdate, enabled, mode) => {
+export default (checkNeedUpdate, enabled, mode, translations) => {
   if (checkNeedUpdate('main-toggle', false)) {
-    showAll()
+    showAll(translations)
   }
 
   if (!enabled) return
 
-  handleAll(checkNeedUpdate, mode)
+  handleAll(checkNeedUpdate, mode, translations)
 }
