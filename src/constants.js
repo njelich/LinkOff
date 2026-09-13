@@ -1,5 +1,12 @@
-// Job selectors
-export const JOB_SELECTORS = ['.job-card-container', 'div[data-job-id]']
+// Job selectors. The first two cover the older markup. The rest are fallbacks
+// for LinkedIn's newer React jobs pages, where the card classes changed.
+export const JOB_SELECTORS = [
+  '.job-card-container',
+  'div[data-job-id]',
+  'li[data-occludable-job-id]',
+  '[data-view-name="job-card"]',
+  '[data-view-name="jobs-search-results-list-item"]',
+]
 
 // Feed selectors
 export const FEED_SELECTOR =
@@ -38,7 +45,7 @@ export const OTHER_REACTIONS_KEYWORDS = [
   'supports this',
   'finds this funny',
 ]
-export const COMMENTED_ON_KEYWORD = 'commented on this'
+export const COMMENTED_ON_KEYWORD = 'commented'
 export const BY_COMPANIES_KEYWORD = 'href="https://www.linkedin.com/company/'
 export const BY_PEOPLE_KEYWORD = 'href="https://www.linkedin.com/in/'
 export const SUGGESTED_KEYWORD = 'Suggested'
@@ -73,3 +80,39 @@ export const UNFOLLOW_ALL_BUTTON_SELECTOR =
 export const GOOGLE_INTEGRATION_SELECTOR = '.google-auth-button'
 
 export const DEFAULT_LOCALE = 'en'
+
+// LinkedIn sometimes serves pages inside a document whose pathname is
+// /preload/, so location.pathname cannot be trusted. Fall back to the canonical
+// link, then the referrer, then the raw href.
+export const getRealPathname = () => {
+  const candidates = [
+    window.location.pathname,
+    document.querySelector('link[rel="canonical"]')?.href,
+    document.referrer,
+  ]
+
+  for (const candidate of candidates) {
+    if (!candidate || candidate === '/preload/') continue
+
+    try {
+      const path = candidate.startsWith('/')
+        ? candidate
+        : new URL(candidate).pathname
+
+      if (path && path !== '/preload/') return path
+    } catch {
+      // ignore unparseable values and try the next candidate
+    }
+  }
+
+  return window.location.pathname
+}
+
+// True when the page is actually showing job cards, regardless of the path.
+export const looksLikeJobsPage = () =>
+  getRealPathname().startsWith('/jobs/') ||
+  document.querySelector(JOB_SELECTORS.join(',')) !== null
+
+export const looksLikeFeedPage = () =>
+  getRealPathname().startsWith('/feed/') ||
+  document.querySelector(FEED_SELECTOR) !== null

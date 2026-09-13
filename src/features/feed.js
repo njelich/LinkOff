@@ -9,6 +9,7 @@ import {
   IMAGE_KEYWORD,
   LIKED_KEYWORDS,
   LINKS_KEYWORD,
+  looksLikeFeedPage,
   OTHER_REACTIONS_KEYWORDS,
   POLLS_KEYWORD,
   POST_SELECTOR,
@@ -36,7 +37,7 @@ let oldFeedKeywords = []
 const handleSortByRecent = async (checkNeedUpdate) => {
   if (!checkNeedUpdate('sort-by-recent', true)) return
 
-  if (!window.location.pathname.startsWith('/feed/')) return
+  if (!looksLikeFeedPage()) return
 
   const dropdownTrigger = await waitForSelector(DROPDOWN_TRIGGER_SELECTOR)
 
@@ -137,8 +138,15 @@ const handleAgeFiltering = (keywords, age) => {
 }
 
 const getFeedKeywords = (config) => {
+  const raw = config['feed-keywords']
+
   const keywords =
-    config['feed-keywords'] === '' ? [] : config['feed-keywords'].split(',')
+    typeof raw === 'string' && raw.length
+      ? raw
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
 
   const hideByAge = config['hide-by-age']
 
@@ -166,6 +174,34 @@ const getFeedKeywords = (config) => {
   return keywords
 }
 
+// LinkedIn renders social proof lines with non-breaking spaces and React's
+// empty comment separators, which break plain substring matching on outerHTML.
+const normaliseHtml = (html) =>
+  html
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/&nbsp;|&#160;|&#xa0;|\u00a0/gi, ' ')
+    .replace(/\s+/g, ' ')
+
+// The social proof line ("Tim Farmer commented", "Jo Bloggs celebrates this")
+// is the first visible line of a post. LinkedIn now words it inconsistently and
+// splits it across several elements, so match on the rendered text of that
+// line, case insensitively, rather than on the raw HTML.
+const getHeaderText = (post) => {
+  const text = post.innerText || post.textContent || ''
+  const firstLine = text
+    .split('\n')
+    .map((line) => line.trim())
+    .find((line) => line.length > 0)
+
+  return (firstLine || '').replace(/\s+/g, ' ')
+}
+
+const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const headerMatches = (header, keyword) =>
+  header.length > 0 &&
+  new RegExp('\\b' + escapeRegExp(keyword) + '\\b', 'i').test(header)
+
 const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
   if (oldFeedKeywords.some((kw) => !keywords.includes(kw))) {
     resetShownPosts()
@@ -185,8 +221,12 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
     // Filter only if there are enough posts to load more
     if (posts.length > 5 || mode == 'dim') {
       posts.forEach((post) => {
+        const html = normaliseHtml(post.outerHTML)
+        const header = getHeaderText(post)
+
         const keywordIndex = keywords.findIndex(
-          (keyword) => post.outerHTML.indexOf(keyword) !== -1
+          (keyword) =>
+            html.indexOf(keyword) !== -1 || headerMatches(header, keyword)
         )
 
         if (keywordIndex === -1) {
@@ -198,6 +238,8 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
       })
     } else {
       if (!postCountPrompted && !disablePostCount) {
+        if (!looksLikeFeedPage()) return
+
         postCountPrompted = true
         alert(
           'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
@@ -214,7 +256,7 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
 }
 
 const toggleFeed = async (shown) => {
-  if (!window.location.pathname.startsWith('/feed/')) return
+  if (!looksLikeFeedPage()) return
 
   if (shown) {
     document.querySelector(FEED_SELECTOR)?.classList.remove('hide')
