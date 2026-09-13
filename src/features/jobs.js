@@ -1,14 +1,25 @@
-import { JOB_SELECTORS } from '../constants.js'
+import { JOB_SELECTORS, looksLikeJobsPage } from '../constants.js'
 import { getCustomSelector, resetJobs } from '../utils.js'
 
 let runs = 0
 let jobKeywordInterval
 let jobKeywords = []
 let oldJobKeywords = []
+let lastJobSummary = ''
 
 const getJobKeywords = (config) => {
+  // 'job-keywords' is only written to storage once the user edits the tag
+  // input. If it has never been touched it is undefined, and `undefined == ''`
+  // is false, so the old code went straight into undefined.split() and threw.
+  const raw = config['job-keywords']
+
   let jobKeywords =
-    config['job-keywords'] == '' ? [] : config['job-keywords'].split(',')
+    typeof raw === 'string' && raw.length
+      ? raw
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
 
   if (config['hide-promoted-jobs']) {
     jobKeywords.push('Promoted')
@@ -19,8 +30,6 @@ const getJobKeywords = (config) => {
 }
 
 const blockByJobKeywords = (keywords, mode) => {
-  if (!window.location.pathname.startsWith('/jobs/')) return
-
   if (oldJobKeywords.some((kw) => !keywords.includes(kw))) {
     resetJobs()
   }
@@ -31,11 +40,15 @@ const blockByJobKeywords = (keywords, mode) => {
 
   if (keywords.length)
     jobKeywordInterval = setInterval(() => {
+      // Checked every tick. LinkedIn is a single page app and can serve jobs
+      // from a /preload/ document, so this must not rely on the raw pathname.
+      if (!looksLikeJobsPage()) return
+
       if (runs % 10 === 0) resetJobs()
 
       posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
 
-      console.log(`LinkOff: Found ${posts.length} unblocked jobs`)
+      let matched = 0
 
       posts.forEach((post) => {
         const found = keywords.find((keyword) => {
@@ -45,11 +58,20 @@ const blockByJobKeywords = (keywords, mode) => {
         })
 
         if (found) {
+          matched++
           post.classList.add(mode, 'showIcon')
         } else {
           post.classList.remove('hide', 'dim', 'showIcon')
         }
       })
+
+      // Only log when the numbers change, so the console stays readable.
+      const summary = `${posts.length} cards found, ${matched} matched keywords`
+
+      if (summary !== lastJobSummary) {
+        lastJobSummary = summary
+        console.log(`LinkOff jobs: ${summary}`)
+      }
 
       runs++
     }, 350)

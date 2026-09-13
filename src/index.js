@@ -4,7 +4,12 @@ import doFeed from './features/feed.js'
 import doMisc, { unfollowAll } from './features/misc.js'
 import doJobs from './features/jobs.js'
 import { getLocaleTranslations, shallowEqual } from './utils.js'
-import { FOLLOW_PAGE_URL } from './constants.js'
+import {
+  FOLLOW_PAGE_URL,
+  getRealPathname,
+  looksLikeFeedPage,
+  looksLikeJobsPage,
+} from './constants.js'
 
 let oldConfig = {}
 let translations
@@ -36,10 +41,20 @@ const doIt = async (config) => {
     translations = await getLocaleTranslations()
   }
 
-  doGenerals(checkNeedUpdate)
-  doFeed(checkNeedUpdate, enabled, mode, config)
-  doJobs(checkNeedUpdate, enabled, mode, config)
-  doMisc(checkNeedUpdate, enabled, mode, translations)
+  // Run each feature in isolation. Previously a throw in doFeed meant doJobs
+  // and doMisc were never reached at all.
+  const safely = (name, fn) => {
+    try {
+      fn()
+    } catch (e) {
+      console.error(`LinkOff: ${name} failed`, e)
+    }
+  }
+
+  safely('doGenerals', () => doGenerals(checkNeedUpdate))
+  safely('doFeed', () => doFeed(checkNeedUpdate, enabled, mode, config))
+  safely('doJobs', () => doJobs(checkNeedUpdate, enabled, mode, config))
+  safely('doMisc', () => doMisc(checkNeedUpdate, enabled, mode, translations))
 
   oldConfig = config
 }
@@ -70,12 +85,20 @@ chrome.runtime.onMessage.addListener(async (req) => {
 let lastUrl
 let urlCheckIntervalId = null
 
-const AUTHORIZED_URLS = ['/', '/feed/', '/jobs/', '/messaging/']
+const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+
+// Match on prefix, not exact equality, so sub-pages such as
+// /jobs/search/ and /jobs/collections/recommended/ are covered.
+const isAuthorizedUrl = (pathname) =>
+  pathname === '/' ||
+  AUTHORIZED_URLS.some((p) => pathname.startsWith(p)) ||
+  looksLikeFeedPage() ||
+  looksLikeJobsPage()
 
 const startUrlCheck = () => {
   if (urlCheckIntervalId !== null) return
   urlCheckIntervalId = setInterval(() => {
-    if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+    if (!isAuthorizedUrl(getRealPathname())) return
 
     if (window.location.href !== lastUrl) {
       lastUrl = window.location.href
