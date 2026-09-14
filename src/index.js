@@ -36,12 +36,24 @@ const doIt = async (config) => {
     translations = await getLocaleTranslations()
   }
 
-  doGenerals(checkNeedUpdate)
-  doFeed(checkNeedUpdate, enabled, mode, config)
-  doJobs(checkNeedUpdate, enabled, mode, config)
-  doMisc(checkNeedUpdate, enabled, mode, translations)
+  let allSucceeded = true
 
-  oldConfig = config
+  const safely = (name, fn) => {
+    try {
+      fn()
+    } catch (error) {
+      allSucceeded = false
+      console.error(`LinkOff: ${name} failed`, error)
+    }
+  }
+
+  safely('doGenerals', () => doGenerals(checkNeedUpdate))
+  safely('doFeed', () => doFeed(checkNeedUpdate, enabled, mode, config))
+  safely('doJobs', () => doJobs(checkNeedUpdate, enabled, mode, config))
+  safely('doMisc', () => doMisc(checkNeedUpdate, enabled, mode, translations))
+
+  // Leaving oldConfig stale lets the failed setting be reapplied next time.
+  if (allSucceeded) oldConfig = config
 }
 
 const initialize = async () => {
@@ -49,6 +61,11 @@ const initialize = async () => {
 
   doIt(config)
 }
+
+// The feature helpers fire off unawaited async work, so failures surface here.
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('LinkOff: unhandled failure', event.reason)
+})
 
 // Storage listener
 chrome.storage.onChanged.addListener(initialize)
@@ -70,12 +87,16 @@ chrome.runtime.onMessage.addListener(async (req) => {
 let lastUrl
 let urlCheckIntervalId = null
 
-const AUTHORIZED_URLS = ['/', '/feed/', '/jobs/', '/messaging/']
+const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+
+// Prefix match, so sub-pages such as /jobs/search/ are covered too.
+const isAuthorizedUrl = (pathname) =>
+  pathname === '/' || AUTHORIZED_URLS.some((url) => pathname.startsWith(url))
 
 const startUrlCheck = () => {
   if (urlCheckIntervalId !== null) return
   urlCheckIntervalId = setInterval(() => {
-    if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+    if (!isAuthorizedUrl(window.location.pathname)) return
 
     if (window.location.href !== lastUrl) {
       lastUrl = window.location.href

@@ -1,5 +1,12 @@
-// Job selectors
-export const JOB_SELECTORS = ['.job-card-container', 'div[data-job-id]']
+// Job selectors. The first two match the older markup, the rest the rewritten
+// jobs pages. They nest, so matches are reduced to the innermost card.
+export const JOB_SELECTORS = [
+  '.job-card-container',
+  'div[data-job-id]',
+  'li[data-occludable-job-id]',
+  '[data-view-name="job-card"]',
+  '[data-view-name="jobs-search-results-list-item"]',
+]
 
 // Feed selectors
 export const FEED_SELECTOR =
@@ -38,10 +45,12 @@ export const OTHER_REACTIONS_KEYWORDS = [
   'supports this',
   'finds this funny',
 ]
-export const COMMENTED_ON_KEYWORD = 'commented on this'
 export const BY_COMPANIES_KEYWORD = 'href="https://www.linkedin.com/company/'
 export const BY_PEOPLE_KEYWORD = 'href="https://www.linkedin.com/in/'
 export const SUGGESTED_KEYWORD = 'Suggested'
+
+// Matched against the post's social proof line only, never the raw markup.
+export const COMMENTED_HEADER_KEYWORD = 'commented'
 
 // Visibility selectors
 export const PRISTINE_SELECTOR = ':not([data-hidden])'

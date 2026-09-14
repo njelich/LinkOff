@@ -1,14 +1,21 @@
 import { JOB_SELECTORS } from '../constants.js'
-import { getCustomSelector, resetJobs } from '../utils.js'
+import {
+  getCustomSelector,
+  getInnermostElements,
+  parseKeywords,
+  resetJobs,
+} from '../utils.js'
 
 let runs = 0
 let jobKeywordInterval
 let jobKeywords = []
 let oldJobKeywords = []
+let lastJobSummary = ''
+
+const isJobsPage = () => window.location.pathname.startsWith('/jobs/')
 
 const getJobKeywords = (config) => {
-  let jobKeywords =
-    config['job-keywords'] == '' ? [] : config['job-keywords'].split(',')
+  const jobKeywords = parseKeywords(config['job-keywords'])
 
   if (config['hide-promoted-jobs']) {
     jobKeywords.push('Promoted')
@@ -19,7 +26,7 @@ const getJobKeywords = (config) => {
 }
 
 const blockByJobKeywords = (keywords, mode) => {
-  if (!window.location.pathname.startsWith('/jobs/')) return
+  if (!isJobsPage()) return
 
   if (oldJobKeywords.some((kw) => !keywords.includes(kw))) {
     resetJobs()
@@ -27,29 +34,41 @@ const blockByJobKeywords = (keywords, mode) => {
 
   oldJobKeywords = keywords
 
-  let posts
+  const lowercaseKeywords = keywords.map((keyword) => keyword.toLowerCase())
 
   if (keywords.length)
     jobKeywordInterval = setInterval(() => {
+      // The single page app can navigate away without doJobs running again.
+      if (!isJobsPage()) return resetAll()
+
       if (runs % 10 === 0) resetJobs()
 
-      posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
+      const posts = getInnermostElements(
+        document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
+      )
 
-      console.log(`LinkOff: Found ${posts.length} unblocked jobs`)
+      let matched = 0
 
       posts.forEach((post) => {
-        const found = keywords.find((keyword) => {
-          return (
-            post.innerHTML.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
-          )
-        })
+        const html = post.innerHTML.toLowerCase()
+        const found = lowercaseKeywords.some(
+          (keyword) => html.indexOf(keyword) !== -1
+        )
 
         if (found) {
+          matched++
           post.classList.add(mode, 'showIcon')
         } else {
           post.classList.remove('hide', 'dim', 'showIcon')
         }
       })
+
+      const summary = `Found ${posts.length} jobs, ${matched} blocked`
+
+      if (summary !== lastJobSummary) {
+        lastJobSummary = summary
+        console.log(`LinkOff: ${summary}`)
+      }
 
       runs++
     }, 350)
@@ -57,6 +76,7 @@ const blockByJobKeywords = (keywords, mode) => {
 
 const resetAll = () => {
   clearInterval(jobKeywordInterval)
+  lastJobSummary = ''
   resetJobs()
 }
 
