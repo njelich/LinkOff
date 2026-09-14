@@ -2,6 +2,7 @@ const DEFAULTS = {
   // Generals
   'gentle-mode': true,
   'main-toggle': true,
+  'wide-mode': false,
   // Feed
   'hide-whole-feed': false,
   'hide-by-age': 'week',
@@ -29,6 +30,7 @@ const DEFAULTS = {
   'hide-notification-count': false,
   'hide-profile-counters': false,
   'hide-google-integration': false,
+  'disable-postcount-prompt': false,
   // Jobs
   'job-keywords': '',
   'hide-promoted-jobs': false,

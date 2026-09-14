@@ -1,5 +1,5 @@
 // Job selectors. The first two match the older markup, the rest the rewritten
-// jobs pages. They nest, so matches are reduced to the innermost card.
+// jobs pages. They nest, so matches are reduced to the outermost list row.
 export const JOB_SELECTORS = [
   '.job-card-container',
   'div[data-job-id]',

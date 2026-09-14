@@ -31,7 +31,6 @@ import {
 let runs = 0
 let feedInterval
 let postCountPrompted = false
-let feedKeywords = { keywords: [], headerKeywords: [] }
 let oldFeedKeywords = []
 
 const isFeedPage = () => window.location.pathname.startsWith('/feed/')
@@ -50,6 +49,12 @@ const handleSortByRecent = async (checkNeedUpdate) => {
   recentOption?.click()
 }
 
+// LinkedIn timestamps read "<number><unit> •". Pushing the bare unit would also
+// match ordinary text such as "Company • Promoted", so the catch-all variants
+// keep a digit in front; any number ends in one of these ten.
+const withAnyLeadingDigit = (unit) =>
+  Array.from({ length: 10 }, (_, digit) => `${digit}${unit}`)
+
 const handleAgeFiltering = (keywords, age) => {
   const ageKeywords = {
     hour: 'h •',
@@ -65,7 +70,7 @@ const handleAgeFiltering = (keywords, age) => {
         keywords.push(`${x}${ageKeywords.hour}`)
       }
     } else {
-      keywords.push(`${ageKeywords.hour}`)
+      keywords.push(...withAnyLeadingDigit(ageKeywords.hour))
     }
 
     hideByDay(false)
@@ -77,7 +82,7 @@ const handleAgeFiltering = (keywords, age) => {
         keywords.push(`${x}${ageKeywords.day}`)
       }
     } else {
-      keywords.push(`${ageKeywords.day}`)
+      keywords.push(...withAnyLeadingDigit(ageKeywords.day))
     }
 
     hideByWeek(false)
@@ -89,7 +94,7 @@ const handleAgeFiltering = (keywords, age) => {
         keywords.push(`${x}${ageKeywords.week}`)
       }
     } else {
-      keywords.push(`${ageKeywords.week}`)
+      keywords.push(...withAnyLeadingDigit(ageKeywords.week))
     }
 
     hideByMonth(false)
@@ -101,7 +106,7 @@ const handleAgeFiltering = (keywords, age) => {
         keywords.push(`${x}${ageKeywords.month}`)
       }
     } else {
-      keywords.push(`${ageKeywords.month}`)
+      keywords.push(...withAnyLeadingDigit(ageKeywords.month))
     }
     hideByYear(false)
   }
@@ -112,7 +117,7 @@ const handleAgeFiltering = (keywords, age) => {
         keywords.push(`${x}${ageKeywords.year}`)
       }
     } else {
-      keywords.push(`${ageKeywords.year}`)
+      keywords.push(...withAnyLeadingDigit(ageKeywords.year))
     }
   }
 
@@ -174,8 +179,9 @@ const getFeedKeywords = (config) => {
   return { keywords, headerKeywords }
 }
 
-// LinkedIn wraps the social proof line in non-breaking spaces and React comment
-// separators, which break plain substring matching on the raw markup.
+// LinkedIn splits its markup with React comment separators and pads text with
+// non-breaking spaces, so a keyword spanning a space never matches the raw
+// outerHTML. Keywords are matched against this normalized copy instead.
 const normalizeHtml = (html) =>
   html
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -183,8 +189,12 @@ const normalizeHtml = (html) =>
     .replace(/\s+/g, ' ')
 
 // The social proof line ("Tim Farmer commented") is the first rendered line of
-// a post. Posts that are not rendered have no header and never match.
+// a post. For a post that is not being rendered innerText falls back to
+// textContent, which has no line breaks and would put the whole post on that
+// first line, so skip those — they are invisible until a later tick anyway.
 const getHeaderText = (post) => {
+  if (!post.getClientRects().length) return ''
+
   const firstLine = (post.innerText || '')
     .split('\n')
     .find((line) => line.trim())
@@ -217,17 +227,20 @@ const blockPostsByKeywords = (
     keyword.toLowerCase()
   )
 
-  let posts
-
   const runBlockPosts = () => {
     if (runs % 10 === 0) resetBlockedPosts()
-    // Select posts which are not already hidden
-    posts = document.querySelectorAll(
-      getCustomSelector(POST_SELECTOR, 'pristine')
-    )
+
+    // Counted over the whole feed: the pristine list below empties out as posts
+    // get processed, and is 0 on a cold load before LinkedIn has rendered any.
+    const loadedPosts = document.querySelectorAll(POST_SELECTOR)
 
     // Filter only if there are enough posts to load more
-    if (posts.length > 5 || mode == 'dim') {
+    if (loadedPosts.length > 5 || mode == 'dim') {
+      // Select posts which are not already hidden
+      const posts = document.querySelectorAll(
+        getCustomSelector(POST_SELECTOR, 'pristine')
+      )
+
       posts.forEach((post) => {
         const html = normalizeHtml(post.outerHTML)
 
@@ -242,7 +255,12 @@ const blockPostsByKeywords = (
           post.dataset.hidden = false
         }
       })
-    } else if (!postCountPrompted && !disablePostCount && isFeedPage()) {
+    } else if (
+      loadedPosts.length &&
+      !postCountPrompted &&
+      !disablePostCount &&
+      isFeedPage()
+    ) {
       postCountPrompted = true
       alert(
         'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
@@ -283,7 +301,7 @@ const handleHideWholeFeed = () => {
   clearInterval(feedInterval)
 }
 
-const handleFilterFeed = (mode, config) => {
+const handleFilterFeed = (feedKeywords, mode, config) => {
   toggleFeed(true)
 
   resetBlockedPosts()
@@ -307,9 +325,5 @@ export default (checkNeedUpdate, enabled, mode, config) => {
 
   handleSortByRecent(checkNeedUpdate)
 
-  feedKeywords = getFeedKeywords(config)
-
-  if (feedKeywords !== oldFeedKeywords) {
-    handleFilterFeed(mode, config)
-  }
+  handleFilterFeed(getFeedKeywords(config), mode, config)
 }

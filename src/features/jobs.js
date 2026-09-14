@@ -1,14 +1,7 @@
-import { JOB_SELECTORS } from '../constants.js'
-import {
-  getCustomSelector,
-  getInnermostElements,
-  parseKeywords,
-  resetJobs,
-} from '../utils.js'
+import { getJobCards, parseKeywords, resetJobs } from '../utils.js'
 
 let runs = 0
 let jobKeywordInterval
-let jobKeywords = []
 let oldJobKeywords = []
 let lastJobSummary = ''
 
@@ -43,9 +36,7 @@ const blockByJobKeywords = (keywords, mode) => {
 
       if (runs % 10 === 0) resetJobs()
 
-      const posts = getInnermostElements(
-        document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
-      )
+      const posts = getJobCards()
 
       let matched = 0
 
@@ -89,12 +80,7 @@ export default (checkNeedUpdate, enabled, mode, config) => {
 
   if (!enabled) return
 
-  jobKeywords = getJobKeywords(config)
+  resetAll()
 
-  // Hide by keywords
-  if (jobKeywords !== oldJobKeywords || jobKeywords.length === 0) {
-    resetAll()
-
-    blockByJobKeywords(jobKeywords, mode)
-  }
+  blockByJobKeywords(getJobKeywords(config), mode)
 }

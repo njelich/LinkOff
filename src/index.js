@@ -70,16 +70,24 @@ chrome.runtime.onMessage.addListener(async (req) => {
 let lastUrl
 let urlCheckIntervalId = null
 
-const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+// Prefixes, so sub-pages such as /jobs/search/ are covered too. The home page
+// is the one path that has to match exactly.
+const AUTHORIZED_PATH_PREFIXES = ['/feed/', '/jobs/', '/messaging/']
 
-// Prefix match, so sub-pages such as /jobs/search/ are covered too.
-const isAuthorizedUrl = (pathname) =>
-  pathname === '/' || AUTHORIZED_URLS.some((url) => pathname.startsWith(url))
+const isAuthorizedPath = (pathname) =>
+  pathname === '/' ||
+  AUTHORIZED_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix))
 
 const startUrlCheck = () => {
   if (urlCheckIntervalId !== null) return
   urlCheckIntervalId = setInterval(() => {
-    if (!isAuthorizedUrl(window.location.pathname)) return
+    if (!isAuthorizedPath(window.location.pathname)) {
+      // Features stop themselves once the page is out of their scope, so
+      // forget where we were: returning to the same url must re-run them.
+      lastUrl = undefined
+
+      return
+    }
 
     if (window.location.href !== lastUrl) {
       lastUrl = window.location.href

@@ -32,16 +32,23 @@ export const parseKeywords = (raw) =>
         .filter(Boolean)
     : []
 
-// Several job selectors match nested elements of the same card. Keeping only
-// the innermost one stops a card being dimmed and badged twice.
-export const getInnermostElements = (elements) => {
+// Several job selectors match nested parts of the same card. Keeping only the
+// outermost match stops a card being dimmed and badged twice, and hides the
+// whole list row so the list collapses instead of leaving the empty slot
+// LinkedIn reserves for it.
+const getOutermostElements = (elements) => {
   const all = Array.from(elements)
 
   return all.filter(
     (element) =>
-      !all.some((other) => other !== element && element.contains(other))
+      !all.some((other) => other !== element && other.contains(element))
   )
 }
+
+export const getJobCards = () =>
+  getOutermostElements(
+    document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
+  )
 
 export const waitForSelector = async (selector) => {
   while (checkElementAndPlaceholderBySelector(selector)) {
@@ -297,11 +304,7 @@ export const resetBlockedPosts = () => {
 export const resetJobs = () => {
   console.log('LinkOff: Reset shown jobs')
 
-  let posts = getInnermostElements(
-    document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
-  )
-
-  posts.forEach((post) => {
+  getJobCards().forEach((post) => {
     removeHideClasses(post)
     delete post.dataset.hidden
   })
