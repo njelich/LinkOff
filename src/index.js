@@ -70,12 +70,16 @@ chrome.runtime.onMessage.addListener(async (req) => {
 let lastUrl
 let urlCheckIntervalId = null
 
-const AUTHORIZED_URLS = ['/', '/feed/', '/jobs/', '/messaging/']
+const AUTHORIZED_URLS = ['/feed/', '/jobs/', '/messaging/']
+
+// Prefix match, so sub-pages such as /jobs/search/ are covered too.
+const isAuthorizedUrl = (pathname) =>
+  pathname === '/' || AUTHORIZED_URLS.some((url) => pathname.startsWith(url))
 
 const startUrlCheck = () => {
   if (urlCheckIntervalId !== null) return
   urlCheckIntervalId = setInterval(() => {
-    if (!AUTHORIZED_URLS.includes(window.location.pathname)) return
+    if (!isAuthorizedUrl(window.location.pathname)) return
 
     if (window.location.href !== lastUrl) {
       lastUrl = window.location.href

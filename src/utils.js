@@ -24,6 +24,25 @@ export const removeHideClasses = (element) => {
   element.classList.remove('hide', 'dim', 'showIcon')
 }
 
+export const parseKeywords = (raw) =>
+  typeof raw === 'string'
+    ? raw
+        .split(',')
+        .map((keyword) => keyword.trim())
+        .filter(Boolean)
+    : []
+
+// Several job selectors match nested elements of the same card. Keeping only
+// the innermost one stops a card being dimmed and badged twice.
+export const getInnermostElements = (elements) => {
+  const all = Array.from(elements)
+
+  return all.filter(
+    (element) =>
+      !all.some((other) => other !== element && element.contains(other))
+  )
+}
+
 export const waitForSelector = async (selector) => {
   while (checkElementAndPlaceholderBySelector(selector)) {
     await new Promise((resolve) => {
@@ -278,7 +297,9 @@ export const resetBlockedPosts = () => {
 export const resetJobs = () => {
   console.log('LinkOff: Reset shown jobs')
 
-  let posts = document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
+  let posts = getInnermostElements(
+    document.querySelectorAll(getCustomSelector(JOB_SELECTORS, 'all'))
+  )
 
   posts.forEach((post) => {
     removeHideClasses(post)

@@ -2,7 +2,7 @@ import {
   BY_COMPANIES_KEYWORD,
   BY_PEOPLE_KEYWORD,
   CAROUSEL_KEYWORD,
-  COMMENTED_ON_KEYWORD,
+  COMMENTED_HEADER_KEYWORD,
   DROPDOWN_TRIGGER_SELECTOR,
   FEED_SELECTOR,
   FOLLOWED_KEYWORD,
@@ -21,6 +21,7 @@ import {
 import {
   getCustomSelector,
   hidePost,
+  parseKeywords,
   removeHideClasses,
   resetBlockedPosts,
   resetShownPosts,
@@ -30,13 +31,15 @@ import {
 let runs = 0
 let feedInterval
 let postCountPrompted = false
-let feedKeywords = []
+let feedKeywords = { keywords: [], headerKeywords: [] }
 let oldFeedKeywords = []
+
+const isFeedPage = () => window.location.pathname.startsWith('/feed/')
 
 const handleSortByRecent = async (checkNeedUpdate) => {
   if (!checkNeedUpdate('sort-by-recent', true)) return
 
-  if (!window.location.pathname.startsWith('/feed/')) return
+  if (!isFeedPage()) return
 
   const dropdownTrigger = await waitForSelector(DROPDOWN_TRIGGER_SELECTOR)
 
@@ -137,8 +140,7 @@ const handleAgeFiltering = (keywords, age) => {
 }
 
 const getFeedKeywords = (config) => {
-  const keywords =
-    config['feed-keywords'] === '' ? [] : config['feed-keywords'].split(',')
+  const keywords = parseKeywords(config['feed-keywords'])
 
   const hideByAge = config['hide-by-age']
 
@@ -156,22 +158,64 @@ const getFeedKeywords = (config) => {
   if (config['hide-followed']) keywords.push(FOLLOWED_KEYWORD)
   if (config['hide-liked']) keywords.push(...LIKED_KEYWORDS)
   if (config['hide-other-reactions']) keywords.push(...OTHER_REACTIONS_KEYWORDS)
-  if (config['hide-commented-on']) keywords.push(COMMENTED_ON_KEYWORD)
   if (config['hide-by-companies']) keywords.push(BY_COMPANIES_KEYWORD)
   if (config['hide-by-people']) keywords.push(BY_PEOPLE_KEYWORD)
   if (config['hide-suggested']) keywords.push(SUGGESTED_KEYWORD)
 
-  console.log('LinkOff: Current feed keywords are', keywords)
+  const headerKeywords = []
 
-  return keywords
+  if (config['hide-commented-on']) headerKeywords.push(COMMENTED_HEADER_KEYWORD)
+
+  console.log('LinkOff: Current feed keywords are', [
+    ...keywords,
+    ...headerKeywords,
+  ])
+
+  return { keywords, headerKeywords }
 }
 
-const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
-  if (oldFeedKeywords.some((kw) => !keywords.includes(kw))) {
+// LinkedIn wraps the social proof line in non-breaking spaces and React comment
+// separators, which break plain substring matching on the raw markup.
+const normalizeHtml = (html) =>
+  html
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/&(?:amp;)?nbsp;|&#160;|&#xa0;|\u00a0/gi, ' ')
+    .replace(/\s+/g, ' ')
+
+// The social proof line ("Tim Farmer commented") is the first rendered line of
+// a post. Posts that are not rendered have no header and never match.
+const getHeaderText = (post) => {
+  const firstLine = (post.innerText || '')
+    .split('\n')
+    .find((line) => line.trim())
+
+  return firstLine ? firstLine.replace(/\s+/g, ' ').trim().toLowerCase() : ''
+}
+
+const matchesHeader = (post, lowercaseKeywords) => {
+  if (!lowercaseKeywords.length) return false
+
+  const header = getHeaderText(post)
+
+  return lowercaseKeywords.some((keyword) => header.indexOf(keyword) !== -1)
+}
+
+const blockPostsByKeywords = (
+  { keywords, headerKeywords },
+  mode,
+  disablePostCount
+) => {
+  const allKeywords = [...keywords, ...headerKeywords]
+
+  if (oldFeedKeywords.some((kw) => !allKeywords.includes(kw))) {
     resetShownPosts()
   }
 
-  oldFeedKeywords = keywords
+  oldFeedKeywords = allKeywords
+
+  const lowercaseHeaderKeywords = headerKeywords.map((keyword) =>
+    keyword.toLowerCase()
+  )
 
   let posts
 
@@ -185,36 +229,36 @@ const blockPostsByKeywords = (keywords, mode, disablePostCount) => {
     // Filter only if there are enough posts to load more
     if (posts.length > 5 || mode == 'dim') {
       posts.forEach((post) => {
-        const keywordIndex = keywords.findIndex(
-          (keyword) => post.outerHTML.indexOf(keyword) !== -1
-        )
+        const html = normalizeHtml(post.outerHTML)
 
-        if (keywordIndex === -1) {
+        const blocked =
+          keywords.some((keyword) => html.indexOf(keyword) !== -1) ||
+          matchesHeader(post, lowercaseHeaderKeywords)
+
+        if (blocked) {
+          hidePost(post, mode)
+        } else {
           removeHideClasses(post)
           post.dataset.hidden = false
-        } else {
-          hidePost(post, mode)
         }
       })
-    } else {
-      if (!postCountPrompted && !disablePostCount) {
-        postCountPrompted = true
-        alert(
-          'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
-        )
-      }
+    } else if (!postCountPrompted && !disablePostCount && isFeedPage()) {
+      postCountPrompted = true
+      alert(
+        'Scroll down to start blocking posts (LinkedIn needs at least 10 loaded to load new ones).\n\nTo disable this alert, toggle it under misc in LinkOff settings'
+      )
     }
   }
 
-  if (keywords.length)
+  if (allKeywords.length)
     feedInterval = setInterval(() => {
       runBlockPosts()
       runs++
     }, 350)
 }
 
-const toggleFeed = async (shown) => {
-  if (!window.location.pathname.startsWith('/feed/')) return
+const toggleFeed = (shown) => {
+  if (!isFeedPage()) return
 
   if (shown) {
     document.querySelector(FEED_SELECTOR)?.classList.remove('hide')
