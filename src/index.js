@@ -36,24 +36,12 @@ const doIt = async (config) => {
     translations = await getLocaleTranslations()
   }
 
-  let allSucceeded = true
+  doGenerals(checkNeedUpdate)
+  doFeed(checkNeedUpdate, enabled, mode, config)
+  doJobs(checkNeedUpdate, enabled, mode, config)
+  doMisc(checkNeedUpdate, enabled, mode, translations)
 
-  const safely = (name, fn) => {
-    try {
-      fn()
-    } catch (error) {
-      allSucceeded = false
-      console.error(`LinkOff: ${name} failed`, error)
-    }
-  }
-
-  safely('doGenerals', () => doGenerals(checkNeedUpdate))
-  safely('doFeed', () => doFeed(checkNeedUpdate, enabled, mode, config))
-  safely('doJobs', () => doJobs(checkNeedUpdate, enabled, mode, config))
-  safely('doMisc', () => doMisc(checkNeedUpdate, enabled, mode, translations))
-
-  // Leaving oldConfig stale lets the failed setting be reapplied next time.
-  if (allSucceeded) oldConfig = config
+  oldConfig = config
 }
 
 const initialize = async () => {
@@ -61,11 +49,6 @@ const initialize = async () => {
 
   doIt(config)
 }
-
-// The feature helpers fire off unawaited async work, so failures surface here.
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('LinkOff: unhandled failure', event.reason)
-})
 
 // Storage listener
 chrome.storage.onChanged.addListener(initialize)
